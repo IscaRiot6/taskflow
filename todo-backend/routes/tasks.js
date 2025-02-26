@@ -1,58 +1,67 @@
-const express = require('express')
+import express from 'express'
+import Task from '../models/taskModel.js'
 const router = express.Router()
 
-// In-memory array to hold tasks
+// In-memory tasks array
 let tasks = []
+let currentId = 1 // ID counter to ensure unique IDs
 
-// Route to get all tasks
+// ✅ Get all tasks
 router.get('/', (req, res) => {
-  console.log('Fetching all tasks:', tasks)
+  console.log('📋 Fetching all tasks:', tasks)
   res.json(tasks)
 })
 
-// Route to add a new task
+// ✅ Add a new task (POST)
 router.post('/', (req, res) => {
-  const { title } = req.body // Extract title from request body
+  const { title } = req.body
 
-  // Validation: Ensure title exists and is not empty
   if (!title || title.trim() === '') {
     return res.status(400).json({ error: 'Task title is required' })
   }
 
-  const newTask = {
-    id: tasks.length + 1, // Assign a new unique ID
-    title: title.trim() // Trim spaces to avoid empty entries
-  }
-
+  const newTask = { id: currentId++, title: title.trim() }
   tasks.push(newTask)
-  console.log('Added new task:', newTask) // Log the newly added task
-  console.log('Updated tasks array:', tasks) // Log the updated tasks array
+  console.log('✅ Task added:', newTask)
   res.status(201).json(newTask)
 })
 
-// Route to update a task
+// ✅ Update a task (PUT)
 router.put('/:id', (req, res) => {
-  const { id } = req.params // Get the ID from the URL
-  const updatedTask = req.body // Get the updated task data from the request body
+  const taskId = Number(req.params.id) // Convert ID to number
+  console.log(`🔄 Updating task with ID: ${taskId}`)
 
-  // Find the task by ID
-  const taskIndex = tasks.findIndex(task => task.id === id)
-  if (taskIndex !== -1) {
-    tasks[taskIndex] = { ...tasks[taskIndex], ...updatedTask } // Update the existing task
-    console.log('Updated task:', tasks[taskIndex]) // Log the updated task
-    res.json(tasks[taskIndex]) // Send back the updated task
-  } else {
-    res.status(404).send('Task not found') // Handle case where task ID doesn't exist
+  const { title } = req.body
+  if (!title || title.trim() === '') {
+    return res.status(400).json({ error: 'Updated task title is required' })
   }
+
+  // Find task
+  const task = tasks.find(task => task.id === taskId)
+  if (!task) {
+    return res.status(404).json({ error: 'Task not found' })
+  }
+
+  task.title = title.trim()
+  console.log('✅ Task updated:', task)
+  res.json(task)
 })
 
-// Route to delete a task
+// ✅ Delete a task (DELETE)
 router.delete('/:id', (req, res) => {
-  const { id } = req.params
-  console.log(`Deleting task with id: ${id}`) // Log the ID being deleted
-  tasks = tasks.filter(task => task.id !== id)
-  console.log(`Remaining tasks: ${JSON.stringify(tasks)}`)
+  const taskId = Number(req.params.id)
+  console.log(`🗑 Deleting task with ID: ${taskId}`)
+
+  const initialLength = tasks.length
+  tasks = tasks.filter(task => task.id !== taskId)
+
+  if (tasks.length === initialLength) {
+    return res.status(404).json({ error: 'Task not found' })
+  }
+
+  console.log(`✅ Remaining tasks:`, tasks)
   res.status(204).send() // No content
 })
 
-module.exports = router
+// Export router as default
+export default router
