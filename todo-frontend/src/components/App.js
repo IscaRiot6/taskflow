@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
-import TaskForm from './components/TaskForm' // Ensure the import is correct
-import TaskList from './components/TaskList' // Ensure the import is correct
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import Login from './Login' // Import Login component
+import Home from './Home' // Import Home component
+import TaskForm from './TaskForm' // Import TaskForm component
+import TaskList from './TaskList' // Import TaskList component
+import LoginPage from '../pages/LoginPage'
 
 function App () {
   const [tasks, setTasks] = useState([])
