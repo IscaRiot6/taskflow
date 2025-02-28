@@ -5,6 +5,8 @@ import Login from './Login'
 import Home from './Home'
 import About from './About'
 import Welcome from './Welcome'
+import '../styles/App.css'
+import BackgroundSetter from './BackgroundSetter' // Don't include 'components' as it is already in the same folder
 
 function App () {
   const [tasks, setTasks] = useState([])
@@ -22,6 +24,7 @@ function App () {
 
   return (
     <>
+      <BackgroundSetter />
       <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <Routes>
         <Route path='/' element={<Home tasks={tasks} setTasks={setTasks} />} />

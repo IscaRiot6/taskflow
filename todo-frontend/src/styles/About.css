@@ -1,0 +1,110 @@
+/* Background Image with Gradient Overlay */
+body {
+    background: url('../assets/images/image1.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+    height: 100vh; /* Full page height */
+}
+
+/* Gradient Overlay for Depth */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 140, 255, 0.4); /* Light blue gradient overlay */
+    z-index: -1; /* Ensure it stays behind the content */
+}
+
+/* Main Container Styling */
+.about-container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.9); /* Slight transparency */
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 400px; /* Set a fixed height */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Optional: Custom Scrollbar Styling for Modern Browsers */
+.about-container::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+    transition: all 0.3s ease; /* Smooth transition for all properties */
+}
+
+/* Thumb of the scrollbar */
+.about-container::-webkit-scrollbar-thumb {
+    background-color: #00bcd4; /* Color of the scrollbar thumb */
+    border-radius: 4px;
+}
+
+/* Track of the scrollbar */
+.about-container::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color of the track */
+    border-radius: 4px;
+}
+
+/* Hover Effect on About Box */
+.about-container:hover {
+    transform: translateY(-10px); /* Slightly move the box up */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Header Styling */
+.about-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.about-header h1 {
+    font-size: 2rem;
+    color: #333;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+/* Text Content Styling */
+.about-content {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #555;
+    padding: 20px;
+    border-left: 5px solid #00bcd4; /* Adds a nice accent on the left */
+    transition: color 0.3s ease;
+}
+
+.about-content:hover {
+    color: #333; /* Slight color change when hovered */
+}
+
+/* Footer Styling */
+.about-footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+/* Adding Animation on Page Load */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.about-container {
+    animation: fadeInUp 1s ease-out;
+}
