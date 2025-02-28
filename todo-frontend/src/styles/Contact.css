@@ -1,0 +1,46 @@
+.contact-container {
+    display: flex;
+    justify-content: center; /* Centers both panels horizontally */
+    align-items: center; /* Ensures both panels are aligned vertically */
+    height: 80vh; /* Set container height to 80% of the viewport */
+    padding: 20px;
+    gap: 40px; /* Space between the panels */
+    margin-top: 40px; /* Adds space from the top of the screen */
+  }
+  
+  .contact-form,
+  .contact-slideshow {
+    flex: 1;
+    padding: 80px;
+    max-width: 550px; /* Fixed maximum width for both panels */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* Centers content inside each panel */
+    background: rgba(255, 255, 255, 0.85); /* Slightly transparent background */
+    border-radius: 15px;
+    box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.25); /* Subtle shadow effect */
+    transition: all 0.3s ease-in-out; /* Smooth transition for hover effect */
+  }
+  
+  .contact-form:hover,
+  .contact-slideshow:hover {
+    transform: scale(1.05); /* Slightly enlarge the boxes on hover */
+    box-shadow: 8px 8px 35px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
+  }
+  
+  .contact-slideshow img {
+    width: 100%;
+    max-width: 550px; /* Resize the slideshow */
+    height: 400px; /* Ensure the height of the slideshow */
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 4px 4px 25px rgba(0, 0, 0, 0.35); /* Shadow effect for the image */
+    transition: all 0.3s ease-in-out; /* Smooth transition for the image hover */
+  }
+  
+  .contact-slideshow img:hover {
+    transform: scale(1.05); /* Slightly enlarge the image on hover */
+    box-shadow: 6px 6px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow on hover */
+  }
+  

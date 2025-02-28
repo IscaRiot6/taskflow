@@ -6,7 +6,8 @@ import Home from './Home'
 import About from './About'
 import Welcome from './Welcome'
 import '../styles/App.css'
-import BackgroundSetter from './BackgroundSetter' // Don't include 'components' as it is already in the same folder
+import BackgroundSetter from './BackgroundSetter'
+import Contact from './Contact' // Import Contact
 
 function App () {
   const [tasks, setTasks] = useState([])
@@ -31,6 +32,7 @@ function App () {
         <Route path='/login' element={<Login onLogin={handleLogin} />} />
         <Route path='/about' element={<About />} />
         <Route path='/welcome' element={<Welcome />} />
+        <Route path='/contact' element={<Contact />} />
       </Routes>
     </>
   )
