@@ -1,0 +1,61 @@
+.welcome-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 20px;
+    height: calc(100vh - 40px);
+    background-image: url('../assets/images/image8.png');
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(255, 255, 255, 0.8); /* Optional */
+  }
+  
+  .left-panel,
+  .right-panel {
+    flex: 1;
+    margin: 10px;
+    padding: 20px;
+  }
+  
+  .left-panel {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .mini-frame {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .mini-image {
+    width: 48%; /* Adjust for layout */
+    height: auto;
+    border-radius: 8px; /* Optional */
+    transition: transform 0.3s ease; /* Smooth transition on hover */
+  }
+  
+  .mini-image:hover {
+    transform: scale(1.05); /* Enlarge slightly on hover */
+  }
+  
+  .banner {
+    margin-bottom: 20px;
+  }
+  
+  .banner-image {
+    width: 100%; /* Full width for the banner */
+    height: auto;
+    border-radius: 8px; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .banner-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+  
+  .welcome-message {
+    text-align: center;
+  }
+  
