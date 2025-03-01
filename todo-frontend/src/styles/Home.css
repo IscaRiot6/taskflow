@@ -1,0 +1,100 @@
+/* Container for Task List */
+.task-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Flexibly adjust columns */
+    gap: 20px; /* Space between tasks */
+    padding: 20px;
+    justify-items: center; /* Center each task item */
+    margin-top: 20px; /* Add some space above the tasks */
+  }
+  
+  /* Individual Task Card Styling */
+  .task-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+    width: 100%; /* Let task card fill its grid space */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .task-card:hover {
+    transform: scale(1.05); /* Slight zoom effect */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Enhance shadow on hover */
+  }
+  
+  /* Task Title */
+  .task-card h3 {
+    color: #fff;
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+  }
+  
+  /* Task Description (if applicable) */
+  .task-card p {
+    color: #ccc;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  /* Buttons for Edit/Delete */
+  .task-card button {
+    background-color: #007BFF;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 10px;
+  }
+  
+  .task-card button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Task Form Styling */
+  .task-form-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .task-form {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 500px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+  }
+  
+  .task-form input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #fff;
+  }
+  
+  .task-form button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .task-form button:hover {
+    background-color: #0056b3;
+  }
+  
+  .task-card input {
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+  }

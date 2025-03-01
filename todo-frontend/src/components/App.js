@@ -1,8 +1,9 @@
+// src/App.js
 import React, { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './Navbar' // Adjust import if necessary
 import Login from './Login'
-import Home from './Home'
+import HomePage from '../pages/HomePage' // Correct the path here
 import About from './About'
 import Welcome from './Welcome'
 import '../styles/App.css'
@@ -28,7 +29,10 @@ function App () {
       <BackgroundSetter />
       <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <Routes>
-        <Route path='/' element={<Home tasks={tasks} setTasks={setTasks} />} />
+        <Route
+          path='/'
+          element={<HomePage tasks={tasks} setTasks={setTasks} />}
+        />
         <Route path='/login' element={<Login onLogin={handleLogin} />} />
         <Route path='/about' element={<About />} />
         <Route path='/welcome' element={<Welcome />} />
