@@ -5,42 +5,71 @@
     height: 80vh; /* Set container height to 80% of the viewport */
     padding: 20px;
     gap: 40px; /* Space between the panels */
-    margin-top: 40px; /* Adds space from the top of the screen */
-  }
-  
-  .contact-form,
-  .contact-slideshow {
+    margin-top: 20px; /* Adjusted margin to lift panels up */
+    opacity: 0; /* Start hidden for fade-in effect */
+    animation: fadeIn 0.8s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.contact-form,
+.contact-slideshow {
     flex: 1;
     padding: 80px;
-    max-width: 550px; /* Fixed maximum width for both panels */
+    max-width: 600px; /* Slightly larger width */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center; /* Centers content inside each panel */
-    background: rgba(255, 255, 255, 0.85); /* Slightly transparent background */
+    background: rgba(255, 255, 255, 0.9); /* Slightly sharper transparency */
     border-radius: 15px;
-    box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.25); /* Subtle shadow effect */
-    transition: all 0.3s ease-in-out; /* Smooth transition for hover effect */
-  }
-  
-  .contact-form:hover,
-  .contact-slideshow:hover {
-    transform: scale(1.05); /* Slightly enlarge the boxes on hover */
-    box-shadow: 8px 8px 35px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
-  }
-  
-  .contact-slideshow img {
+    box-shadow: 3px 3px 25px rgba(0, 0, 0, 0.3); /* Stronger shadow effect */
+    transition: all 0.4s ease-in-out; /* Smoother transition */
+    overflow: hidden;
+}
+
+.contact-form:hover {
+    transform: translateX(10px); /* Left-to-right hover effect */
+    box-shadow: 8px 8px 40px rgba(0, 0, 0, 0.5); /* Stronger shadow on hover */
+}
+
+.contact-slideshow {
+    background: none; /* Remove the transparent box */
+    border-radius: 15px;
+}
+
+.contact-slideshow img {
     width: 100%;
-    max-width: 550px; /* Resize the slideshow */
-    height: 400px; /* Ensure the height of the slideshow */
+    max-width: 600px; /* Adjusted size */
+    height: 450px; /* Enlarged height */
     object-fit: cover;
     border-radius: 15px;
-    box-shadow: 4px 4px 25px rgba(0, 0, 0, 0.35); /* Shadow effect for the image */
-    transition: all 0.3s ease-in-out; /* Smooth transition for the image hover */
-  }
-  
-  .contact-slideshow img:hover {
-    transform: scale(1.05); /* Slightly enlarge the image on hover */
-    box-shadow: 6px 6px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow on hover */
-  }
-  
+    box-shadow: 4px 4px 30px rgba(0, 0, 0, 0.4); /* Enhanced shadow */
+    transition: transform 1s ease-in-out; /* Smooth zoom-in transition */
+}
+
+.contact-slideshow img:hover {
+    transform: scale(1.08); /* Slight zoom effect */
+    box-shadow: 6px 6px 35px rgba(0, 0, 0, 0.55); /* Bolder hover shadow */
+}
+
+.contact-form input:focus, 
+.contact-form textarea:focus {
+    outline: none;
+    border: 2px solid #4A90E2;
+    box-shadow: 0 0 10px rgba(74, 144, 226, 0.5); /* Glow effect */
+    transition: all 0.3s ease-in-out;
+}
+
+@keyframes messageSent {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.message-sent {
+    animation: messageSent 0.6s ease-in-out;
+}
