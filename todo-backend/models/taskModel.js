@@ -5,6 +5,28 @@ const taskSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  // New fields:
+  description: {
+    type: String,
+    default: ''
+  },
+  image: {
+    type: String,
+    default: '' // Could be a URL to the image
+  },
+  genres: {
+    type: [String],
+    default: [] // An array of strings
+  },
+  themes: {
+    type: [String],
+    default: [] // An array of strings
+  },
+  yourScore: {
+    type: Number,
+    default: 0 // You can change the default if needed
+  },
+  // Existing fields:
   completed: {
     type: Boolean,
     default: false

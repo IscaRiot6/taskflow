@@ -1,9 +1,9 @@
-// src/components/TaskList.js
 import TaskItem from './TaskItem'
+import '../styles/TaskList.css'
 
 const TaskList = ({ tasks, onDelete, onEdit }) => {
   return (
-    <ul>
+    <div className='task-list'>
       {tasks.map(task => (
         <TaskItem
           key={task._id}
@@ -12,7 +12,7 @@ const TaskList = ({ tasks, onDelete, onEdit }) => {
           onEdit={onEdit}
         />
       ))}
-    </ul>
+    </div>
   )
 }
 

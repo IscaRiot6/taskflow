@@ -16,27 +16,28 @@ router.get('/', async (req, res) => {
 
 // ✅ Add a new task (POST)
 router.post('/', async (req, res) => {
-  const { title } = req.body
-
-  if (!title || title.trim() === '') {
-    return res.status(400).json({ error: 'Task title is required' })
-  }
-
-  const newTask = new Task({ title: title.trim() }) // Create a new Task instance
   try {
-    const savedTask = await newTask.save() // Save the task to MongoDB
-    console.log('✅ Task added:', savedTask)
+    const { title, description, image, genres, themes, yourScore } = req.body
+    const newTask = new Task({
+      title,
+      description,
+      image,
+      genres,
+      themes,
+      yourScore
+    })
+    const savedTask = await newTask.save()
     res.status(201).json(savedTask)
   } catch (error) {
-    console.error('Error adding task:', error)
-    res.status(500).json({ error: 'Failed to add task' })
+    res.status(500).json({ error: 'Error creating task' })
   }
 })
 
 // ✅ Update a task (PUT)
 router.put('/:id', async (req, res) => {
   const taskId = req.params.id // Get the task ID from the URL
-  const { title } = req.body
+  const { title, description, image, genres, themes, yourScore, completed } =
+    req.body
 
   if (!title || title.trim() === '') {
     return res.status(400).json({ error: 'Updated task title is required' })
@@ -45,7 +46,15 @@ router.put('/:id', async (req, res) => {
   try {
     const updatedTask = await Task.findByIdAndUpdate(
       taskId,
-      { title: title.trim() },
+      {
+        title: title.trim(),
+        description: description?.trim() || '',
+        image: image || '',
+        genres: genres || [],
+        themes: themes || [],
+        yourScore: yourScore || null,
+        completed: completed ?? false
+      },
       { new: true, runValidators: true } // Return the updated task and validate
     )
 

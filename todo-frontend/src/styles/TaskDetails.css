@@ -1,0 +1,18 @@
+.task-details-container {
+    max-width: 800px; /* Increased width */
+    margin: 40px auto; /* More spacing */
+    padding: 25px;
+    background-color: #fff !important;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  .task-image {
+    width: 100%; /* Ensures image fits box width */
+    height: auto; /* Prevents forced height shrinking */
+    max-height: 500px; /* Limits extreme tall images */
+    object-fit: contain; /* Prevents cropping while keeping aspect ratio */
+    border-radius: 8px;
+  }
+  

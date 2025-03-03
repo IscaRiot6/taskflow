@@ -8,7 +8,8 @@ import About from './About'
 import Welcome from './Welcome'
 import '../styles/App.css'
 import BackgroundSetter from './BackgroundSetter'
-import Contact from './Contact' // Import Contact
+import Contact from './Contact'
+import TaskDetails from './TaskDetails'
 
 function App () {
   const [tasks, setTasks] = useState([])
@@ -33,6 +34,7 @@ function App () {
           path='/'
           element={<HomePage tasks={tasks} setTasks={setTasks} />}
         />
+        <Route path='/task/:id' element={<TaskDetails tasks={tasks} />} />
         <Route path='/login' element={<Login onLogin={handleLogin} />} />
         <Route path='/about' element={<About />} />
         <Route path='/welcome' element={<Welcome />} />
