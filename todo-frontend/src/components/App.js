@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './Navbar' // Adjust import if necessary
@@ -25,6 +24,45 @@ function App () {
     // Additional logout logic if needed
   }
 
+  // Edit task function
+  const handleEditTask = async (
+    id,
+    newTitle,
+    newDescription,
+    newImage,
+    newGenres,
+    newThemes,
+    newScore
+  ) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/tasks/${id}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: newTitle,
+            description: newDescription,
+            image: newImage,
+            genres: newGenres,
+            themes: newThemes,
+            yourScore: newScore
+          })
+        }
+      )
+
+      if (!response.ok) throw new Error('Failed to update task')
+
+      const updatedTask = await response.json()
+
+      setTasks(prevTasks =>
+        prevTasks.map(task => (task._id === id ? updatedTask : task))
+      )
+    } catch (error) {
+      console.error('Error editing task:', error)
+    }
+  }
+
   return (
     <>
       <BackgroundSetter />
@@ -34,7 +72,10 @@ function App () {
           path='/'
           element={<HomePage tasks={tasks} setTasks={setTasks} />}
         />
-        <Route path='/task/:id' element={<TaskDetails tasks={tasks} />} />
+        <Route
+          path='/task/:id'
+          element={<TaskDetails tasks={tasks} onEdit={handleEditTask} />}
+        />
         <Route path='/login' element={<Login onLogin={handleLogin} />} />
         <Route path='/about' element={<About />} />
         <Route path='/welcome' element={<Welcome />} />
