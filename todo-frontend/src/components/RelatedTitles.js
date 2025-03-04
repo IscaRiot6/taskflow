@@ -24,18 +24,40 @@ const RelatedTitles = ({ onAdd }) => {
   }, [id]) // Fetch whenever the ID changes
 
   const handleAdd = async newTask => {
-    if (onAdd) {
-      onAdd(newTask) // Pass the new task to the onAdd function (possibly saving it to the backend)
-    } else {
-      console.error('onAdd function is not available')
-    }
+    try {
+      // Sending the new task to the backend
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/tasks/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newTask) // Ensure that newTask is correctly passed as JSON
+        }
+      )
 
-    // After adding a new task, re-fetch the related tasks (to ensure the latest ones are displayed)
-    const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/tasks/${id}/related`
-    )
-    const data = await response.json()
-    setRelatedTasks(data)
+      if (!response.ok) {
+        throw new Error('Failed to add task')
+      }
+
+      // Re-fetch the related tasks after adding a new task
+      const fetchRelatedTasks = async () => {
+        try {
+          const response = await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/tasks/${id}/related`
+          )
+          const data = await response.json()
+          setRelatedTasks(data) // Only update the related tasks state
+        } catch (error) {
+          console.error('Error fetching related tasks:', error)
+        }
+      }
+
+      fetchRelatedTasks() // Re-fetch only the related tasks to avoid any mix-up
+    } catch (error) {
+      console.error('Error adding task:', error)
+    }
   }
 
   return (

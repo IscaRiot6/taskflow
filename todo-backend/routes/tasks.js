@@ -16,23 +16,33 @@ router.get('/', async (req, res) => {
 
 // Fetch related tasks for a specific task
 router.get('/:id/related', async (req, res) => {
-  const taskId = req.params.id
+  const taskId = req.params.id // Extract the task ID
+  console.log(`Fetching related tasks for task ID: ${taskId}`) // Log task ID
 
   try {
     const task = await Task.findById(taskId)
+
     if (!task) {
+      console.log(`Task with ID ${taskId} not found.`)
       return res.status(404).json({ error: 'Task not found' })
     }
 
-    // Fetch related tasks based on genres or other criteria
-    const relatedTasks = await Task.find({
-      genres: { $in: task.genres },
-      _id: { $ne: taskId } // Exclude the current task from the result
-    })
+    console.log(`Found task:`, task) // Log the full task object
+    console.log(`Related tasks array: ${task.relatedTasks}`) // Log the relatedTasks field
+
+    if (!task.relatedTasks || !Array.isArray(task.relatedTasks)) {
+      console.log(`No related tasks field found.`)
+      return res.status(200).json([]) // Return empty array if relatedTasks is missing
+    }
+
+    // Fetch related tasks by their IDs
+    const relatedTasks = await Task.find({ _id: { $in: task.relatedTasks } })
+
+    console.log(`Fetched related tasks:`, relatedTasks) // Log fetched tasks
 
     res.json(relatedTasks)
   } catch (error) {
-    console.error('Error fetching related tasks:', error)
+    console.error(`Error fetching related tasks for ID ${taskId}:`, error)
     res.status(500).json({ error: 'Failed to fetch related tasks' })
   }
 })
