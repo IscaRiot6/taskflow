@@ -9,6 +9,7 @@ import '../styles/App.css'
 import BackgroundSetter from './BackgroundSetter'
 import Contact from './Contact'
 import TaskDetails from './TaskDetails'
+import RelatedTitles from './RelatedTitles'
 
 function App () {
   const [tasks, setTasks] = useState([])
@@ -76,6 +77,11 @@ function App () {
           path='/task/:id'
           element={<TaskDetails tasks={tasks} onEdit={handleEditTask} />}
         />
+        <Route
+          path='/related-titles/:id'
+          element={<RelatedTitles onAdd={handleEditTask} />} // Pass handleEditTask to RelatedTitles as onAdd
+        />
+
         <Route path='/login' element={<Login onLogin={handleLogin} />} />
         <Route path='/about' element={<About />} />
         <Route path='/welcome' element={<Welcome />} />

@@ -14,6 +14,29 @@ router.get('/', async (req, res) => {
   }
 })
 
+// Fetch related tasks for a specific task
+router.get('/:id/related', async (req, res) => {
+  const taskId = req.params.id
+
+  try {
+    const task = await Task.findById(taskId)
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' })
+    }
+
+    // Fetch related tasks based on genres or other criteria
+    const relatedTasks = await Task.find({
+      genres: { $in: task.genres },
+      _id: { $ne: taskId } // Exclude the current task from the result
+    })
+
+    res.json(relatedTasks)
+  } catch (error) {
+    console.error('Error fetching related tasks:', error)
+    res.status(500).json({ error: 'Failed to fetch related tasks' })
+  }
+})
+
 // ✅ Add a new task (POST)
 router.post('/', async (req, res) => {
   try {

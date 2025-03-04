@@ -1,93 +1,62 @@
 import '../styles/TaskDetails.css'
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import Modal from './Modal'
+import { Link } from 'react-router-dom'
 
 const TaskDetails = ({ tasks, onEdit }) => {
   const { id } = useParams()
   const navigate = useNavigate()
   const task = tasks.find(task => task._id === id)
 
-  const [isEditing, setIsEditing] = useState(false)
-  const [newTitle, setNewTitle] = useState(task?.title || '')
-  const [newDescription, setNewDescription] = useState(task?.description || '')
-  const [newImage, setNewImage] = useState(task?.image || '')
-  const [newGenres, setNewGenres] = useState(task?.genres.join(', ') || '')
-  const [newThemes, setNewThemes] = useState(task?.themes.join(', ') || '')
-  const [newScore, setNewScore] = useState(task?.yourScore || '')
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   if (!task) {
     return <h2>Task Not Found</h2>
   }
 
-  const handleSave = () => {
+  const handleSave = updatedTask => {
     onEdit(
-      id,
-      newTitle,
-      newDescription,
-      newImage,
-      newGenres.split(','),
-      newThemes.split(','),
-      newScore
+      updatedTask._id,
+      updatedTask.title,
+      updatedTask.description,
+      updatedTask.image,
+      updatedTask.genres,
+      updatedTask.themes,
+      updatedTask.yourScore
     )
-    setIsEditing(false)
+    setIsModalOpen(false)
   }
 
   return (
     <div className='task-details-container'>
-      {isEditing ? (
-        <>
-          <input
-            type='text'
-            value={newTitle}
-            onChange={e => setNewTitle(e.target.value)}
-          />
-          <textarea
-            value={newDescription}
-            onChange={e => setNewDescription(e.target.value)}
-          />
-          <input
-            type='text'
-            value={newImage}
-            onChange={e => setNewImage(e.target.value)}
-          />
-          <input
-            type='text'
-            value={newGenres}
-            onChange={e => setNewGenres(e.target.value)}
-          />
-          <input
-            type='text'
-            value={newThemes}
-            onChange={e => setNewThemes(e.target.value)}
-          />
-          <input
-            type='number'
-            value={newScore}
-            onChange={e => setNewScore(e.target.value)}
-          />
-          <button onClick={handleSave}>Save</button>
-          <button onClick={() => setIsEditing(false)}>Cancel</button>
-        </>
-      ) : (
-        <>
-          <h1>{task.title}</h1>
-          <img src={task.image} alt={task.title} className='task-image' />
-          <p>
-            <strong>Description:</strong> {task.description}
-          </p>
-          <p>
-            <strong>Genres:</strong> {task.genres.join(', ')}
-          </p>
-          <p>
-            <strong>Themes:</strong> {task.themes.join(', ')}
-          </p>
-          <p>
-            <strong>Score:</strong> {task.yourScore}
-          </p>
-          <button onClick={() => setIsEditing(true)}>Edit</button>
-          <button onClick={() => navigate('/')}>Back</button>
-        </>
+      <h1>{task.title}</h1>
+      <img src={task.image} alt={task.title} className='task-image' />
+      <p>
+        <strong>Description:</strong> {task.description}
+      </p>
+      <p>
+        <strong>Genres:</strong> {task.genres.join(', ')}
+      </p>
+      <p>
+        <strong>Themes:</strong> {task.themes.join(', ')}
+      </p>
+      <p>
+        <strong>Score:</strong> {task.yourScore}
+      </p>
+      <button onClick={() => setIsModalOpen(true)}>Edit</button>
+      <button onClick={() => navigate('/')}>Back</button>
+
+      {isModalOpen && (
+        <Modal
+          task={task}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSave}
+        />
       )}
+      <Link to={`/related-titles/${task._id}`} className='related-titles-link'>
+        View Related Titles
+      </Link>
     </div>
   )
 }
