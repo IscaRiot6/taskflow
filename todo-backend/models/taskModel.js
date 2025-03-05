@@ -31,6 +31,8 @@ const taskSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  relatedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
+
   createdAt: {
     type: Date,
     default: Date.now
