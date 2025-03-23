@@ -1,4 +1,5 @@
 import React from 'react'
+import '../styles/SortTasks.css'
 
 const SortTasks = ({ tasks, setTasks }) => {
   const handleSort = () => {
@@ -10,7 +11,7 @@ const SortTasks = ({ tasks, setTasks }) => {
 
   return (
     <button onClick={handleSort} className='sort-button'>
-      Sort A-Z
+      Sort A-Z 🔤
     </button>
   )
 }

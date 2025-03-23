@@ -18,10 +18,17 @@ const Pagination = ({ tasks, setCurrentPage, currentPage, tasksPerPage }) => {
       >
         Prev
       </button>
-      <span>
-        {' '}
-        Page {currentPage} of {totalPages}{' '}
-      </span>
+
+      {Array.from({ length: totalPages }, (_, index) => (
+        <button
+          key={index + 1}
+          className={currentPage === index + 1 ? 'active' : ''}
+          onClick={() => handlePageChange(index + 1)}
+        >
+          {index + 1}
+        </button>
+      ))}
+
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}

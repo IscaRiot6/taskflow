@@ -1,0 +1,23 @@
+.sort-button {
+    background-color: #ff6600;  /* Vibrant orange */
+    color: white;
+    font-size: 16px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    width: auto;  /* Prevents it from stretching across the page */
+    display: block;
+    margin: 10px auto;  /* Centers the button */
+  }
+  
+  .sort-button:hover {
+    background-color: #ff4500; /* Darker shade on hover */
+    transform: scale(1.05);
+  }
+  
+  .sort-button:active {
+    transform: scale(0.98);
+  }
+  

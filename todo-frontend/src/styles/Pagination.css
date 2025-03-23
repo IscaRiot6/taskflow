@@ -15,6 +15,12 @@
     cursor: pointer;
     transition: background 0.3s;
   }
+
+  .pagination button.active {
+    background-color: #ff6600;
+    font-weight: bold;
+  }
+  
   
   .pagination button:hover {
     background-color: #0056b3;
