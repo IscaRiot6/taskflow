@@ -1,0 +1,31 @@
+/* Search container to control positioning */
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Stylish input */
+  .search-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 20px;
+    border: 2px solid #007bff;
+    border-radius: 25px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+  
+  /* Input focus effect */
+  .search-input:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Placeholder style */
+  .search-input::placeholder {
+    color: #888;
+    font-style: italic;
+  }
+  

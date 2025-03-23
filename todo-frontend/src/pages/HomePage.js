@@ -26,7 +26,7 @@ const HomePage = ({ tasks, setTasks }) => {
 
   return (
     <div>
-      <h1>Welcome to the Task Manager</h1>
+      {/* <h1>Welcome to the Task Manager</h1> */}
       <Home tasks={tasks} setTasks={setTasks} />
     </div>
   )

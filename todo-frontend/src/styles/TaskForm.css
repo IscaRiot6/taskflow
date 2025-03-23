@@ -34,3 +34,58 @@
 .task-form-btn:hover {
   background-color: #45a049;
 }
+
+.toggle-form-btn {
+  display: block; /* Makes it a block element for easy centering */
+  width: 200px; /* Adjust width as needed */
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #007bff; /* Change color as desired */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin: 20px auto; /* Centers horizontally */
+  text-align: center;
+}
+
+.toggle-form-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Enhanced styling for welcome heading */
+/* Enhanced styling for welcome heading */
+.welcome-heading {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-top: 40px;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeIn 0.6s forwards ease-out 0.3s;
+  transition: all 0.3s ease;
+  display: inline-block; /* Prevent background from stretching */
+}
+
+.welcome-heading:hover {
+  background: linear-gradient(90deg, #0056b3, #003f7f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: scale(1.05);
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
