@@ -12,19 +12,13 @@ const RelatedTitles = ({ onAdd }) => {
     const fetchRelatedTasks = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/tasks/${id}/related`
+          `http://localhost:5000/api/tasks/${id}/related`
         )
+        if (!response.ok) throw new Error('Failed to fetch related tasks')
         const data = await response.json()
-
-        if (response.ok && Array.isArray(data)) {
-          setRelatedTasks(data) // ✅ Correctly set related tasks
-        } else {
-          console.warn('No related tasks found or unexpected format', data)
-          setRelatedTasks([]) // ✅ Handle empty case properly
-        }
+        setRelatedTasks(data)
       } catch (error) {
         console.error('Error fetching related tasks:', error)
-        setRelatedTasks([]) // ✅ Ensure UI doesn't break
       }
     }
     fetchRelatedTasks()
@@ -33,38 +27,22 @@ const RelatedTitles = ({ onAdd }) => {
   const handleAdd = async newTask => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/tasks/`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/tasks/${id}/related`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(newTask) // Ensure newTask is passed correctly
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newTask)
         }
       )
 
-      if (!response.ok) {
-        throw new Error('Failed to add task')
-      }
+      if (!response.ok) throw new Error('Failed to create and add related task')
 
-      // Re-fetch related tasks after adding a new task
-      const fetchRelatedTasks = async () => {
-        try {
-          const response = await fetch(
-            `${process.env.REACT_APP_BACKEND_URL}/api/tasks/${id}/related`
-          )
-          const data = await response.json()
+      const { relatedTask } = await response.json()
 
-          setRelatedTasks(Array.isArray(data) ? data : []) // Ensure it's always an array
-        } catch (error) {
-          console.error('Error fetching related tasks:', error)
-          setRelatedTasks([])
-        }
-      }
-
-      fetchRelatedTasks() // Re-fetch related tasks
+      // Update UI with the new related task
+      setRelatedTasks(prev => [...prev, relatedTask])
     } catch (error) {
-      console.error('Error adding task:', error)
+      console.error('Error adding related task:', error)
     }
   }
 

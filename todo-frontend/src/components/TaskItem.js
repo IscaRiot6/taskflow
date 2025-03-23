@@ -14,7 +14,13 @@ const TaskItem = ({ task, onDelete, onEdit }) => {
       <p>Genres: {genres.join(', ')}</p>
       <p>Themes: {themes.join(', ')}</p>
       <p>Your Score: {task.yourScore}</p>
-      <img src={task.image} alt={task.title} />
+
+      {/* Image validation fix */}
+      {task.image ? (
+        <img src={task.image} alt={task.title} />
+      ) : (
+        <p className='no-image'>No image available</p> // Optional fallback
+      )}
 
       <button onClick={() => onEdit(task)}>Edit</button>
       <button onClick={() => onDelete(task._id)}>Delete</button>

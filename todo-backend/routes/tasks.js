@@ -1,6 +1,7 @@
 import express from 'express'
 import Task from '../models/taskModel.js' // Import your Task model
 const router = express.Router()
+import mongoose from 'mongoose'
 
 // ✅ Get all tasks
 router.get('/', async (req, res) => {
@@ -14,32 +15,61 @@ router.get('/', async (req, res) => {
   }
 })
 
-// Fetch related tasks for a specific task
+// ✅ Get related tasks for a specific task
 router.get('/:id/related', async (req, res) => {
-  const taskId = req.params.id // Extract the task ID
-  console.log(`Fetching related tasks for task ID: ${taskId}`) // Log task ID
+  try {
+    const task = await Task.findById(req.params.id).populate('relatedTasks')
+    if (!task) return res.status(404).json({ error: 'Task not found' })
+
+    res.json(Array.isArray(task.relatedTasks) ? task.relatedTasks : [])
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' })
+  }
+})
+
+// POST route to add a related task
+// POST route to add a new related task
+router.post('/:taskId/related', async (req, res) => {
+  const { taskId } = req.params
+  const { title, description, image, genres, themes, yourScore } = req.body
+
+  if (!title || title.trim() === '') {
+    return res.status(400).json({ error: 'Task title is required' })
+  }
 
   try {
-    const task = await Task.findById(taskId).populate('relatedTasks') // ✅ Populate related tasks
+    const task = await Task.findById(taskId)
+    if (!task) return res.status(404).json({ error: 'Task not found' })
 
-    if (!task) {
-      console.log(`Task with ID ${taskId} not found.`)
-      return res.status(404).json({ error: 'Task not found' })
-    }
+    // Create a new task
+    const newRelatedTask = new Task({
+      title,
+      description,
+      image,
+      genres,
+      themes,
+      yourScore
+    })
 
-    console.log(`Found task:`, task) // Log the full task object
+    const savedTask = await newRelatedTask.save()
 
-    // Checking if relatedTasks is populated correctly
-    if (task.relatedTasks && task.relatedTasks.length > 0) {
-      console.log(`Related tasks array:`, task.relatedTasks) // Log the populated related tasks array
-      res.json(task.relatedTasks) // Return populated related tasks
-    } else {
-      console.log(`No related tasks found for task ID: ${taskId}`)
-      res.status(404).json({ error: 'No related tasks found' })
-    }
+    // Add the new task to the relatedTasks array
+    task.relatedTasks = Array.isArray(task.relatedTasks)
+      ? task.relatedTasks
+      : []
+    task.relatedTasks.push(savedTask._id)
+
+    await task.save()
+
+    res
+      .status(201)
+      .json({
+        message: 'Related task created and added',
+        relatedTask: savedTask
+      })
   } catch (error) {
-    console.error(`Error fetching related tasks for ID ${taskId}:`, error)
-    res.status(500).json({ error: 'Failed to fetch related tasks' })
+    console.error('Server error:', error)
+    res.status(500).json({ error: 'Server error' })
   }
 })
 

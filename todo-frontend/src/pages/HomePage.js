@@ -1,4 +1,3 @@
-// src/pages/HomePage.js
 import React, { useEffect } from 'react'
 import Home from '../components/Home'
 
@@ -11,15 +10,19 @@ const HomePage = ({ tasks, setTasks }) => {
         )
         const data = await response.json()
         console.log('Fetched tasks:', data) // Debugging log
-        if (tasks.length === 0) {
+
+        if (!tasks || tasks.length === 0) {
           setTasks(data)
         }
       } catch (error) {
         console.error('Error fetching tasks:', error)
       }
     }
-    fetchTasks()
-  }, [tasks, setTasks])
+
+    if (!tasks || tasks.length === 0) {
+      fetchTasks() // Fetch only if tasks are empty
+    }
+  }, [setTasks]) // ✅ Removed `tasks` from dependencies
 
   return (
     <div>
