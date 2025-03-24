@@ -1,0 +1,75 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  min-height: 100vh; /* Full page coverage */
+  width: 100%;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Default theme - Ensure background image remains */
+.theme-default {
+  /* background: url('../assets/images/image1.jpeg') no-repeat center center fixed; */
+  background-size: cover;
+  color: #000;
+}
+
+/* Black theme */
+.theme-black {
+  background-color: #000 !important;
+  color: #fff;
+}
+
+/* Purple theme */
+.theme-purple {
+  background-color: #6a0dad !important;
+  color: #fff;
+}
+
+/* Preserve background images */
+.theme-black,
+.theme-purple {
+  background-image: inherit;
+  background-size: inherit;
+  background-attachment: inherit;
+}
+
+/* Fix contrast for task items */
+.theme-black .task-item,
+.theme-purple .task-item {
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.theme-black .task-item h3,
+.theme-purple .task-item h3 {
+  color: #fff;
+}
+
+.theme-black .task-item p,
+.theme-purple .task-item p {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Ensure buttons stand out */
+.theme-toggle {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+
+.theme-toggle button {
+  margin: 0 10px;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.theme-toggle button:nth-child(1) { background: #ddd; color: #000; } /* Default */
+.theme-toggle button:nth-child(2) { background: #000; color: #fff; } /* Black */
+.theme-toggle button:nth-child(3) { background: #6a0dad; color: #fff; } /* Purple */

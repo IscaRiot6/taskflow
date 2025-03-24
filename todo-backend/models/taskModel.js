@@ -14,6 +14,7 @@ const taskSchema = new mongoose.Schema({
     type: String,
     default: '' // Could be a URL to the image
   },
+
   genres: {
     type: [String],
     default: [] // An array of strings

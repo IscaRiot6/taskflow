@@ -5,13 +5,17 @@ import Modal from './Modal'
 import SortTasks from './SortTasks'
 import Pagination from './Pagination'
 import SearchTask from './SearchTask'
+import Notification from './Notification' // Import Notification component
+// import ThemeToggle from './ThemeToggle'
 
 const Home = ({ tasks, setTasks }) => {
+  const [theme, setTheme] = useState('default')
   const [filteredTasks, setFilteredTasks] = useState(tasks)
   const [isFormVisible, setIsFormVisible] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTask, setEditingTask] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [notification, setNotification] = useState(null) // Notification state
   const tasksPerPage = 18
 
   useEffect(() => {
@@ -21,6 +25,12 @@ const Home = ({ tasks, setTasks }) => {
   const indexOfLastTask = currentPage * tasksPerPage
   const indexOfFirstTask = indexOfLastTask - tasksPerPage
   const paginatedTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask)
+
+  // Function to show notification
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type })
+    setTimeout(() => setNotification(null), 3000) // Hide after 3 seconds
+  }
 
   const handleAddTask = async taskData => {
     try {
@@ -38,8 +48,10 @@ const Home = ({ tasks, setTasks }) => {
         setTasks(prev => [...prev, addedTask])
       }
       setIsFormVisible(false)
+      showNotification('Task added successfully!', 'success') // Trigger notification
     } catch (error) {
       console.error('Error adding task:', error)
+      showNotification('Failed to add task.', 'error') // Error notification
     }
   }
 
@@ -60,8 +72,10 @@ const Home = ({ tasks, setTasks }) => {
         prev.map(task => (task._id === updatedTask._id ? updatedTask : task))
       )
       closeModal()
+      showNotification('Task updated successfully!', 'success') // Notification for edit
     } catch (error) {
       console.error('Error editing task:', error)
+      showNotification('Failed to update task.', 'error')
     }
   }
 
@@ -71,8 +85,10 @@ const Home = ({ tasks, setTasks }) => {
         method: 'DELETE'
       })
       setTasks(prev => prev.filter(task => task._id !== id))
+      showNotification('Task deleted successfully!', 'success') // Notification for delete
     } catch (error) {
       console.error('Error deleting task:', error)
+      showNotification('Failed to delete task.', 'error')
     }
   }
 
@@ -87,7 +103,12 @@ const Home = ({ tasks, setTasks }) => {
   }
 
   return (
-    <div className='home-container'>
+    <div className={`home-container theme-${theme}`}>
+      {/* <ThemeToggle currentTheme={theme} setTheme={setTheme} /> */}
+      {notification && (
+        <Notification message={notification.message} type={notification.type} />
+      )}
+
       <div className='left-panel'>
         <h1 className='welcome-heading'>Welcome to the Task Manager</h1>
         <button
@@ -101,7 +122,6 @@ const Home = ({ tasks, setTasks }) => {
       </div>
 
       <div className='right-panel'>
-        {/* Move search-container to top */}
         <div className='search-container'>
           <SearchTask tasks={tasks} setFilteredTasks={setFilteredTasks} />
         </div>

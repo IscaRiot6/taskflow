@@ -1,0 +1,40 @@
+.theme-toggle-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.theme-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.theme-btn.default {
+  background-color: #007bff;
+}
+
+.theme-btn.default:hover {
+  background-color: #0056b3;
+}
+
+.theme-btn.black {
+  background-color: #343a40;
+}
+
+.theme-btn.black:hover {
+  background-color: #23272b;
+}
+
+.theme-btn.purple {
+  background-color: #6a0dad;
+}
+
+.theme-btn.purple:hover {
+  background-color: #580a9e;
+}

@@ -7,7 +7,7 @@
     background-image: url('../assets/images/image8.png');
     background-size: cover;
     background-position: center;
-    background-color: rgba(255, 255, 255, 0.8); /* Optional */
+    background-color: rgba(255, 255, 255, 0.8);
   }
   
   .left-panel,

@@ -4,38 +4,31 @@ import TaskList from './TaskList'
 import Modal from './Modal'
 import SortTasks from './SortTasks'
 import Pagination from './Pagination'
-// import '../styles/Home.css'
 import SearchTask from './SearchTask'
+import Notification from './Notification' // Import Notification component
 
 const Home = ({ tasks, setTasks }) => {
-  const [filteredTasks, setFilteredTasks] = useState(tasks) // search input
-  const [isFormVisible, setIsFormVisible] = useState(false) // HIDE
+  const [filteredTasks, setFilteredTasks] = useState(tasks)
+  const [isFormVisible, setIsFormVisible] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTask, setEditingTask] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const tasksPerPage = 18 // Set the number of tasks per page
+  const [notification, setNotification] = useState(null) // Notification state
+  const tasksPerPage = 18
 
-  // Calculate indexes for slicing
+  useEffect(() => {
+    setFilteredTasks(tasks)
+  }, [tasks])
+
   const indexOfLastTask = currentPage * tasksPerPage
   const indexOfFirstTask = indexOfLastTask - tasksPerPage
-  const paginatedTasks = tasks.slice(indexOfFirstTask, indexOfLastTask) // Only show relevant tasks
+  const paginatedTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask)
 
-  // useEffect(() => {
-  //   const fetchTasks = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `${process.env.REACT_APP_BACKEND_URL}/api/tasks`
-  //       )
-  //       const data = await response.json()
-  //       if (tasks.length === 0) {
-  //         setTasks(data)
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching tasks:', error)
-  //     }
-  //   }
-  //   fetchTasks()
-  // }, [setTasks])
+  // Function to show notification
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type })
+    setTimeout(() => setNotification(null), 3000) // Hide after 3 seconds
+  }
 
   const handleAddTask = async taskData => {
     try {
@@ -49,13 +42,14 @@ const Home = ({ tasks, setTasks }) => {
       )
       const addedTask = await response.json()
 
-      // Only add to the global list if it's not a related task
       if (!taskData.isRelated) {
-        setTasks(prevTasks => [...prevTasks, addedTask])
+        setTasks(prev => [...prev, addedTask])
       }
-      setIsFormVisible(false) // Hide the form after adding a task
+      setIsFormVisible(false)
+      showNotification('Task added successfully!', 'success') // Trigger notification
     } catch (error) {
       console.error('Error adding task:', error)
+      showNotification('Failed to add task.', 'error') // Error notification
     }
   }
 
@@ -66,23 +60,20 @@ const Home = ({ tasks, setTasks }) => {
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedTaskData) // Send the full task data
+          body: JSON.stringify(updatedTaskData)
         }
       )
-
       if (!response.ok) throw new Error('Failed to update task')
 
       const updatedTask = await response.json()
-
-      setTasks(prevTasks =>
-        prevTasks.map(task =>
-          task._id === updatedTaskData._id ? updatedTask : task
-        )
+      setTasks(prev =>
+        prev.map(task => (task._id === updatedTask._id ? updatedTask : task))
       )
-
-      closeModal() // Ensure modal closes after updating
+      closeModal()
+      showNotification('Task updated successfully!', 'success') // Notification for edit
     } catch (error) {
       console.error('Error editing task:', error)
+      showNotification('Failed to update task.', 'error')
     }
   }
 
@@ -91,9 +82,11 @@ const Home = ({ tasks, setTasks }) => {
       await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/${id}`, {
         method: 'DELETE'
       })
-      setTasks(prevTasks => prevTasks.filter(task => task._id !== id))
+      setTasks(prev => prev.filter(task => task._id !== id))
+      showNotification('Task deleted successfully!', 'success') // Notification for delete
     } catch (error) {
       console.error('Error deleting task:', error)
+      showNotification('Failed to delete task.', 'error')
     }
   }
 
@@ -106,37 +99,40 @@ const Home = ({ tasks, setTasks }) => {
     setIsModalOpen(false)
     setEditingTask(null)
   }
-  console.log('Tasks received in Home:', tasks)
 
   return (
     <div className='home-container'>
-      <div className='left-panel'>
-        <h1>My Task List</h1>
+      {notification && (
+        <Notification message={notification.message} type={notification.type} />
+      )}
 
-        {/* Button to show/hide TaskForm */}
+      <div className='left-panel'>
+        <h1 className='welcome-heading'>Welcome to the Task Manager</h1>
         <button
           className='toggle-form-btn'
           onClick={() => setIsFormVisible(prev => !prev)}
         >
           {isFormVisible ? 'Hide Form' : 'New Task'}
         </button>
-
-        {/* Show TaskForm only if the state is true */}
         {isFormVisible && <TaskForm onAdd={handleAddTask} />}
-
         <SortTasks tasks={tasks} setTasks={setTasks} />
       </div>
 
       <div className='right-panel'>
+        <div className='search-container'>
+          <SearchTask tasks={tasks} setFilteredTasks={setFilteredTasks} />
+        </div>
+
         <TaskList
           tasks={paginatedTasks}
           onDelete={handleDeleteTask}
-          onEdit={setEditingTask}
+          onEdit={openEditModal}
         />
+
         <Pagination
-          tasks={tasks}
-          setCurrentPage={setCurrentPage}
+          tasks={filteredTasks}
           currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
           tasksPerPage={tasksPerPage}
         />
       </div>
@@ -144,7 +140,7 @@ const Home = ({ tasks, setTasks }) => {
       {isModalOpen && (
         <Modal
           task={editingTask}
-          onClose={() => setIsModalOpen(false)}
+          onClose={closeModal}
           onSave={handleEditTask}
         />
       )}
