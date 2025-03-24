@@ -31,6 +31,7 @@ function App () {
     newTitle,
     newDescription,
     newImage,
+    newImage2, // Added this argument
     newGenres,
     newThemes,
     newScore
@@ -45,6 +46,8 @@ function App () {
             title: newTitle,
             description: newDescription,
             image: newImage,
+            image2: newImage2, // Send image2 correctly
+
             genres: newGenres,
             themes: newThemes,
             yourScore: newScore

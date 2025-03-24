@@ -31,7 +31,8 @@ router.get('/:id/related', async (req, res) => {
 // POST route to add a new related task
 router.post('/:taskId/related', async (req, res) => {
   const { taskId } = req.params
-  const { title, description, image, genres, themes, yourScore } = req.body
+  const { title, description, image, image2, genres, themes, yourScore } =
+    req.body
 
   if (!title || title.trim() === '') {
     return res.status(400).json({ error: 'Task title is required' })
@@ -46,6 +47,7 @@ router.post('/:taskId/related', async (req, res) => {
       title,
       description,
       image,
+      image2,
       genres,
       themes,
       yourScore
@@ -61,12 +63,10 @@ router.post('/:taskId/related', async (req, res) => {
 
     await task.save()
 
-    res
-      .status(201)
-      .json({
-        message: 'Related task created and added',
-        relatedTask: savedTask
-      })
+    res.status(201).json({
+      message: 'Related task created and added',
+      relatedTask: savedTask
+    })
   } catch (error) {
     console.error('Server error:', error)
     res.status(500).json({ error: 'Server error' })
@@ -76,11 +76,13 @@ router.post('/:taskId/related', async (req, res) => {
 // ✅ Add a new task (POST)
 router.post('/', async (req, res) => {
   try {
-    const { title, description, image, genres, themes, yourScore } = req.body
+    const { title, description, image, image2, genres, themes, yourScore } =
+      req.body
     const newTask = new Task({
       title,
       description,
       image,
+      image2,
       genres,
       themes,
       yourScore
@@ -95,8 +97,16 @@ router.post('/', async (req, res) => {
 // ✅ Update a task (PUT)
 router.put('/:id', async (req, res) => {
   const taskId = req.params.id // Get the task ID from the URL
-  const { title, description, image, genres, themes, yourScore, completed } =
-    req.body
+  const {
+    title,
+    description,
+    image,
+    image2,
+    genres,
+    themes,
+    yourScore,
+    completed
+  } = req.body
 
   if (!title || title.trim() === '') {
     return res.status(400).json({ error: 'Updated task title is required' })
@@ -109,6 +119,7 @@ router.put('/:id', async (req, res) => {
         title: title.trim(),
         description: description?.trim() || '',
         image: image || '',
+        image2: image2 || '',
         genres: genres || [],
         themes: themes || [],
         yourScore: yourScore || null,

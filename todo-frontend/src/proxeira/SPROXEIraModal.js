@@ -5,7 +5,6 @@ const Modal = ({ task, onClose, onSave }) => {
   const [newTitle, setNewTitle] = useState(task?.title || '')
   const [newDescription, setNewDescription] = useState(task?.description || '')
   const [newImage, setNewImage] = useState(task?.image || '')
-  const [newImage2, setNewImage2] = useState(task?.image2 || '') // Added this
   const [newGenres, setNewGenres] = useState(task?.genres.join(', ') || '')
   const [newThemes, setNewThemes] = useState(task?.themes.join(', ') || '')
   const [newScore, setNewScore] = useState(task?.yourScore || '')
@@ -14,7 +13,6 @@ const Modal = ({ task, onClose, onSave }) => {
     setNewTitle(task?.title || '')
     setNewDescription(task?.description || '')
     setNewImage(task?.image || '')
-    setNewImage2(task?.image2 || '') // Added this
     setNewGenres(task?.genres.join(', ') || '')
     setNewThemes(task?.themes.join(', ') || '')
     setNewScore(task?.yourScore || '')
@@ -23,21 +21,23 @@ const Modal = ({ task, onClose, onSave }) => {
   const handleSave = () => {
     if (!newTitle.trim()) return // Prevent saving empty titles
 
+    // Construct an object with all the updated task data
     const updatedTaskData = {
-      _id: task._id,
-      title: newTitle,
-      description: newDescription,
-      image: newImage,
-      image2: newImage2, // Added this
-      genres: newGenres.split(',').map(genre => genre.trim()),
-      themes: newThemes.split(',').map(theme => theme.trim()),
-      yourScore: newScore ? Number(newScore) : 0
+      _id: task._id, // The task ID (for the backend)
+      title: newTitle, // Updated title
+      description: newDescription, // Updated description
+      image: newImage, // Updated image URL
+      genres: newGenres.split(',').map(genre => genre.trim()), // Ensure genres are an array
+      themes: newThemes.split(',').map(theme => theme.trim()), // Ensure themes are an array
+      yourScore: newScore ? Number(newScore) : 0 // Ensure score is a number
     }
 
+    // Pass the updated task data to the onSave function
     onSave(updatedTaskData)
-    onClose()
+    onClose() // Close the modal after saving
   }
 
+  // Detect "Enter" key press and trigger handleSave
   const handleKeyDown = e => {
     if (e.key === 'Enter') {
       handleSave()
@@ -52,7 +52,7 @@ const Modal = ({ task, onClose, onSave }) => {
           type='text'
           value={newTitle}
           onChange={e => setNewTitle(e.target.value)}
-          onKeyDown={handleKeyDown}
+          onKeyDown={handleKeyDown} // Listen for Enter key
           placeholder='Task Title'
         />
         <textarea
@@ -65,12 +65,6 @@ const Modal = ({ task, onClose, onSave }) => {
           value={newImage}
           onChange={e => setNewImage(e.target.value)}
           placeholder='Image URL'
-        />
-        <input
-          type='text'
-          value={newImage2} // Added this
-          onChange={e => setNewImage2(e.target.value)} // Added this
-          placeholder='Second Image URL' // Added this
         />
         <input
           type='text'

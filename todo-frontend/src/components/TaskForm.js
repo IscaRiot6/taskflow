@@ -5,6 +5,7 @@ const TaskForm = ({ onAdd }) => {
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [newTaskDescription, setNewTaskDescription] = useState('')
   const [newTaskImage, setNewTaskImage] = useState('')
+  const [newTaskImage2, setNewTaskImage2] = useState('') // Added second image state
   const [newTaskGenres, setNewTaskGenres] = useState('')
   const [newTaskThemes, setNewTaskThemes] = useState('')
   const [newTaskScore, setNewTaskScore] = useState('')
@@ -17,6 +18,7 @@ const TaskForm = ({ onAdd }) => {
       title: newTaskTitle,
       description: newTaskDescription,
       image: newTaskImage,
+      image2: newTaskImage2, // Include second image
       genres: newTaskGenres.split(',').map(genre => genre.trim()), // Converting to an array
       themes: newTaskThemes.split(',').map(theme => theme.trim()), // Converting to an array
       yourScore: newTaskScore ? Number(newTaskScore) : 0 // Ensure it's a number
@@ -26,6 +28,7 @@ const TaskForm = ({ onAdd }) => {
     setNewTaskTitle('')
     setNewTaskDescription('')
     setNewTaskImage('')
+    setNewTaskImage2('') // Reset second image state
     setNewTaskGenres('')
     setNewTaskThemes('')
     setNewTaskScore('')
@@ -67,6 +70,18 @@ const TaskForm = ({ onAdd }) => {
           value={newTaskImage}
           onChange={e => setNewTaskImage(e.target.value)}
           placeholder='Enter image URL'
+        />
+      </div>
+
+      <div className='form-group'>
+        <label htmlFor='taskImage2'>Second Image URL</label>
+        <input
+          id='taskImage2'
+          className='task-input'
+          type='text'
+          value={newTaskImage2}
+          onChange={e => setNewTaskImage2(e.target.value)}
+          placeholder='Enter second image URL'
         />
       </div>
 

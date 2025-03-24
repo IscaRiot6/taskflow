@@ -8,20 +8,21 @@ const TaskDetails = ({ tasks, onEdit }) => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [task, setTask] = useState(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [editSuccess, setEditSuccess] = useState(false) // Success message state
 
+  // Update task when `tasks` change
   useEffect(() => {
     const foundTask = tasks.find(task => task._id === id)
-    setTask(foundTask || null)
+    setTask(foundTask || null) // Ensure task updates properly
   }, [tasks, id])
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   if (!task) {
     return <h2>Task Not Found</h2>
   }
 
-  const images = [task.image, task.image2].filter(Boolean)
+  const images = [task.image, task.image2].filter(Boolean) // Filter out empty images
 
   const handlePrevImage = () => {
     setCurrentImageIndex(prevIndex =>
@@ -41,16 +42,13 @@ const TaskDetails = ({ tasks, onEdit }) => {
       updatedTask.title,
       updatedTask.description,
       updatedTask.image,
-      updatedTask.image2,
+      updatedTask.image2, // Pass image2 correctly
       updatedTask.genres,
       updatedTask.themes,
       updatedTask.yourScore
     )
 
     setIsModalOpen(false)
-    setEditSuccess(true) // Show success message
-
-    setTimeout(() => setEditSuccess(false), 3000) // Hide after 3 seconds
   }
 
   return (
@@ -88,13 +86,8 @@ const TaskDetails = ({ tasks, onEdit }) => {
         <strong>Score:</strong> {task.yourScore}
       </p>
 
-      <button className='task-btn edit' onClick={() => setIsModalOpen(true)}>
-        Edit
-      </button>
-
-      <button className='back-btn' onClick={() => navigate('/')}>
-        Back
-      </button>
+      <button onClick={() => setIsModalOpen(true)}>Edit</button>
+      <button onClick={() => navigate('/')}>Back</button>
 
       {isModalOpen && (
         <Modal
@@ -107,10 +100,6 @@ const TaskDetails = ({ tasks, onEdit }) => {
       <Link to={`/related-titles/${task._id}`} className='related-titles-link'>
         View Related Titles
       </Link>
-
-      {editSuccess && (
-        <div className='edit-success'>Task updated successfully!</div>
-      )}
     </div>
   )
 }
