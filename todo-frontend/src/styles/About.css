@@ -1,9 +1,8 @@
 /* Background Image with Gradient Overlay */
 body {
-    background: url('../assets/images/image1.jpeg') no-repeat center center fixed;
     background-size: cover;
     position: relative;
-    height: 100vh; /* Full page height */
+    height: 100%; /* Full page height */
 }
 
 /* Gradient Overlay for Depth */
@@ -14,7 +13,7 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 140, 255, 0.4); /* Light blue gradient overlay */
+    /* background: rgba(0, 140, 255, 0.4);  Light blue gradient overlay  */
     z-index: -1; /* Ensure it stays behind the content */
 }
 

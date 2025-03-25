@@ -24,7 +24,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center; /* Centers content inside each panel */
-    background: rgba(255, 255, 255, 0.9); /* Slightly sharper transparency */
+    background: rgba(255, 255, 255, 0.603); /* Slightly sharper transparency */
     border-radius: 15px;
     box-shadow: 3px 3px 25px rgba(0, 0, 0, 0.3); /* Stronger shadow effect */
     transition: all 0.4s ease-in-out; /* Smoother transition */
