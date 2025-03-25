@@ -32,21 +32,36 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
     color: white;
     border: none;
-    padding: 10px;
+    padding: 12px;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 22px;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background-color 0.3s, transform 0.2s ease, box-shadow 0.2s ease;
     z-index: 1;
+  }
+
+  .carousel-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
   }
   
   .carousel-btn.left {
-    left: 10px;
+    left: 15px;
   }
   
   .carousel-btn.right {
-    right: 10px;
+    right: 15px;
   }
 
   .back-btn {
@@ -81,5 +96,25 @@
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  .task-buttons {
+    display: flex;
+    gap: 10px; /* Adjusts spacing between buttons */
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .related-titles-link {
+    display: inline-block;
+    margin-top: 10px;
+    text-decoration: none;
+    color: #3498db;
+    font-weight: bold;
+  }
+  
+  .related-titles-link:hover {
+    opacity: 0.8;
+  }
+  
   
   

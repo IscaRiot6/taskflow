@@ -88,13 +88,23 @@ const TaskDetails = ({ tasks, onEdit }) => {
         <strong>Score:</strong> {task.yourScore}
       </p>
 
-      <button className='task-btn edit' onClick={() => setIsModalOpen(true)}>
-        Edit
-      </button>
+      {/* Button Container for Proper Spacing */}
+      <div className='task-buttons'>
+        <button className='task-btn edit' onClick={() => setIsModalOpen(true)}>
+          Edit
+        </button>
 
-      <button className='back-btn' onClick={() => navigate('/')}>
-        Back
-      </button>
+        <button className='task-btn back-btn' onClick={() => navigate('/')}>
+          Back
+        </button>
+
+        <Link
+          to={`/related-titles/${task._id}`}
+          className='related-titles-link'
+        >
+          View Related Titles
+        </Link>
+      </div>
 
       {isModalOpen && (
         <Modal
@@ -103,10 +113,6 @@ const TaskDetails = ({ tasks, onEdit }) => {
           onSave={handleSave}
         />
       )}
-
-      <Link to={`/related-titles/${task._id}`} className='related-titles-link'>
-        View Related Titles
-      </Link>
 
       {editSuccess && (
         <div className='edit-success'>Task updated successfully!</div>
