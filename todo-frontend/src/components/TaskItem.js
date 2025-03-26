@@ -38,11 +38,17 @@ const TaskItem = ({ task, onDelete, onEdit }) => {
           {/* Show buttons only if multiple images exist */}
           {images.length > 1 && (
             <>
-              <button className='prev-button' onClick={prevImage}>
-                &lt;
+              <button
+                className='task-carousel-button taskItem-left'
+                onClick={prevImage}
+              >
+                &#x25C0;
               </button>
-              <button className='next-button' onClick={nextImage}>
-                &gt;
+              <button
+                className='task-carousel-button taskItem-right'
+                onClick={nextImage}
+              >
+                &#x25B6;
               </button>
             </>
           )}

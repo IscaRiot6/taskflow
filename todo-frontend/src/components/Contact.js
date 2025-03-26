@@ -29,6 +29,9 @@ const Contact = () => {
     message: ''
   })
 
+  // State for message sent notification
+  const [messageSent, setMessageSent] = useState(false)
+
   // Slideshow state
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
@@ -42,6 +45,12 @@ const Contact = () => {
     e.preventDefault()
     alert(`Message Sent!\nName: ${formData.name}\nEmail: ${formData.email}`)
     setFormData({ name: '', email: '', message: '' }) // Reset form
+    setMessageSent(true) // Trigger message sent animation
+
+    // Hide the message after 3 seconds
+    setTimeout(() => {
+      setMessageSent(false)
+    }, 3000) // Message disappears after 3 seconds
   }
 
   // Auto slideshow effect
@@ -91,8 +100,15 @@ const Contact = () => {
               required
             />
           </div>
-          <button type='submit'>Send Message</button>
+          <button type='submit' className='contact-form-button'>
+            Send Message
+          </button>
         </form>
+
+        {/* Display "Message Sent" after successful form submission */}
+        {messageSent && (
+          <div className='message-sent visible'>Message Sent Successfully!</div>
+        )}
       </div>
 
       {/* Right Panel - Slideshow */}

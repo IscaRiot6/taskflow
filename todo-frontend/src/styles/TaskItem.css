@@ -1,80 +1,127 @@
 .task-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #fff;
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .task-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  .task-btn {
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-    font-size: 14px;
-  }
-  
-  .task-btn.edit {
-    background-color: #3498db; /* Blue */
-    color: white;
-  }
-  
-  .task-btn.delete {
-    background-color: #e74c3c; /* Red */
-    color: white;
-  }
-  
-  .task-btn:hover {
-    opacity: 0.8;
-  }
-  
-  .carousel-container {
-    position: relative;
-    width: 100%;
-    max-width: 300px; /* Adjust this as needed */
-    margin: auto;
-  }
-  
-  .carousel-image {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  .carousel-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 50%;
-    font-size: 16px;
-    transition: 0.3s;
-  }
-  
-  .carousel-button:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-  }
-  
-  .carousel-button.left {
-    left: 10px;
-  }
-  
-  .carousel-button.right {
-    right: 10px;
-  }
-  
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.task-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.task-btn {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+.task-btn.edit {
+  background-color: #3498db; /* Blue */
+  color: white;
+}
+
+.task-btn.delete {
+  background-color: #e74c3c; /* Red */
+  color: white;
+}
+
+.task-btn:hover {
+  opacity: 0.8;
+}
+
+.carousel-container {
+width: 100%;
+max-width: 300px; /* Adjust this as needed */
+margin: auto;
+}
+
+.image-carousel {
+  /* display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  width: fit-content; 
+  position: relative;  */
+  position: relative; /* Ensures buttons position relative to this container */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the image */
+  width: fit-content;
+}
+
+.carousel-image {
+/* width: 100%;
+height: auto;
+border-radius: 8px; */
+width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block; /* Removes inline spacing issues */
+}
+
+.task-carousel-button {
+  /* transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 16px;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; 
+  height: 40px; */
+  position: absolute; /* Now positioned relative to .image-carousel */
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 16px;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.task-carousel-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Button positions */
+/* .taskItem-left {
+  margin-right: auto; 
+}
+
+.taskItem-right {
+  margin-left: auto; 
+} */
+/* Button positions */
+.taskItem-left {
+  left: 10px;
+}
+
+.taskItem-right {
+  right: 10px;
+}
+
+
+
+
+
