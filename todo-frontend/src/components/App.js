@@ -97,9 +97,17 @@ function App () {
       <BackgroundSetter />
       <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <Routes>
+        <Route path='/' element={<Welcome />} />{' '}
+        {/* Make Welcome the main page */}
         <Route
-          path='/'
-          element={<HomePage tasks={tasks} setTasks={setTasks} />}
+          path='/home'
+          element={
+            <HomePage
+              tasks={tasks}
+              setTasks={setTasks}
+              handleEditTask={handleEditTask}
+            />
+          }
         />
         <Route
           path='/task/:id'
@@ -111,18 +119,7 @@ function App () {
         />
         <Route path='/login' element={<LoginPage onLogin={handleLogin} />} />
         <Route path='/signup' element={<SignupPage />} />
-        <Route
-          path='/home'
-          element={
-            <HomePage
-              tasks={tasks}
-              setTasks={setTasks}
-              handleEditTask={handleEditTask}
-            />
-          }
-        />
         <Route path='/about' element={<About />} />
-        <Route path='/welcome' element={<Welcome />} />
         <Route path='/contact' element={<Contact />} />
       </Routes>
     </div>

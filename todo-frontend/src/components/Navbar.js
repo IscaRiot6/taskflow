@@ -20,7 +20,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
 
   return (
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-      <Link to='/'>Home</Link>
+      <Link to='/home'>Home</Link>
       <Link to='/about'>About</Link>
       <Link to='/contact'>Contact</Link>
       {isLoggedIn ? (
