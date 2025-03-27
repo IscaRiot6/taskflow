@@ -24,7 +24,10 @@ const Home = ({ tasks, setTasks }) => {
 
   const indexOfLastTask = currentPage * tasksPerPage
   const indexOfFirstTask = indexOfLastTask - tasksPerPage
-  const paginatedTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask)
+  // const paginatedTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask)
+  const paginatedTasks = Array.isArray(filteredTasks)
+    ? filteredTasks.slice(indexOfFirstTask, indexOfLastTask)
+    : [] // Fallback to empty array if filteredTasks is not an array
 
   // Function to show notification
   const showNotification = (message, type = 'success') => {
@@ -38,41 +41,60 @@ const Home = ({ tasks, setTasks }) => {
         `${process.env.REACT_APP_BACKEND_URL}/api/tasks`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('authToken')}` // Add the auth token if needed
+          },
           body: JSON.stringify(taskData)
         }
       )
+
+      if (!response.ok) {
+        throw new Error('Failed to add task')
+      }
+
       const addedTask = await response.json()
 
-      if (!taskData.isRelated) {
-        setTasks(prev => [...prev, addedTask])
-      }
+      // After successfully adding to the backend, update frontend state
+      setTasks(prev => [...prev, addedTask])
+
       setIsFormVisible(false)
-      showNotification('Task added successfully!', 'success') // Trigger notification
+      showNotification('Task added successfully!', 'success')
     } catch (error) {
       console.error('Error adding task:', error)
-      showNotification('Failed to add task.', 'error') // Error notification
+      showNotification('Failed to add task.', 'error')
     }
   }
 
   const handleEditTask = async updatedTaskData => {
     try {
+      const token = localStorage.getItem('authToken') // Get auth token from localStorage
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/tasks/${updatedTaskData._id}`,
         {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+
           body: JSON.stringify(updatedTaskData)
         }
       )
-      if (!response.ok) throw new Error('Failed to update task')
+
+      if (!response.ok) {
+        throw new Error('Failed to update task')
+      }
 
       const updatedTask = await response.json()
+      // console.log('Task updated successfully:', updatedTaskData)
       setTasks(prev =>
-        prev.map(task => (task._id === updatedTask._id ? updatedTask : task))
+        prev.map(task =>
+          task._id === updatedTask._id ? updatedTaskData : task
+        )
       )
       closeModal()
-      showNotification('Task updated successfully!', 'success') // Notification for edit
+      showNotification('Task updated successfully!', 'success') // Show notification after update
     } catch (error) {
       console.error('Error editing task:', error)
       showNotification('Failed to update task.', 'error')
@@ -81,11 +103,24 @@ const Home = ({ tasks, setTasks }) => {
 
   const handleDeleteTask = async id => {
     try {
-      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/tasks/${id}`, {
-        method: 'DELETE'
-      })
+      const token = localStorage.getItem('authToken') // Get the auth token
+
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/tasks/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}` // Add token here
+          }
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to delete task')
+      }
+
       setTasks(prev => prev.filter(task => task._id !== id))
-      showNotification('Task deleted successfully!', 'success') // Notification for delete
+      showNotification('Task deleted successfully!', 'success') // Show notification
     } catch (error) {
       console.error('Error deleting task:', error)
       showNotification('Failed to delete task.', 'error')

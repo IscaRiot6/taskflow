@@ -4,6 +4,8 @@ import express from 'express'
 import cors from 'cors'
 import connectDB from './models/db.js'
 connectDB()
+import tasksRoutes from './routes/tasks.js'
+import authRoutes from './routes/auth.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -17,11 +19,9 @@ app.get('/', (req, res) => {
   res.send('Server is running!')
 })
 
-// Import tasks routes
-import tasksRoutes from './routes/tasks.js'
-
 // Use tasks routes
 app.use('/api/tasks', tasksRoutes)
+app.use('/api/auth', authRoutes) // Add authentication routes
 
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!' })

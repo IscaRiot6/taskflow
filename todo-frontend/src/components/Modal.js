@@ -21,20 +21,22 @@ const Modal = ({ task, onClose, onSave }) => {
   }, [task])
 
   const handleSave = () => {
-    if (!newTitle.trim()) return // Prevent saving empty titles
+    if (!newTitle.trim()) return // Prevent empty title
 
     const updatedTaskData = {
       _id: task._id,
       title: newTitle,
       description: newDescription,
       image: newImage,
-      image2: newImage2, // Added this
-      genres: newGenres.split(',').map(genre => genre.trim()),
-      themes: newThemes.split(',').map(theme => theme.trim()),
+      image2: newImage2,
+      genres: newGenres.split(',').map(g => g.trim()),
+      themes: newThemes.split(',').map(t => t.trim()),
       yourScore: newScore ? Number(newScore) : 0
     }
 
-    onSave(updatedTaskData)
+    console.log('Saving task:', updatedTaskData)
+
+    onSave(updatedTaskData) // Calls handleEditTaskFromModal -> handleEditTask in App.js
     onClose()
   }
 

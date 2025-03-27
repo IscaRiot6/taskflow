@@ -1,0 +1,129 @@
+.signup-wrapper {
+    
+    display: flex;
+    min-height: 100vh;
+    background-image: url('../assets/signupImages/signupBackgroundImage.jpeg');
+  }
+  
+  /* Left Panel */
+  .signup-left {  
+    background-color: rgba(26, 41, 94, 0.3);
+    /* background-image: url('../assets/signupImages/signupBackgroundImage.jpeg'); */
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  /* Right Panel */
+  .signup-right {
+    background-color: rgba(184, 149, 149, 0.3); /* Optional overlay for dimming */
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+     background-blur: 5px; 
+    filter: brightness(50%);
+  }
+  
+  /* Signup Form Container */
+  .signup-container {  
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    background: rgba(255, 209, 209, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    backdrop-filter: blur(10px);
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  /* Heading Styling */
+  .signup-container h1 {
+    font-size: 32px;
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Input Fields */
+  .signup-form input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Button Styling */
+  .signup-form button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #4a90e2, #357ae8);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .signup-form button:hover {
+    background: linear-gradient(135deg, #357ae8, #4a90e2);
+    box-shadow: 0 0 15px rgba(173, 216, 230, 0.6);
+    transform: scale(1.05);
+  }
+  
+  /* Password Validation List */
+  .password-validation ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .password-validation li {
+    margin: 5px 0;
+    color: red;
+  }
+  
+  .password-validation li.valid {
+    color: green;
+  }
+  
+/* Carousel Styling */
+/* .signup-carousel {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+  }
+  
+  .signup-carousel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 1s ease-in-out;
+  }
+  
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+   */

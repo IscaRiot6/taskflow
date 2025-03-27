@@ -18,7 +18,16 @@ const images = [
   require('../assets/slideshowImages/slideshowImage14.jpeg'),
   require('../assets/slideshowImages/slideshowImage15.jpg'),
   require('../assets/slideshowImages/slideshowImage16.png'),
-  require('../assets/slideshowImages/slideshowImage17.jpg')
+  require('../assets/slideshowImages/slideshowImage17.jpg'),
+  require('../assets/slideshowImages/slideshowImages10.jpeg'),
+  require('../assets/slideshowImages/slideshowImages12.jpg'),
+  // require('../assets/slideshowImages/slideshowImages13.png'),
+  require('../assets/slideshowImages/slideshowImages13.jpg'),
+  require('../assets/slideshowImages/slideshowImages14.jpg'),
+  require('../assets/slideshowImages/slideshowImages15.jpg'),
+  require('../assets/slideshowImages/slideshowImages18.jpeg'),
+  // require('../assets/slideshowImages/slideshowImage19.jpg'),
+  require('../assets/slideshowImages/slideshowImages77.png')
 ]
 
 const Contact = () => {

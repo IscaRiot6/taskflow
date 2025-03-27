@@ -1,12 +1,16 @@
 import express from 'express'
 import Task from '../models/taskModel.js' // Import your Task model
 const router = express.Router()
-import mongoose from 'mongoose'
+import authMiddleware from '../middleware/authMiddleware.js'
+import User from '../models/userModel.js'
+
+// Apply authMiddleware to protect all routes below
+router.use(authMiddleware)
 
 // ✅ Get all tasks
 router.get('/', async (req, res) => {
   try {
-    const tasks = await Task.find() // Fetch tasks from MongoDB
+    const tasks = await Task.find({ user: req.user.userId }) // Fetch only user-specific tasks
     console.log('📋 Fetching all tasks:', tasks)
     res.json(tasks)
   } catch (error) {
@@ -27,7 +31,6 @@ router.get('/:id/related', async (req, res) => {
   }
 })
 
-// POST route to add a related task
 // POST route to add a new related task
 router.post('/:taskId/related', async (req, res) => {
   const { taskId } = req.params
@@ -50,7 +53,8 @@ router.post('/:taskId/related', async (req, res) => {
       image2,
       genres,
       themes,
-      yourScore
+      yourScore,
+      user: task.user // Ensure the new related task has the same user
     })
 
     const savedTask = await newRelatedTask.save()
@@ -78,6 +82,11 @@ router.post('/', async (req, res) => {
   try {
     const { title, description, image, image2, genres, themes, yourScore } =
       req.body
+
+    if (!title || title.trim() === '') {
+      return res.status(400).json({ error: 'Task title is required' })
+    }
+
     const newTask = new Task({
       title,
       description,
@@ -85,11 +94,23 @@ router.post('/', async (req, res) => {
       image2,
       genres,
       themes,
-      yourScore
+      yourScore,
+      user: req.user.userId
     })
+
     const savedTask = await newTask.save()
+
+    // Check if user exists before updating
+    const user = await User.findById(req.user.userId)
+    if (!user) return res.status(404).json({ error: 'User not found' })
+
+    // Add task ID to user's tasks array
+    user.tasks.push(savedTask._id)
+    await user.save()
+
     res.status(201).json(savedTask)
   } catch (error) {
+    console.error('Error creating task:', error)
     res.status(500).json({ error: 'Error creating task' })
   }
 })
@@ -108,30 +129,48 @@ router.put('/:id', async (req, res) => {
     completed
   } = req.body
 
-  if (!title || title.trim() === '') {
-    return res.status(400).json({ error: 'Updated task title is required' })
-  }
+  // Ensure required fields are provided (e.g., title)
+  // if (!title || title.trim() === '') {
+  //   return res.status(400).json({ error: 'Updated task title is required' })
+  // }
 
   try {
-    const updatedTask = await Task.findByIdAndUpdate(
-      taskId,
-      {
-        title: title.trim(),
-        description: description?.trim() || '',
-        image: image || '',
-        image2: image2 || '',
-        genres: genres || [],
-        themes: themes || [],
-        yourScore: yourScore || null,
-        completed: completed ?? false
-      },
-      { new: true, runValidators: true } // Return the updated task and validate
-    )
-
-    if (!updatedTask) {
-      return res.status(404).json({ error: 'Task not found' })
+    // First, find the current task
+    const task = await Task.findOne({ _id: taskId, user: req.user.userId })
+    if (!task) {
+      return res.status(404).json({
+        error: 'Task not found or you are not authorized to update this task'
+      })
     }
 
+    // Prepare the data to be updated, only update provided fields
+    const updatedData = {}
+
+    // Only update the title if a new one is provided
+    if (title && title !== task.title) {
+      updatedData.title = title.trim()
+    }
+    if (description !== undefined)
+      updatedData.description = description?.trim() || ''
+    if (image !== undefined) updatedData.image = image || ''
+    if (image2 !== undefined) updatedData.image2 = image2 || ''
+    if (genres !== undefined) updatedData.genres = genres || []
+    if (themes !== undefined) updatedData.themes = themes || []
+    if (yourScore !== undefined) updatedData.yourScore = yourScore || null
+    if (completed !== undefined) updatedData.completed = completed ?? false
+
+    // Update the task using `findByIdAndUpdate` with only updated fields
+    const updatedTask = await Task.findByIdAndUpdate(taskId, updatedData, {
+      new: true,
+      runValidators: true
+    })
+
+    // If no task is found, return an error
+    if (!updatedTask) {
+      return res.status(404).json({ error: 'Failed to update task' })
+    }
+
+    // Log and return the updated task
     console.log('✅ Task updated:', updatedTask)
     res.json(updatedTask)
   } catch (error) {
@@ -146,11 +185,19 @@ router.delete('/:id', async (req, res) => {
   console.log(`🗑 Deleting task with ID: ${taskId}`)
 
   try {
-    const deletedTask = await Task.findByIdAndDelete(taskId) // Delete the task from MongoDB
+    const deletedTask = await Task.findOneAndDelete({
+      _id: taskId,
+      user: req.user.userId
+    }) // Ensure the user owns the task
 
     if (!deletedTask) {
       return res.status(404).json({ error: 'Task not found' })
     }
+
+    // Remove the deleted task from the user's tasks array
+    await User.findByIdAndUpdate(req.user.userId, {
+      $pull: { tasks: taskId }
+    })
 
     console.log(`✅ Task deleted:`, deletedTask)
     res.status(204).send() // No content
