@@ -12,6 +12,7 @@ import TaskDetails from './TaskDetails'
 import RelatedTitles from './RelatedTitles'
 import ThemeToggle from './ThemeToggle'
 import '../styles/App.css'
+import MiniAudioPlayer from '../components/MiniAudioPlayer'
 
 function App () {
   const [user, setUser] = useState(null)
@@ -94,6 +95,7 @@ function App () {
   return (
     <div className={`app theme-${theme}`}>
       <ThemeToggle setTheme={setTheme} />
+      <MiniAudioPlayer /> {/* 🎵 This adds the player */}
       <BackgroundSetter />
       <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <Routes>

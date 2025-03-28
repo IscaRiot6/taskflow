@@ -1,5 +1,6 @@
 /* Main Login Container */
 .login-container {
+  
     display: flex;
     align-items: center; /* Centers vertically */
     justify-content: center; /* Ensures balance */
@@ -17,7 +18,8 @@
     width: 50vw;
     height: 90vh;
     padding: 20px;
-    background: #121212;
+    /* background: #121212; */
+    
 }
   
   /* Image Styling (Strict Sizing) */
@@ -56,6 +58,7 @@
   
   /* Ensuring Images Fit Correctly */
   .image-grid {
+    
     display: contents; /* Prevents unnecessary wrapping */
   }
   
@@ -63,26 +66,32 @@
 
   /* Right Panel - Login Form */
   .login-right {
+    
+    position: relative;
+    width: 50vw; /* Adjust based on layout */
+    height: 90vh; /* Matches left panel */
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: transparent;
+    /* background: transparent; */
     animation: slideIn 1s ease-in-out;
   }
 
   .login-right::before {
+    /* background-image: url('../assets/loginImages/backgroundImage10.jpg'); */
     content: "";
     position: absolute;
     width: 40%;
     height: 90%;
-    background: rgba(255, 255, 255, 0.05);
+    
     border-radius: 20px;
-    backdrop-filter: blur(10px);
+    /* backdrop-filter: blur(10px); */
     z-index: 0;
 }
 
 .login-form {
+  
     position: relative;
     z-index: 1;
 }
@@ -100,7 +109,7 @@
   .login-form {
     width: 400px;
     padding: 40px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(65, 10, 10, 0.1);
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     text-align: center;

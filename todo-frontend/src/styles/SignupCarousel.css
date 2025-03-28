@@ -23,6 +23,13 @@
   
 }
 
+.signup-carousel:hover {
+  
+    transform: scale(1.01); /* Slight zoom */
+    box-shadow: 0 3px 15px rgba(255, 0, 0, 0.8); /* Subtle red glow */
+}
+
+
 /* 🔹 Left & Right Buttons */
 .prev-button,
 .next-button {
@@ -44,6 +51,8 @@
 
 .prev-button:hover,
 .next-button:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(207, 187, 187, 0.8);
+  animation: pulseGlow 5s infinite alternate ease-in-out;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* Soft white glow */
 }
 

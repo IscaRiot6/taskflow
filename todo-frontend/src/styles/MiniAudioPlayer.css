@@ -1,0 +1,21 @@
+.mini-audio-player {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  .mini-audio-player button {
+    background-color: #1c2b3b;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .mini-audio-player button:hover {
+    background-color: #0056b3;
+  }
+  

@@ -71,6 +71,18 @@ const Contact = () => {
     return () => clearInterval(interval) // Cleanup interval on unmount
   }, [])
 
+  // Function to manually go to the next image
+  const nextImage = () => {
+    setCurrentImageIndex(prevIndex => (prevIndex + 1) % images.length)
+  }
+
+  // Function to manually go to the previous image
+  const prevImage = () => {
+    setCurrentImageIndex(
+      prevIndex => (prevIndex - 1 + images.length) % images.length
+    )
+  }
+
   return (
     <div className='contact-container'>
       {/* Left Panel - Form */}
@@ -120,9 +132,15 @@ const Contact = () => {
         )}
       </div>
 
-      {/* Right Panel - Slideshow */}
+      {/* Right Panel - Slideshow with navigation buttons */}
       <div className='contact-slideshow'>
+        <button className='prev-button' onClick={prevImage}>
+          &#10094;
+        </button>
         <img src={images[currentImageIndex]} alt='Slideshow' />
+        <button className='next-button' onClick={nextImage}>
+          &#10095;
+        </button>
       </div>
     </div>
   )

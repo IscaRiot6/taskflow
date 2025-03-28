@@ -94,7 +94,7 @@ const TaskDetails = ({ tasks, onEdit }) => {
           Edit
         </button>
 
-        <button className='task-btn back-btn' onClick={() => navigate('/')}>
+        <button className='task-btn back-btn' onClick={() => navigate('/home')}>
           Back
         </button>
 

@@ -1,0 +1,11 @@
+.login-form-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 95%; /* Shrinks it slightly from the right */
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: -1; /* Keeps it behind the form */
+    border-radius: 20px; /* Optional, makes it match your right panel */
+}

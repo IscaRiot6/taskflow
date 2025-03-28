@@ -1,7 +1,3 @@
-//This app helps you manage your daily tasks efficiently. Built with React
-//and Node.js, it provides a simple yet powerful experience for staying
-//productive.
-
 import '../styles/About.css'
 
 const About = () => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 // Importing images
 import img1 from '../assets/loginImages/loginImage1.png'
-
+import img2 from '../assets/loginImages/loginImage17.jpg'
 import img3 from '../assets/loginImages/loginImage3.jpg'
 import img4 from '../assets/loginImages/loginImage4.jpg'
 import img5 from '../assets/loginImages/loginImage5.jpg'
@@ -18,7 +18,7 @@ import img15 from '../assets/loginImages/loginImage15.jpg'
 
 const images = [
   img1,
-
+  img2,
   img3,
   img4,
   img5,

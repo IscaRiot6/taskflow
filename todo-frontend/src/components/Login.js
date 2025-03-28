@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import '../styles/Login.css'
 import RandomImageDisplay from './RandomImageDisplay'
 import { Link } from 'react-router-dom'
+import LoginFormGenerator from './LoginFormGenerator'
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('')
@@ -24,6 +25,7 @@ const Login = ({ onLogin }) => {
       </div>
       <div className='login-right'>
         <div className='login-right-box'></div>
+        <LoginFormGenerator />
         <form onSubmit={handleSubmit} className='login-form'>
           <h2 className='login-title'>Welcome Back</h2>
           <input
