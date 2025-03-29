@@ -30,7 +30,7 @@ const images = [
   require('../assets/slideshowImages/slideshowImages77.png')
 ]
 
-const Contact = () => {
+const Contact = ({ onSubmitContactForm }) => {
   // State for form inputs
   const [formData, setFormData] = useState({
     name: '',
@@ -50,16 +50,29 @@ const Contact = () => {
   }
 
   // Handle form submission
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault()
-    alert(`Message Sent!\nName: ${formData.name}\nEmail: ${formData.email}`)
-    setFormData({ name: '', email: '', message: '' }) // Reset form
-    setMessageSent(true) // Trigger message sent animation
+
+    const contactData = {
+      name: formData.name,
+      email: formData.email,
+      message: formData.message
+    }
+
+    try {
+      // Sending the form data to the backend
+      await onSubmitContactForm(contactData)
+      setFormData({ name: '', email: '', message: '' }) // Reset form
+      setMessageSent(true) // Show success message
+    } catch (error) {
+      console.error('Error sending message:', error)
+      setMessageSent(false) // If there's an error, don't show the success message
+    }
 
     // Hide the message after 3 seconds
     setTimeout(() => {
       setMessageSent(false)
-    }, 3000) // Message disappears after 3 seconds
+    }, 3000)
   }
 
   // Auto slideshow effect

@@ -6,6 +6,7 @@ import connectDB from './models/db.js'
 connectDB()
 import tasksRoutes from './routes/tasks.js'
 import authRoutes from './routes/auth.js'
+import contactRoutes from './routes/contact.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -21,7 +22,8 @@ app.get('/', (req, res) => {
 
 // Use tasks routes
 app.use('/api/tasks', tasksRoutes)
-app.use('/api/auth', authRoutes) // Add authentication routes
+app.use('/api/auth', authRoutes)
+app.use('/api/contact', contactRoutes)
 
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!' })

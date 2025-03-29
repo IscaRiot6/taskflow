@@ -107,3 +107,35 @@ body::before {
 .about-container {
     animation: fadeInUp 1s ease-out;
 }
+
+.typing-text {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #563285;
+    text-align: center;
+    min-height: 40px; /* Prevents jumping when text changes */
+  }
+
+  .productivity-bar {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 1.2rem;
+    color: #6abd71;
+  }
+  
+  .progress-container {
+    width: 80%;
+    height: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin: 10px auto;
+    overflow: hidden;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(135deg, #4a90e2, #357ae8);
+    transition: width 1s ease-in-out;
+  }
+  
+  

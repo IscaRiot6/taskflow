@@ -4,10 +4,10 @@ import Navbar from './Navbar'
 import LoginPage from '../pages/LoginPage'
 import SignupPage from '../pages/SignupPage'
 import HomePage from '../pages/HomePage'
+import ContactPage from '../pages/ContactPage'
 import About from './About'
 import Welcome from './Welcome'
 import BackgroundSetter from './BackgroundSetter'
-import Contact from './Contact'
 import TaskDetails from './TaskDetails'
 import RelatedTitles from './RelatedTitles'
 import ThemeToggle from './ThemeToggle'
@@ -122,7 +122,7 @@ function App () {
         <Route path='/login' element={<LoginPage onLogin={handleLogin} />} />
         <Route path='/signup' element={<SignupPage />} />
         <Route path='/about' element={<About />} />
-        <Route path='/contact' element={<Contact />} />
+        <Route path='/contact' element={<ContactPage />} />
       </Routes>
     </div>
   )
