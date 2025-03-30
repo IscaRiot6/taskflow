@@ -2,8 +2,9 @@ import '../styles/TaskItem.css'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 
-const TaskItem = ({ task, onDelete, onEdit }) => {
+const TaskItem = ({ task, onDelete, onEdit, onFavorite, isFavoritesPage }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isFavorite, setIsFavorite] = useState(task.favorite || false) // Track favorite status
 
   const images = [task.image, task.image2].filter(img => img) // Only valid images
 
@@ -13,6 +14,27 @@ const TaskItem = ({ task, onDelete, onEdit }) => {
 
   const prevImage = () => {
     setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length)
+  }
+
+  // Handle the "Add to Favorites" or "Remove from Favorites" functionality
+  const handleFavoriteClick = () => {
+    if (isFavoritesPage) {
+      // On the favorites page, remove the task from favorites
+      setIsFavorite(false) // Update local state
+      if (onFavorite) {
+        onFavorite(task, false) // Call onFavorite to remove it from favorites
+      } else {
+        console.error('onFavorite is not a function')
+      }
+    } else {
+      // On other pages, add the task to favorites
+      setIsFavorite(true) // Update local state
+      if (onFavorite) {
+        onFavorite(task, true) // Call onFavorite to add it to favorites
+      } else {
+        console.error('onFavorite is not a function')
+      }
+    }
   }
 
   return (
@@ -56,11 +78,26 @@ const TaskItem = ({ task, onDelete, onEdit }) => {
       )}
 
       <div className='task-buttons'>
-        <button className='task-btn edit' onClick={() => onEdit(task)}>
-          Edit
-        </button>
-        <button className='task-btn delete' onClick={() => onDelete(task._id)}>
-          Delete
+        {/* Show Edit button only on home page */}
+        {!isFavoritesPage && (
+          <button className='task-btn edit' onClick={() => onEdit(task)}>
+            Edit
+          </button>
+        )}
+
+        {/* Hide Delete button on favorites page */}
+        {!isFavoritesPage && (
+          <button
+            className='task-btn delete'
+            onClick={() => onDelete(task._id)}
+          >
+            Delete
+          </button>
+        )}
+
+        {/* Show Add to Favorites/Remove from Favorites button */}
+        <button className='task-btn favorite' onClick={handleFavoriteClick}>
+          {isFavoritesPage ? 'Remove from Favorites' : 'Add to Favorites'}
         </button>
       </div>
     </li>

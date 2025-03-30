@@ -2,8 +2,9 @@ import '../styles/TaskItem.css'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 
-const TaskItem = ({ task, onDelete, onEdit }) => {
+const TaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isFavorite, setIsFavorite] = useState(task.favorite || false) // Track favorite status
 
   const images = [task.image, task.image2].filter(img => img) // Only valid images
 
@@ -13,6 +14,15 @@ const TaskItem = ({ task, onDelete, onEdit }) => {
 
   const prevImage = () => {
     setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length)
+  }
+
+  const handleFavoriteClick = () => {
+    setIsFavorite(prev => !prev) // Toggle favorite status locally
+    if (onFavorite) {
+      onFavorite(task) // Call onFavorite to update parent and backend
+    } else {
+      console.error('onFavorite is not a function')
+    }
   }
 
   return (
@@ -38,11 +48,17 @@ const TaskItem = ({ task, onDelete, onEdit }) => {
           {/* Show buttons only if multiple images exist */}
           {images.length > 1 && (
             <>
-              <button className='prev-button' onClick={prevImage}>
-                &lt;
+              <button
+                className='task-carousel-button taskItem-left'
+                onClick={prevImage}
+              >
+                &#x25C0;
               </button>
-              <button className='next-button' onClick={nextImage}>
-                &gt;
+              <button
+                className='task-carousel-button taskItem-right'
+                onClick={nextImage}
+              >
+                &#x25B6;
               </button>
             </>
           )}
@@ -55,6 +71,9 @@ const TaskItem = ({ task, onDelete, onEdit }) => {
         </button>
         <button className='task-btn delete' onClick={() => onDelete(task._id)}>
           Delete
+        </button>
+        <button className='task-btn favorite' onClick={handleFavoriteClick}>
+          Add to Favorites
         </button>
       </div>
     </li>

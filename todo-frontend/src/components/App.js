@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import Navbar from './Navbar'
+import SideNavbar from './SideNavbar' // Import Side Navbar
 import LoginPage from '../pages/LoginPage'
 import SignupPage from '../pages/SignupPage'
 import HomePage from '../pages/HomePage'
+import FavoritesPage from '../pages/FavoritesPage'
 import ContactPage from '../pages/ContactPage'
 import About from './About'
 import Welcome from './Welcome'
@@ -12,7 +14,6 @@ import TaskDetails from './TaskDetails'
 import RelatedTitles from './RelatedTitles'
 import ThemeToggle from './ThemeToggle'
 import '../styles/App.css'
-import MiniAudioPlayer from '../components/MiniAudioPlayer'
 
 function App () {
   const [user, setUser] = useState(null)
@@ -95,9 +96,9 @@ function App () {
   return (
     <div className={`app theme-${theme}`}>
       <ThemeToggle setTheme={setTheme} />
-      <MiniAudioPlayer /> {/* 🎵 This adds the player */}
       <BackgroundSetter />
       <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      <SideNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <Routes>
         <Route path='/' element={<Welcome />} />{' '}
         {/* Make Welcome the main page */}
@@ -123,6 +124,7 @@ function App () {
         <Route path='/signup' element={<SignupPage />} />
         <Route path='/about' element={<About />} />
         <Route path='/contact' element={<ContactPage />} />
+        <Route path='/favorites' element={<FavoritesPage />} />
       </Routes>
     </div>
   )

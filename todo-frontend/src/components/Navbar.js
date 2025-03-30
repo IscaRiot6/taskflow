@@ -21,6 +21,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
   return (
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
       <Link to='/home'>Home</Link>
+      <Link to='/favorites'>Favorites</Link>
       <Link to='/about'>About</Link>
       <Link to='/contact'>Contact</Link>
       {isLoggedIn ? (

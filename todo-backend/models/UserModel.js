@@ -28,8 +28,8 @@ const userSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Task' // Referencing the Task model
     }
-  ]
-  // favouriteTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }]
+  ],
+  favoriteTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }]
 })
 
 // Hash password before saving

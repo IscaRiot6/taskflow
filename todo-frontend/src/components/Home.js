@@ -6,7 +6,6 @@ import SortTasks from './SortTasks'
 import Pagination from './Pagination'
 import SearchTask from './SearchTask'
 import Notification from './Notification' // Import Notification component
-// import ThemeToggle from './ThemeToggle'
 
 const Home = ({ tasks, setTasks }) => {
   const [theme, setTheme] = useState('default')
@@ -127,6 +126,43 @@ const Home = ({ tasks, setTasks }) => {
     }
   }
 
+  // Add to favorites function
+  const handleAddToFavorites = async task => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/tasks/${task._id}/favorite`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ taskId: task._id })
+        }
+      )
+
+      if (response.ok) {
+        // Toggle the task's favorite status locally
+        setTasks(prevTasks =>
+          prevTasks.map(t =>
+            t._id === task._id ? { ...t, favorite: !t.favorite } : t
+          )
+        )
+        console.log('Task favorite status updated')
+        // Show success notification
+        showNotification('Task has been added to your favorites.', 'success')
+      } else {
+        console.error('Failed to update favorite status')
+        // Show error notification
+        showNotification('Failed to add task to favorites.', 'error')
+      }
+    } catch (error) {
+      console.error('Error updating favorite status:', error)
+      // Show error notification
+      showNotification('Error adding task to favorites.', 'error')
+    }
+  }
+
   const openEditModal = task => {
     setEditingTask(task)
     setIsModalOpen(true)
@@ -165,6 +201,7 @@ const Home = ({ tasks, setTasks }) => {
           tasks={paginatedTasks}
           onDelete={handleDeleteTask}
           onEdit={openEditModal}
+          onFavorite={handleAddToFavorites} // Pass onFavorite function here
         />
 
         <Pagination
