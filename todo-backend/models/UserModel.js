@@ -22,6 +22,15 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
+  bio: {
+    type: String,
+    maxlength: 350,
+    default: ''
+  },
+  settings: {
+    darkMode: { type: Boolean, default: false },
+    notifications: { type: Boolean, default: true }
+  },
   // Add a reference to the tasks collection
   tasks: [
     {
