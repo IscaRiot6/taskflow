@@ -1,0 +1,175 @@
+/* Parent container to center profile info */
+.profile-container {
+  flex: 2; /* ✅ Makes it larger than ProfileInfo */
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  max-width: 600px; /* Keeps the profile section from stretching too much */
+  
+}
+
+
+.profile-content {
+  display: flex; /* ✅ Makes it a flex container */
+  justify-content: center; /* ✅ Centers both components */
+  align-items: flex-start; /* ✅ Aligns them at the top */
+  gap: 160px; /* ✅ Adds space between ProfileInfo & Profile */
+}
+
+/* Profile Info Box */
+.profile-info {
+
+  flex: 1; /* ✅ Allows it to take equal space */
+  text-align: center;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 20px 0; /* Adds space between profile info and form */
+  width: 100%;
+  max-width: 400px; /* Prevents it from being too wide */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+}
+
+.profile-info:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Profile Picture */
+.profile-info img {
+  border-radius: 50%;
+  border: 2px solid #007bff;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}
+
+.profile-username {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+  margin-right: 10px;
+  transition: color 0.3s ease;
+}
+
+.profile-username:hover {
+  color: #0056b3;
+}
+
+.profile-pic {
+  border-radius: 50%;
+  border: 2px solid #ddd;
+}
+
+.profile-bio {
+  font-style: italic;
+  color: #333;
+  margin: 10px 0;
+}
+
+.profile-email {
+  color: #555;
+  margin: 5px 0;
+}
+
+.profile-settings p {
+  font-size: 14px;
+  margin: 5px 0;
+  color: #666;
+}
+
+.profile-settings strong {
+  color: #333;
+}
+
+
+/* Edit Profile Form */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Adds spacing between elements */
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  /* opacity: 0; */
+  /* transform: translateY(-10px); */
+  /* transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; */
+}
+
+/* Input fields */
+.profile-form input,
+.profile-form textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Checkbox container */
+.profile-form div {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Button styling */
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+.profile-page {
+  /* display: flex; */
+  flex-direction: column; /* ✅ Stack elements vertically */
+  align-items: center; /* ✅ Center content horizontally */
+  justify-content: center; /* ✅ Optional: Center content vertically */
+  text-align: center; /* ✅ Ensures text is centered */
+  min-height: 60vh; /* ✅ Makes sure the content is vertically aligned properly */
+}
+
+/* Title styling */
+.profile-title {
+  /* margin-bottom: 20px; */
+  font-size: 2rem;
+    color: #333;
+    transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+}
+
+.profile-title:hover{
+  color: #007bff; /* A soft blue */
+  text-shadow: 0 0 10px rgba(0, 123, 255, 0.8);
+
+}
+
+.profile-info, .profile-container {
+  width: 50%;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .profile-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-info,
+  .profile-container {
+    width: 90%;
+  }
+}
+

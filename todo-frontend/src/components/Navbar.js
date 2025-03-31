@@ -24,6 +24,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
       <Link to='/favorites'>Favorites</Link>
       <Link to='/about'>About</Link>
       <Link to='/contact'>Contact</Link>
+      <Link to='/profile'>Profile</Link>
       {isLoggedIn ? (
         <button onClick={onLogout}>Log Out</button>
       ) : (

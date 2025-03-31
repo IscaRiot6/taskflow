@@ -4,6 +4,30 @@ import authMiddleware from '../middleware/authMiddleware.js'
 
 const router = express.Router()
 
+// This route will be used to get the logged-in user's profile
+router.get('/', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.userId // Get the userId from the decoded JWT (via authMiddleware)
+    const user = await User.findById(userId) // Assuming you have a User model and Mongoose
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    // Send back user profile information (make sure you're sending the data you need)
+    res.json({
+      username: user.username,
+      email: user.email,
+      bio: user.bio,
+      profilePic: user.profilePic,
+      settings: user.settings,
+      tasks: user.tasks
+    })
+  } catch (error) {
+    console.error('Error fetching profile:', error)
+    res.status(500).json({ message: 'Server error' })
+  }
+})
+
 // Update user profile
 router.put('/update', authMiddleware, async (req, res) => {
   try {
@@ -26,5 +50,18 @@ router.put('/update', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Server error' })
   }
 })
+
+// fetch/ track history logs
+// router.get('/history', authMiddleware, async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user.userId).select('history')
+//     if (!user) return res.status(404).json({ message: 'User not found' })
+
+//     res.json(user.history.slice(-10).reverse()) // Last 10 actions (latest first)
+//   } catch (error) {
+//     console.error('Error fetching history:', error)
+//     res.status(500).json({ message: 'Server error' })
+//   }
+// })
 
 export default router

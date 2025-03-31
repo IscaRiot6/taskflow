@@ -108,6 +108,14 @@ router.post('/', async (req, res) => {
     user.tasks.push(savedTask._id)
     await user.save()
 
+    // ✅ Log task creation
+    user.history.push({
+      action: 'Created Task',
+      taskId: savedTask._id,
+      timestamp: new Date()
+    })
+    await user.save()
+
     res.status(201).json(savedTask)
   } catch (error) {
     console.error('Error creating task:', error)
@@ -165,6 +173,17 @@ router.put('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Failed to update task' })
     }
 
+    // 🔥 **Fix Here: Fetch the user before pushing to `history`**
+    const user = await User.findById(req.user.userId)
+    if (!user) return res.status(404).json({ error: 'User not found' })
+
+    // ✅ Log task update
+    user.history.push({
+      action: 'Updated Task',
+      taskId: updatedTask._id, // ✅ Use `updatedTask`
+      timestamp: new Date()
+    })
+
     // Log and return the updated task
     console.log('✅ Task updated:', updatedTask)
     res.json(updatedTask)
@@ -195,6 +214,19 @@ router.delete('/:id', async (req, res) => {
     })
 
     console.log(`✅ Task deleted:`, deletedTask)
+
+    // Fetch the user before pushing to history
+    const user = await User.findById(req.user.userId)
+    if (!user) return res.status(404).json({ error: 'User not found' })
+
+    // ✅ Log task deletion
+    user.history.push({
+      action: 'Deleted Task',
+      taskId: deletedTask._id, // Correct reference
+      timestamp: new Date()
+    })
+    await user.save()
+
     res.status(204).send() // No content
   } catch (error) {
     console.error('Error deleting task:', error)
@@ -219,6 +251,14 @@ router.put('/:taskId/favorite', authMiddleware, async (req, res) => {
     if (!user.favoriteTasks.includes(task._id)) {
       user.favoriteTasks.push(task._id)
       await user.save()
+
+      // ✅ Log action
+      user.history.push({
+        action: 'Added to Favorites',
+        taskId: task._id, // Correct reference
+        timestamp: new Date()
+      })
+      await user.save()
     }
 
     res.json({ message: 'Task added to favorites' })
@@ -241,6 +281,14 @@ router.delete('/:taskId/favorite', authMiddleware, async (req, res) => {
     if (!user) return res.status(404).json({ error: 'User not found' })
 
     user.favoriteTasks = user.favoriteTasks.filter(id => !id.equals(task._id))
+    await user.save()
+
+    // ✅ Log action
+    user.history.push({
+      action: 'Removed from Favorites',
+      taskId: task._id, // ✅ Correct reference
+      timestamp: new Date()
+    })
     await user.save()
 
     res.json({ message: 'Task removed from favorites' })

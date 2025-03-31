@@ -7,6 +7,7 @@ import SignupPage from '../pages/SignupPage'
 import HomePage from '../pages/HomePage'
 import FavoritesPage from '../pages/FavoritesPage'
 import ContactPage from '../pages/ContactPage'
+import ProfilePage from '../pages/ProfilePage'
 import About from './About'
 import Welcome from './Welcome'
 import BackgroundSetter from './BackgroundSetter'
@@ -125,6 +126,7 @@ function App () {
         <Route path='/about' element={<About />} />
         <Route path='/contact' element={<ContactPage />} />
         <Route path='/favorites' element={<FavoritesPage />} />
+        <Route path='/profile' element={<ProfilePage />} />
       </Routes>
     </div>
   )

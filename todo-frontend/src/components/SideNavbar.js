@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import '../styles/NavSidebar.css'
+import '../styles/SideNavbar.css'
 import {
   FaHome,
   FaHeart,
   FaInfoCircle,
   FaEnvelope,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaUserCircle // Importing FaUserCircle for the Profile icon
 } from 'react-icons/fa' // Example icons
 
 const SideNavbar = ({ isLoggedIn, onLogout }) => {
@@ -39,6 +40,11 @@ const SideNavbar = ({ isLoggedIn, onLogout }) => {
           <li>
             <Link to='/contact'>
               <FaEnvelope /> <span className='nav-text'>Contact</span>
+            </Link>
+          </li>
+          <li>
+            <Link to='/profile'>
+              <FaUserCircle /> <span className='nav-text'>Profile</span>
             </Link>
           </li>
           {isLoggedIn && (

@@ -1,0 +1,21 @@
+
+
+/* .profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+} */
+
+.profile-tasks p {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.profile-tasks strong {
+  color: #555; /* Muted gray for labels */
+}
+
+.profile-tasks span {
+  color: #ff6600; /* Highlighted number color */
+  font-size: 1.2rem;
+}

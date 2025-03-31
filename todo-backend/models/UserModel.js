@@ -27,6 +27,11 @@ const userSchema = new mongoose.Schema({
     maxlength: 350,
     default: ''
   },
+  profilePic: {
+    // ✅ ADD THIS
+    type: String,
+    default: '' // Optional: Set a default empty string or a placeholder URL
+  },
   settings: {
     darkMode: { type: Boolean, default: false },
     notifications: { type: Boolean, default: true }
@@ -38,7 +43,18 @@ const userSchema = new mongoose.Schema({
       ref: 'Task' // Referencing the Task model
     }
   ],
-  favoriteTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }]
+  favoriteTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
+  history: [
+    {
+      action: { type: String, required: true }, // e.g., "Added Task", "Deleted Task"
+      taskId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Task',
+        required: false
+      },
+      timestamp: { type: Date, default: Date.now }
+    }
+  ]
 })
 
 // Hash password before saving

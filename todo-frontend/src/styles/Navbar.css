@@ -5,7 +5,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 20%; /* Adjust width as needed */
+    width: 25%; /* Adjust width as needed */
     margin: 20px auto; /* Centers the navbar */
     padding: 15px 20px;
     background: rgba(0, 0, 0, 0.8); /* Semi-transparent dark */
