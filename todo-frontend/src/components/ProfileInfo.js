@@ -5,6 +5,7 @@ import '../styles/ProfileInfo.css'
 const ProfileInfo = ({ profile }) => {
   const [taskCount, setTaskCount] = useState(0)
   const [favoriteCount, setFavoriteCount] = useState(0)
+  const [historyLog, setHistoryLog] = useState([]) // Keep historyLog state
 
   useEffect(() => {
     const fetchTaskCounts = async () => {
@@ -37,13 +38,26 @@ const ProfileInfo = ({ profile }) => {
           const favData = await favRes.json()
           setFavoriteCount(favData.count)
         }
+
+        // Fetch history log
+        const historyRes = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/history`,
+          {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        )
+        if (historyRes.ok) {
+          const historyData = await historyRes.json()
+          setHistoryLog(historyData) // Assuming backend returns an array of log entries
+        }
       } catch (error) {
-        console.error('Error fetching task data:', error)
+        console.error('Error fetching data:', error)
       }
     }
 
     fetchTaskCounts()
-  }, [])
+  }, []) // No changes to dependency array
 
   if (!profile) return <p>Loading profile...</p>
 
@@ -64,6 +78,7 @@ const ProfileInfo = ({ profile }) => {
 
       <p className='profile-email'>{profile.email}</p>
       <p className='profile-bio'>{profile.bio}</p>
+
       <div className='profile-tasks'>
         <p>
           <strong>Saved Tasks:</strong> <span>{taskCount}</span>
@@ -72,6 +87,7 @@ const ProfileInfo = ({ profile }) => {
           <strong>Favorite Tasks:</strong> <span>{favoriteCount}</span>
         </p>
       </div>
+
       <div className='profile-settings'>
         <p>
           <strong>Dark Mode:</strong> {profile.settings.darkMode ? 'On' : 'Off'}
@@ -80,6 +96,23 @@ const ProfileInfo = ({ profile }) => {
           <strong>Notifications:</strong>{' '}
           {profile.settings.notifications ? 'Enabled' : 'Disabled'}
         </p>
+      </div>
+
+      {/* Fixed History Log */}
+      <div className='profile-history'>
+        <h3>History Log</h3>
+        {historyLog.length > 0 ? (
+          <ul>
+            {historyLog.map((entry, index) => (
+              <li key={entry._id || index}>
+                <strong>{entry.action}</strong> (Task ID: {entry.taskId}) -{' '}
+                {new Date(entry.timestamp).toLocaleString()}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No history available</p>
+        )}
       </div>
     </div>
   )
