@@ -2,10 +2,27 @@
   max-width: 800px; /* Increased width */
   margin: 40px auto; /* More spacing */
   padding: 25px;
-  background-color: #fff !important;
+  background-color: var(--bg-color); /* Use CSS variable */
+  color: var(--text-color); /* Ensures text adapts */
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   text-align: center;
+}
+
+/* Define variables for themes */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
+.dark-mode {
+  --bg-color: #222; /* Dark background */
+  --text-color: #ffffff; /* Light text */
+}
+
+.purple-mode {
+  --bg-color: #2e1a47; /* Example purple background */
+  --text-color: #e0c3fc;
 }
 
 .task-image {
