@@ -134,3 +134,35 @@
     100% { opacity: 1; }
   }
    */
+
+   .password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .password-container input {
+    padding-right: 2.5rem; 
+  }
+  
+  .eye-icon {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
+
+  .username-container{
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .email-container{
+    position: relative;
+    display: flex;
+    align-items: center;
+  } 
+  

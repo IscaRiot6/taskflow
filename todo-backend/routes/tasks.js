@@ -112,6 +112,7 @@ router.post('/', async (req, res) => {
     user.history.push({
       action: 'Created Task',
       taskId: savedTask._id,
+      taskTitle: savedTask.title, // ✅ Add task title
       timestamp: new Date()
     })
     await user.save()
@@ -181,6 +182,7 @@ router.put('/:id', async (req, res) => {
     user.history.push({
       action: 'Updated Task',
       taskId: updatedTask._id, // ✅ Use `updatedTask`
+      taskTitle: updatedTask.title, // ✅ Include title
       timestamp: new Date()
     })
 
@@ -223,6 +225,7 @@ router.delete('/:id', async (req, res) => {
     user.history.push({
       action: 'Deleted Task',
       taskId: deletedTask._id, // Correct reference
+      taskTitle: deletedTaskTitle, // ✅ Keep the title even after deletion
       timestamp: new Date()
     })
     await user.save()
@@ -256,6 +259,7 @@ router.put('/:taskId/favorite', authMiddleware, async (req, res) => {
       user.history.push({
         action: 'Added to Favorites',
         taskId: task._id, // Correct reference
+        taskTitle: task.title, // ✅ Include title
         timestamp: new Date()
       })
       await user.save()
@@ -287,6 +291,7 @@ router.delete('/:taskId/favorite', authMiddleware, async (req, res) => {
     user.history.push({
       action: 'Removed from Favorites',
       taskId: task._id, // ✅ Correct reference
+      taskTitle: task.title, // ✅ Include title
       timestamp: new Date()
     })
     await user.save()

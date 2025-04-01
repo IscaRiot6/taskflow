@@ -5,7 +5,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 25%; /* Adjust width as needed */
+    width: 100%; /* Allows navbar to take up full width */
+    max-width: 530px; /* Limits maximum width on larger screens */
+
     margin: 20px auto; /* Centers the navbar */
     padding: 15px 20px;
     background: rgba(0, 0, 0, 0.8); /* Semi-transparent dark */
@@ -14,6 +16,7 @@
     border: 2px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Shadow for depth */
     transition: background 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    flex-wrap: wrap; /* Ensure items wrap if needed */
 }
 
 .navbar.scrolled {
@@ -48,4 +51,21 @@
 .navbar button:hover {
     background: #ff1a1a;
     transform: scale(1.05);
+}
+
+/* Media query to handle small screen sizes */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 10px 15px; /* Reduced padding on small screens */
+    }
+
+    .navbar a {
+        font-size: 1rem; /* Adjusted font size for better spacing */
+        margin: 5px 10px; /* Reduced margin for better alignment */
+    }
+
+    .navbar button {
+        font-size: 0.9rem; /* Slightly smaller button text */
+        padding: 6px 12px; /* Adjusted button padding */
+    }
 }

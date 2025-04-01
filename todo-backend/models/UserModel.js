@@ -52,6 +52,7 @@ const userSchema = new mongoose.Schema({
         ref: 'Task',
         required: false
       },
+
       timestamp: { type: Date, default: Date.now }
     }
   ]

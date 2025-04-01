@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import PasswordValidation from './PasswordValidation'
 import SignupCarousel from '../components/SignupCarousel'
 import '../styles/Signup.css'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 const Signup = ({ onSignup, error }) => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,9 @@ const Signup = ({ onSignup, error }) => {
     password: '',
     confirmPassword: ''
   })
+
+  const [showPassword, setShowPassword] = useState(false) // State for toggling password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false) // For confirm password toggle
 
   const handleChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -34,36 +38,58 @@ const Signup = ({ onSignup, error }) => {
           <h2>Sign Up</h2>
           {error && <p className='error-message'>{error}</p>}
           <form className='signup-form' onSubmit={handleSubmit}>
-            <input
-              type='text'
-              name='username'
-              placeholder='Username'
-              onChange={handleChange}
-              required
-            />
-            <input
-              type='email'
-              name='email'
-              placeholder='Email'
-              onChange={handleChange}
-              required
-            />
-            <input
-              type='password'
-              name='password'
-              placeholder='Password'
-              onChange={handleChange}
-              required
-            />
+            <div className='username-container'>
+              <input
+                type='text'
+                name='username'
+                placeholder='Username'
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className='email-container'>
+              <input
+                type='email'
+                name='email'
+                placeholder='Email'
+                onChange={handleChange}
+                required
+              />
+            </div>
+            {/* Password field with the show/hide functionality */}
+            <div className='password-container'>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name='password'
+                placeholder='Password'
+                onChange={handleChange}
+                required
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className='eye-icon'
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
             {/* Password Validation Component */}
             <PasswordValidation password={formData.password} />
-            <input
-              type='password'
-              name='confirmPassword'
-              placeholder='Confirm Password'
-              onChange={handleChange}
-              required
-            />
+            {/* Confirm Password field with show/hide functionality */}
+            <div className='password-container'>
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                name='confirmPassword'
+                placeholder='Confirm Password'
+                onChange={handleChange}
+                required
+              />
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className='eye-icon'
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
             <button type='submit'>Sign Up</button>
           </form>
           <p className='signup-link'>

@@ -5,7 +5,8 @@ import '../styles/ProfileInfo.css'
 const ProfileInfo = ({ profile }) => {
   const [taskCount, setTaskCount] = useState(0)
   const [favoriteCount, setFavoriteCount] = useState(0)
-  const [historyLog, setHistoryLog] = useState([]) // Keep historyLog state
+  const [historyLog, setHistoryLog] = useState([])
+  const [showHistory, setShowHistory] = useState(false)
 
   useEffect(() => {
     const fetchTaskCounts = async () => {
@@ -49,6 +50,8 @@ const ProfileInfo = ({ profile }) => {
         )
         if (historyRes.ok) {
           const historyData = await historyRes.json()
+          // 🔍 Debugging: Log the response from the backend
+          console.log('Fetched History Log Data:', historyData)
           setHistoryLog(historyData) // Assuming backend returns an array of log entries
         }
       } catch (error) {
@@ -98,20 +101,33 @@ const ProfileInfo = ({ profile }) => {
         </p>
       </div>
 
-      {/* Fixed History Log */}
+      {/* History Log Section */}
       <div className='profile-history'>
-        <h3>History Log</h3>
-        {historyLog.length > 0 ? (
-          <ul>
-            {historyLog.map((entry, index) => (
-              <li key={entry._id || index}>
-                <strong>{entry.action}</strong> (Task ID: {entry.taskId}) -{' '}
-                {new Date(entry.timestamp).toLocaleString()}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No history available</p>
+        <h3
+          onClick={() => setShowHistory(!showHistory)}
+          className='history-toggle'
+        >
+          History Log {showHistory ? '▲' : '▼'}
+        </h3>
+
+        {showHistory && (
+          <div className='history-box'>
+            {historyLog.length > 0 ? (
+              <ul>
+                {historyLog.map((entry, index) => (
+                  <li key={entry._id || index}>
+                    <strong>{entry.action}</strong>{' '}
+                    {entry.taskTitle
+                      ? `(${entry.taskTitle})`
+                      : `(Task ID: ${entry.taskId})`}{' '}
+                    - {new Date(entry.timestamp).toLocaleString()}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No history available</p>
+            )}
+          </div>
         )}
       </div>
     </div>
