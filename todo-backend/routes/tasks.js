@@ -186,6 +186,8 @@ router.put('/:id', async (req, res) => {
       timestamp: new Date()
     })
 
+    await user.save() // ✅ Save the updated user document
+
     // Log and return the updated task
     console.log('✅ Task updated:', updatedTask)
     res.json(updatedTask)
@@ -198,46 +200,62 @@ router.put('/:id', async (req, res) => {
 // ✅ Delete a task (DELETE)
 router.delete('/:id', async (req, res) => {
   const taskId = req.params.id
-  console.log(`🗑 Deleting task with ID: ${taskId}`)
 
   try {
+    // 1️⃣ Find the task BEFORE deleting it
+    const taskToDelete = await Task.findOne({
+      _id: taskId,
+      user: req.user.userId
+    })
+    if (!taskToDelete) {
+      return res.status(404).json({ error: 'Task not found or unauthorized' })
+    }
+
+    const savedTitle = taskToDelete.title // ✅ Store title before deletion
+    console.log(`📝 Task Title Preserved: "${savedTitle}"`) // Debugging log
+
+    // 2️⃣ Delete the task
     const deletedTask = await Task.findOneAndDelete({
       _id: taskId,
       user: req.user.userId
-    }) // Ensure the user owns the task
+    })
 
     if (!deletedTask) {
-      return res.status(404).json({ error: 'Task not found' })
+      return res.status(404).json({ error: 'Task deletion failed' })
     }
 
-    // Remove the deleted task from the user's tasks array
-    await User.findByIdAndUpdate(req.user.userId, {
-      $pull: { tasks: taskId }
-    })
+    // 3️⃣ Remove from user's task list
+    await User.findByIdAndUpdate(req.user.userId, { $pull: { tasks: taskId } })
 
-    console.log(`✅ Task deleted:`, deletedTask)
+    // 4️⃣ Add to history (with title)
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.userId,
+      {
+        $push: {
+          history: {
+            action: 'Deleted Task',
+            taskId: taskToDelete._id,
+            taskTitle: taskToDelete.title, // ✅ Save title permanently
+            timestamp: new Date()
+          }
+        }
+      },
+      { new: true }
+    )
 
-    // Fetch the user before pushing to history
-    const user = await User.findById(req.user.userId)
-    if (!user) return res.status(404).json({ error: 'User not found' })
-
-    // ✅ Log task deletion
-    user.history.push({
-      action: 'Deleted Task',
-      taskId: deletedTask._id, // Correct reference
-      taskTitle: deletedTaskTitle, // ✅ Keep the title even after deletion
-      timestamp: new Date()
-    })
-    await user.save()
+    console.log(
+      `📜 History Entry Added:`,
+      updatedUser.history[updatedUser.history.length - 1]
+    ) // Debugging log
 
     res.status(204).send() // No content
   } catch (error) {
-    console.error('Error deleting task:', error)
+    console.error('❌ Error deleting task:', error)
     res.status(500).json({ error: 'Failed to delete task' })
   }
 })
 
-// Add a task to favorites
+// ✅ Add a task to favorites
 router.put('/:taskId/favorite', authMiddleware, async (req, res) => {
   try {
     const task = await Task.findById(req.params.taskId)
@@ -273,7 +291,7 @@ router.put('/:taskId/favorite', authMiddleware, async (req, res) => {
   }
 })
 
-// Remove a task from favorites
+// ✅ Remove a task from favorites
 router.delete('/:taskId/favorite', authMiddleware, async (req, res) => {
   try {
     const task = await Task.findById(req.params.taskId)

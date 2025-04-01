@@ -101,7 +101,7 @@ const Contact = ({ onSubmitContactForm }) => {
       {/* Left Panel - Form */}
       <div className='contact-form'>
         <h2 className='get-in-touch-contact'>Get in Touch</h2>
-        <p>
+        <p className='welcome-message-contact'>
           Feel free to drop a message! I'll get back to you as soon as possible.
         </p>
         <form onSubmit={handleSubmit}>

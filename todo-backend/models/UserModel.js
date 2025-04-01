@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
         ref: 'Task',
         required: false
       },
-
+      taskTitle: { type: String, required: false },
       timestamp: { type: Date, default: Date.now }
     }
   ]

@@ -39,8 +39,8 @@
 }
 
 .contact-form:hover {
-  transform: scale(1.08);
-  box-shadow: 6px 6px 35px rgba(0, 0, 0, 0.55);
+  transform: scale(1.06);
+  box-shadow: 6px 6px 35px rgba(1, 0, 0, 1);
 }
 
 /* Contact form button */
@@ -118,6 +118,15 @@
   background-color: rgba(0, 0, 0, 0.8);
 }
 
+/* For larger screens (desktop) */
+@media (min-width: 1024px) {
+  .contact-slideshow {
+      flex: 1.2;  /* Slightly more width compared to the form */
+      max-width: 750px; /* Increase max-width slightly */
+  }
+}
+
+
 /* Media query for smaller screens */
 @media (max-width: 768px) {
   .contact-container {
@@ -125,6 +134,8 @@
       align-items: center;         /* Center the items */
       text-align: center;          /* Optional: Center text for better readability */
   }
+
+
 
   .contact-form, .contact-slideshow {
       flex: 1 1 100%;               /* Allow both panels to take full width */
@@ -239,6 +250,14 @@ padding: 8px 16px; /* Adjusted padding */
   opacity: 0.8;
 }
 
+.input-label:hover,
+.arrow:hover,
+.get-in-touch-contact:hover,
+.welcome-message-contact:hover{
+  color: #007bff; /* A soft blue */
+  text-shadow: 0 0 10px rgba(0, 123, 255, 0.8);
+}
+
 .arrow {
   font-size: 16px;
   color: #666;
@@ -251,7 +270,3 @@ padding: 8px 16px; /* Adjusted padding */
     transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
 }
 
-.get-in-touch-contact:hover{
-  color: #007bff; /* A soft blue */
-  text-shadow: 0 0 10px rgba(0, 123, 255, 0.8);
-}

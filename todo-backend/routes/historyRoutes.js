@@ -6,7 +6,6 @@ import Task from '../models/taskModel.js' // Adjust path if necessary
 const router = express.Router()
 
 // Get user history
-// Get user history
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).lean() // Convert Mongoose doc to plain JS object
@@ -15,20 +14,11 @@ router.get('/', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    // Fetch task details for each history entry
-    const historyWithTitles = await Promise.all(
-      user.history.map(async entry => {
-        if (!entry.taskId) {
-          return entry // Skip if taskId is missing
-        }
-
-        const task = await Task.findById(entry.taskId).select('title') // Get task title
-        return {
-          ...entry,
-          taskTitle: task ? task.title : 'Unknown Task' // Attach title or fallback
-        }
-      })
-    )
+    // ✅ Use the stored taskTitle directly instead of re-fetching deleted tasks
+    const historyWithTitles = user.history.map(entry => ({
+      ...entry,
+      taskTitle: entry.taskTitle || 'Unknown Task' // Use saved title, fallback if missing
+    }))
 
     // Sort by timestamp (newest first) and return
     res.json(historyWithTitles.sort((a, b) => b.timestamp - a.timestamp))
