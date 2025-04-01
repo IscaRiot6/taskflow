@@ -6,7 +6,7 @@
     justify-content: center;
     align-items: center;
     width: 100%; /* Allows navbar to take up full width */
-    max-width: 530px; /* Limits maximum width on larger screens */
+    max-width: 540px; /* Limits maximum width on larger screens */
 
     margin: 20px auto; /* Centers the navbar */
     padding: 15px 20px;

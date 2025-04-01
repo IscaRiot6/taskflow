@@ -100,12 +100,15 @@ const Contact = ({ onSubmitContactForm }) => {
     <div className='contact-container'>
       {/* Left Panel - Form */}
       <div className='contact-form'>
-        <h2>Get in Touch</h2>
+        <h2 className='get-in-touch-contact'>Get in Touch</h2>
         <p>
           Feel free to drop a message! I'll get back to you as soon as possible.
         </p>
         <form onSubmit={handleSubmit}>
           <div className='input-group'>
+            <p className='input-label'>
+              Place your name here <span className='arrow'>↓</span>
+            </p>
             <input
               type='text'
               name='name'
@@ -115,7 +118,11 @@ const Contact = ({ onSubmitContactForm }) => {
               required
             />
           </div>
+
           <div className='input-group'>
+            <p className='input-label'>
+              Enter your email <span className='arrow'>↓</span>
+            </p>
             <input
               type='email'
               name='email'
@@ -125,7 +132,11 @@ const Contact = ({ onSubmitContactForm }) => {
               required
             />
           </div>
+
           <div className='input-group'>
+            <p className='input-label'>
+              Write your message below <span className='arrow'>↓</span>
+            </p>
             <textarea
               name='message'
               placeholder='Your Message'
@@ -134,6 +145,7 @@ const Contact = ({ onSubmitContactForm }) => {
               required
             />
           </div>
+
           <button type='submit' className='contact-form-button'>
             Send Message
           </button>
