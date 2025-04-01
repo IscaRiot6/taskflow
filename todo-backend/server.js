@@ -10,6 +10,7 @@ import contactRoutes from './routes/contact.js'
 import profileRoutes from './routes/profileRoutes.js'
 import userStats from './routes/userStats.js'
 import historyRoutes from './routes/historyRoutes.js'
+import relatedTaskRoutes from './routes/relatedTasks.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -30,6 +31,7 @@ app.use('/api/contact', contactRoutes)
 app.use('/api/profile', profileRoutes)
 app.use('/api/user', userStats)
 app.use('/api/history', historyRoutes)
+app.use('/api/related-tasks', relatedTaskRoutes)
 
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!' })
