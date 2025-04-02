@@ -39,6 +39,12 @@ const taskSchema = new mongoose.Schema(
     },
     relatedTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
 
+    parentTaskId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Task',
+      default: null
+    }, // ✅ New field
+
     // The user reference
     user: {
       type: mongoose.Schema.Types.ObjectId,

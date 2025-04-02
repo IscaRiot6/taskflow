@@ -13,6 +13,7 @@ router.get('/:taskId', async (req, res) => {
   const { taskId } = req.params
 
   try {
+    console.log('Fetching related tasks for task:', taskId)
     const task = await Task.findOne({
       _id: taskId,
       user: req.user.userId
@@ -38,15 +39,17 @@ router.post('/:taskId', async (req, res) => {
   }
 
   try {
+    console.log('Adding related task to taskId:', taskId)
+
     const task = await Task.findOne({ _id: taskId, user: req.user.userId })
     if (!task)
       return res.status(404).json({ error: 'Task not found or unauthorized' })
 
-    // ✅ Ensure the logged-in user exists
+    // Ensure the logged-in user exists
     const user = await User.findById(req.user.userId)
     if (!user) return res.status(404).json({ error: 'User not found' })
 
-    // ✅ Create a related task under the logged-in user
+    // ✅ Create a related task with a parentTaskId
     const newRelatedTask = new Task({
       title,
       description,
@@ -55,22 +58,30 @@ router.post('/:taskId', async (req, res) => {
       genres,
       themes,
       yourScore,
-      user: req.user.userId // ✅ Ensure it belongs to the logged-in user
+      user: req.user.userId,
+      parentTaskId: taskId // ✅ Set parentTaskId to prevent it from appearing in home page
     })
 
     const savedTask = await newRelatedTask.save()
+
+    console.log('Saved related task:', savedTask)
 
     // ✅ Store the related task reference in the parent task
     task.relatedTasks.push(savedTask._id)
     await task.save()
 
-    // ✅ Store the related task in the user's profile
+    // ✅ Store the related task in the user's profile (optional)
     user.tasks.push(savedTask._id)
     await user.save()
 
-    res
-      .status(201)
-      .json({ message: 'Related task created', relatedTask: savedTask })
+    // ✅ Return the updated parent task with its related tasks
+    const updatedTask = await Task.findById(taskId).populate('relatedTasks')
+
+    res.status(201).json({
+      message: 'Related task created',
+      relatedTask: savedTask,
+      parentTask: updatedTask
+    })
   } catch (error) {
     console.error('Server error:', error)
     res.status(500).json({ error: 'Server error' })

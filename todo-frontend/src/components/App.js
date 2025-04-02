@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import Navbar from './Navbar'
-import SideNavbar from './SideNavbar' // Import Side Navbar
+// import SideNavbar from './SideNavbar' // Import Side Navbar
 import LoginPage from '../pages/LoginPage'
 import SignupPage from '../pages/SignupPage'
 import HomePage from '../pages/HomePage'
@@ -12,7 +12,7 @@ import About from './About'
 import Welcome from './Welcome'
 import BackgroundSetter from './BackgroundSetter'
 import TaskDetails from './TaskDetails'
-import RelatedTitles from './RelatedTitles'
+import RelatedTasks from './RelatedTasks'
 import ThemeToggle from './ThemeToggle'
 import '../styles/App.css'
 
@@ -99,7 +99,7 @@ function App () {
       <ThemeToggle setTheme={setTheme} />
       <BackgroundSetter />
       <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-      <SideNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      {/* <SideNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} /> */}
       <Routes>
         <Route path='/' element={<Welcome />} />{' '}
         {/* Make Welcome the main page */}
@@ -118,8 +118,8 @@ function App () {
           element={<TaskDetails tasks={tasks} onEdit={handleEditTask} />}
         />
         <Route
-          path='/related-titles/:id'
-          element={<RelatedTitles onAdd={handleEditTask} />}
+          path='/related-titles/:taskId'
+          element={<RelatedTasks onAdd={handleEditTask} />}
         />
         <Route path='/login' element={<LoginPage onLogin={handleLogin} />} />
         <Route path='/signup' element={<SignupPage />} />

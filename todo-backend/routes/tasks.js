@@ -7,11 +7,19 @@ import User from '../models/userModel.js'
 // Apply authMiddleware to protect all routes below
 router.use(authMiddleware)
 
-// ✅ Get all tasks
 router.get('/', async (req, res) => {
   try {
-    const tasks = await Task.find({ user: req.user.userId }) // Fetch only user-specific tasks
-    console.log('📋 Fetching all tasks:', tasks)
+    // Debug: Check user info and what we’re querying
+    console.log('User ID:', req.user.userId)
+
+    const tasks = await Task.find({
+      user: req.user.userId,
+      parentTaskId: { $exists: false } // Only parent tasks (no related tasks)
+    })
+
+    // Debug: Log the fetched tasks
+    console.log('📋 Fetching all parent tasks:', tasks)
+
     res.json(tasks)
   } catch (error) {
     console.error('Error fetching tasks:', error)
@@ -22,13 +30,24 @@ router.get('/', async (req, res) => {
 // ✅ Add a new task (POST)
 router.post('/', async (req, res) => {
   try {
-    const { title, description, image, image2, genres, themes, yourScore } =
-      req.body
+    const {
+      title,
+      description,
+      image,
+      image2,
+      genres,
+      themes,
+      yourScore,
+      relatedTaskIds
+    } = req.body
 
     if (!title || title.trim() === '') {
       return res.status(400).json({ error: 'Task title is required' })
     }
 
+    console.log('Creating task:', title)
+
+    // Create the new task
     const newTask = new Task({
       title,
       description,
@@ -40,21 +59,34 @@ router.post('/', async (req, res) => {
       user: req.user.userId
     })
 
-    const savedTask = await newTask.save()
+    // Debug: Show relatedTaskIds if they exist
+    console.log('Related Task IDs:', relatedTaskIds)
 
-    // Check if user exists before updating
+    // If related tasks are provided, add them to the new task's `relatedTasks` field
+    if (relatedTaskIds && Array.isArray(relatedTaskIds)) {
+      newTask.relatedTasks = relatedTaskIds
+      // Add the new task to each related task's `relatedTasks` array
+      await Task.updateMany(
+        { _id: { $in: relatedTaskIds } },
+        { $push: { relatedTasks: newTask._id } }
+      )
+    }
+
+    const savedTask = await newTask.save()
+    console.log('Saved Task:', savedTask)
+
+    // Ensure user exists and add the task to the user's task list
     const user = await User.findById(req.user.userId)
     if (!user) return res.status(404).json({ error: 'User not found' })
 
-    // Add task ID to user's tasks array
     user.tasks.push(savedTask._id)
     await user.save()
 
-    // ✅ Log task creation
+    // Add history entry for the new task
     user.history.push({
       action: 'Created Task',
       taskId: savedTask._id,
-      taskTitle: savedTask.title, // ✅ Add task title
+      taskTitle: savedTask.title,
       timestamp: new Date()
     })
     await user.save()
@@ -77,11 +109,12 @@ router.put('/:id', async (req, res) => {
     genres,
     themes,
     yourScore,
-    completed
+    completed,
+    relatedTaskIds
   } = req.body
 
   try {
-    // First, find the current task
+    // Find the task to update
     const task = await Task.findOne({ _id: taskId, user: req.user.userId })
     if (!task) {
       return res.status(404).json({
@@ -89,13 +122,10 @@ router.put('/:id', async (req, res) => {
       })
     }
 
-    // Prepare the data to be updated, only update provided fields
+    // Prepare the data to update the task
     const updatedData = {}
 
-    // Only update the title if a new one is provided
-    if (title && title !== task.title) {
-      updatedData.title = title.trim()
-    }
+    if (title && title !== task.title) updatedData.title = title.trim()
     if (description !== undefined)
       updatedData.description = description?.trim() || ''
     if (image !== undefined) updatedData.image = image || ''
@@ -105,33 +135,33 @@ router.put('/:id', async (req, res) => {
     if (yourScore !== undefined) updatedData.yourScore = yourScore || null
     if (completed !== undefined) updatedData.completed = completed ?? false
 
-    // Update the task using `findByIdAndUpdate` with only updated fields
+    // If new related task IDs are provided, update relatedTasks
+    if (relatedTaskIds && Array.isArray(relatedTaskIds)) {
+      updatedData.relatedTasks = relatedTaskIds // Update with new related task IDs
+    }
+
+    // Update the task
     const updatedTask = await Task.findByIdAndUpdate(taskId, updatedData, {
       new: true,
       runValidators: true
     })
 
-    // If no task is found, return an error
     if (!updatedTask) {
       return res.status(404).json({ error: 'Failed to update task' })
     }
 
-    // 🔥 **Fix Here: Fetch the user before pushing to `history`**
+    // Log the task update to user history
     const user = await User.findById(req.user.userId)
     if (!user) return res.status(404).json({ error: 'User not found' })
 
-    // ✅ Log task update
     user.history.push({
       action: 'Updated Task',
-      taskId: updatedTask._id, // ✅ Use `updatedTask`
-      taskTitle: updatedTask.title, // ✅ Include title
+      taskId: updatedTask._id,
+      taskTitle: updatedTask.title,
       timestamp: new Date()
     })
+    await user.save()
 
-    await user.save() // ✅ Save the updated user document
-
-    // Log and return the updated task
-    console.log('✅ Task updated:', updatedTask)
     res.json(updatedTask)
   } catch (error) {
     console.error('Error updating task:', error)
