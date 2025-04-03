@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import '../styles/RelatedTaskItem.css' // New styles for related tasks
+import '../styles/RelatedTaskItem.css'
 
 const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -28,9 +28,13 @@ const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
     <div className='related-tasks-container'>
       <li className='related-task-item'>
         <div className='related-task-info'>
-          <Link to={`/task/${task._id}`} className='related-task-link'>
+          <Link
+            to={`/related-titles/${task.parentTaskId}/${task._id}`}
+            className='related-task-link'
+          >
             <h3>{task.title}</h3>
           </Link>
+
           <p>Genres: {task.genres?.join(', ')}</p>
           <p>Themes: {task.themes?.join(', ')}</p>
           <p>Your Score: {task.yourScore}</p>

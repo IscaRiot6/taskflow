@@ -13,6 +13,7 @@ import Welcome from './Welcome'
 import BackgroundSetter from './BackgroundSetter'
 import TaskDetails from './TaskDetails'
 import RelatedTasks from './RelatedTasks'
+import RelatedTaskDetails from './RelatedTaskDetails'
 import ThemeToggle from './ThemeToggle'
 import '../styles/App.css'
 
@@ -120,6 +121,10 @@ function App () {
         <Route
           path='/related-titles/:taskId'
           element={<RelatedTasks onAdd={handleEditTask} />}
+        />
+        <Route
+          path='/related-titles/:taskId/:relatedId'
+          element={<RelatedTaskDetails />}
         />
         <Route path='/login' element={<LoginPage onLogin={handleLogin} />} />
         <Route path='/signup' element={<SignupPage />} />
