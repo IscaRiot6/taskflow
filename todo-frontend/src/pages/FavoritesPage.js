@@ -89,6 +89,7 @@ const FavoritesPage = () => {
 
   // Remove from favorites function
   const handleRemoveFromFavorites = async task => {
+    // to original edw
     try {
       console.log('Attempting to remove:', task._id)
 

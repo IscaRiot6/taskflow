@@ -281,7 +281,7 @@ router.put('/:taskId/favorite', authMiddleware, async (req, res) => {
 // ✅ Remove a task from favorites
 router.delete('/:taskId/favorite', authMiddleware, async (req, res) => {
   try {
-    console.log('Attempting to delete task with ID:', taskId)
+    console.log('Attempting to delete task with ID:', req.params.taskId)
     const task = await Task.findById(req.params.taskId)
     console.log('Task found:', task)
 
@@ -302,6 +302,8 @@ router.delete('/:taskId/favorite', authMiddleware, async (req, res) => {
       timestamp: new Date()
     })
     await user.save()
+    console.log('Favorite Tasks:', user.favoriteTasks)
+    console.log('Task ID:', task._id)
 
     res.json({ message: 'Task removed from favorites' })
   } catch (error) {

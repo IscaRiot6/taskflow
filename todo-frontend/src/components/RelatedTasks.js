@@ -34,12 +34,8 @@ const RelatedTasks = ({ tasks = [] }) => {
             setParentTitle('Unknown Task') // Default title if not found
           }
 
-          // Ensure that relatedTasks is an array before setting state
-          if (Array.isArray(data.relatedTasks)) {
-            setRelatedTasks(data.relatedTasks) // Update related tasks state
-          } else {
-            setRelatedTasks([]) // Empty array if data is not in expected format
-          }
+          // Ensure relatedTasks is always an array before setting state
+          setRelatedTasks(data.relatedTasks || []) // Default to empty array if no tasks
         })
         .catch(() => {
           setParentTitle('Failed to load task') // Error handling for failed fetch
@@ -56,7 +52,7 @@ const RelatedTasks = ({ tasks = [] }) => {
         setRelatedTasks([]) // No related tasks if task is not found
       }
     }
-  }, [taskId, tasks, token]) // Depend on taskId and tasks
+  }, [taskId, tasks, token]) // Depend on taskId, tasks, and token
 
   // Fetch related tasks when the component loads
   useEffect(() => {
@@ -88,17 +84,17 @@ const RelatedTasks = ({ tasks = [] }) => {
         const data = await response.json()
         console.log('Fetched related tasks:', data)
 
-        if (Array.isArray(data)) {
-          setRelatedTasks(data) // Set related tasks if it's an array
+        if (data && Array.isArray(data.relatedTasks)) {
+          setRelatedTasks(data.relatedTasks) // Update only the related tasks array
         } else {
-          console.error('Fetched data is not an array:', data) // Log an error if data is not an array
+          console.error('Fetched data is not an array:', data) // Log error if data format is wrong
         }
       } catch (error) {
         console.error('Error fetching related tasks:', error)
       }
     }
     fetchRelatedTasks()
-  }, [taskId])
+  }, [taskId]) // Only depend on taskId, since this fetch is based on it
 
   // Function to show notification
   const showNotification = (message, type = 'success') => {
