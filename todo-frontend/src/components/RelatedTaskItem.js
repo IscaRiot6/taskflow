@@ -3,6 +3,9 @@ import { useState } from 'react'
 import '../styles/RelatedTaskItem.css'
 
 const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
+  // console.log('task object:', task)
+  // console.log('Navigating to task:', task._id)
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isFavorite, setIsFavorite] = useState(task.favorite || false) // Track favorite status
 
@@ -29,7 +32,7 @@ const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
       <li className='related-task-item'>
         <div className='related-task-info'>
           <Link
-            to={`/related-titles/${task.parentTaskId}/${task._id}`}
+            to={`/related-titles/${task._id}`}
             className='related-task-link'
           >
             <h3>{task.title}</h3>

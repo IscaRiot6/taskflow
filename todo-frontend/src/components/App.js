@@ -16,16 +16,24 @@ import RelatedTasks from './RelatedTasks'
 import RelatedTaskDetails from './RelatedTaskDetails'
 import ThemeToggle from './ThemeToggle'
 import '../styles/App.css'
+import { useCallback } from 'react'
+import PrivateRoute from './PrivateRoute'
 
 function App () {
   const [user, setUser] = useState(null)
   const [tasks, setTasks] = useState([])
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [theme, setTheme] = useState('default')
-  const navigate = useNavigate() // Add useNavigate hook to navigate programmatically
+  const navigate = useNavigate()
+
+  const memoizedSetTasks = useCallback(newTasks => {
+    setTasks(newTasks)
+  }, [])
 
   // Check if the user is already logged in on initial load (from localStorage)
   useEffect(() => {
+    // console.log('Tasks before passing to RelatedTaskDetails:', tasks)
+
     const token = localStorage.getItem('authToken')
     if (token) {
       setIsLoggedIn(true)
@@ -107,31 +115,60 @@ function App () {
         <Route
           path='/home'
           element={
-            <HomePage
-              tasks={tasks}
-              setTasks={setTasks}
-              handleEditTask={handleEditTask}
-            />
+            <PrivateRoute>
+              <HomePage
+                tasks={tasks}
+                setTasks={setTasks}
+                handleEditTask={handleEditTask}
+              />
+            </PrivateRoute>
           }
         />
         <Route
           path='/task/:id'
-          element={<TaskDetails tasks={tasks} onEdit={handleEditTask} />}
+          element={
+            <PrivateRoute>
+              <TaskDetails tasks={tasks} onEdit={handleEditTask} />
+            </PrivateRoute>
+          }
         />
         <Route
+          // EDW KOITAKSE
           path='/related-titles/:taskId'
-          element={<RelatedTasks onAdd={handleEditTask} />}
+          element={
+            <PrivateRoute>
+              <RelatedTasks tasks={tasks} onAdd={handleEditTask} />
+            </PrivateRoute>
+          }
         />
-        <Route
-          path='/related-titles/:taskId/:relatedId'
-          element={<RelatedTaskDetails />}
-        />
+        {/* <Route
+          path='/related-task-details/:taskId'
+          element={
+            <PrivateRoute>
+              <RelatedTaskDetails tasks={tasks} />
+            </PrivateRoute>
+          }
+        /> */}
         <Route path='/login' element={<LoginPage onLogin={handleLogin} />} />
         <Route path='/signup' element={<SignupPage />} />
         <Route path='/about' element={<About />} />
         <Route path='/contact' element={<ContactPage />} />
-        <Route path='/favorites' element={<FavoritesPage />} />
-        <Route path='/profile' element={<ProfilePage />} />
+        <Route
+          path='/favorites'
+          element={
+            <PrivateRoute>
+              <FavoritesPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/profile'
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </div>
   )

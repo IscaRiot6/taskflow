@@ -21,7 +21,11 @@ router.get('/:taskId', async (req, res) => {
     if (!task)
       return res.status(404).json({ error: 'Task not found or unauthorized' })
 
-    res.json(task.relatedTasks) // ✅ Ensure only the user's related tasks are fetched
+    // Send both the parent task's title and the related tasks
+    res.json({
+      parentTitle: task.title, // Return the parent task title
+      relatedTasks: task.relatedTasks // Return the populated related tasks
+    })
   } catch (error) {
     console.error('Error fetching related tasks:', error)
     res.status(500).json({ error: 'Server error' })

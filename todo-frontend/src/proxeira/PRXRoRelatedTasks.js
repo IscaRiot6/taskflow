@@ -11,52 +11,14 @@ const RelatedTasks = ({ tasks = [] }) => {
   const { taskId } = useParams() // Get the parent taskId from the URL
   const [parentTitle, setParentTitle] = useState('Loading...')
   const [notification, setNotification] = useState(null) // Notification state
-  const token = localStorage.getItem('authToken') // Get the token from localStorage
   const navigate = useNavigate()
 
   useEffect(() => {
-    let allTasks = tasks || []
-
-    // Ensure initial loading state is handled
-    if (!allTasks || allTasks.length === 0) {
-      // Fetch the parent task and related tasks
-      fetch(`http://localhost:5000/api/related-tasks/${taskId}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}` // Pass the token for authentication
-        }
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data && data.parentTitle) {
-            setParentTitle(data.parentTitle) // Set parent task title
-          } else {
-            setParentTitle('Unknown Task') // Default title if not found
-          }
-
-          // Ensure that relatedTasks is an array before setting state
-          if (Array.isArray(data.relatedTasks)) {
-            setRelatedTasks(data.relatedTasks) // Update related tasks state
-          } else {
-            setRelatedTasks([]) // Empty array if data is not in expected format
-          }
-        })
-        .catch(() => {
-          setParentTitle('Failed to load task') // Error handling for failed fetch
-          setRelatedTasks([]) // Ensure no related tasks if error occurs
-        })
-    } else {
-      // If tasks are already available, find the title from the list
-      const found = allTasks.find(task => task._id === taskId)
-      if (found) {
-        setParentTitle(found.title) // Set title based on found task
-        setRelatedTasks(found.relatedTasks || []) // Set related tasks if available
-      } else {
-        setParentTitle('Unknown Task') // Default if task not found
-        setRelatedTasks([]) // No related tasks if task is not found
-      }
+    if (tasks.length > 0 && taskId) {
+      const foundTask = tasks.find(task => task._id === taskId)
+      setParentTitle(foundTask?.title || 'Unknown Task')
     }
-  }, [taskId, tasks, token]) // Depend on taskId and tasks
+  }, [tasks, taskId])
 
   // Fetch related tasks when the component loads
   useEffect(() => {
@@ -225,8 +187,8 @@ const RelatedTasks = ({ tasks = [] }) => {
         <Notification message={notification.message} type={notification.type} />
       )}
 
-      {parentTitle === 'Loading...' || !parentTitle ? (
-        <p>Loading parent task info...</p> // Show loading message until the title is fetched
+      {parentTitle === 'Loading...' ? (
+        <p>Loading parent task info...</p>
       ) : (
         <h2 className='related-heading'>Related Tasks for: “{parentTitle}”</h2>
       )}

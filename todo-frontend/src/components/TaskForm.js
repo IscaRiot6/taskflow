@@ -23,6 +23,9 @@ const TaskForm = ({ onAdd }) => {
       themes: newTaskThemes.split(',').map(theme => theme.trim()), // Converting to an array
       yourScore: newTaskScore ? Number(newTaskScore) : 0 // Ensure it's a number
     }
+    if (!newTask.parentTaskId) {
+      delete newTask.parentTaskId
+    }
 
     const task = await onAdd(newTask)
     setNewTaskTitle('')

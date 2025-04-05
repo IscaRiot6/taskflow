@@ -53,6 +53,7 @@ const TaskDetails = ({ tasks, onEdit }) => {
     setTimeout(() => setEditSuccess(false), 3000) // Hide after 3 seconds
   }
 
+  // PROSEKSE AUTO EINAI TO SWST O OK OOOO K OKOKOKOKOKOKOK
   return (
     <div className='task-details-container'>
       <h1>{task.title}</h1>

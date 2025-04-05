@@ -1,38 +1,40 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-const RelatedTaskDetails = () => {
-  const { taskId, relatedId } = useParams() // Get params from URL
+const RelatedTaskDetails = ({ tasks = [] }) => {
+  const { taskId } = useParams() // Get params from URL
   const [task, setTask] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  console.log('RelatedTaskDetails component mounted!')
+
   useEffect(() => {
-    console.log('Fetching related task with:', taskId, relatedId) // 🔍 Debugging log
+    console.log('Tasks received in RelatedTaskDetails:', tasks)
+    console.log('TaskId from URL:', taskId)
 
-    // Retrieve the token from localStorage (adjust this if you store it elsewhere)
-    const token = localStorage.getItem('authToken')
+    if (!tasks || tasks.length === 0) {
+      console.error('Tasks array is empty or undefined in RelatedTaskDetails.')
 
-    fetch(`http://localhost:5000/api/related-tasks/${taskId}/${relatedId}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`, // Add the token here
-        'Content-Type': 'application/json'
+      // Try to get tasks from localStorage as a fallback
+      const savedTasks = JSON.parse(localStorage.getItem('tasks')) || []
+
+      if (savedTasks.length > 0) {
+        console.log('Loaded tasks from localStorage:', savedTasks)
+        setTask(
+          savedTasks.find(task => String(task._id) === String(taskId)) || null
+        )
       }
-    })
-      .then(res => {
-        console.log('Response status:', res.status) // 🔍 Debugging log
-        return res.json()
-      })
-      .then(data => {
-        console.log('Fetched task:', data) // 🔍 Debugging log
-        setTask(data)
-        setLoading(false) // Done loading
-      })
-      .catch(err => {
-        console.error('Error fetching task', err)
-        setLoading(false) // Done loading even on error
-      })
-  }, [taskId, relatedId])
+
+      setLoading(false)
+      return
+    }
+
+    const foundTask = tasks.find(task => String(task._id) === String(taskId))
+    console.log('Task found:', foundTask)
+
+    setTask(foundTask)
+    setLoading(false)
+  }, [taskId, tasks])
 
   if (loading) return <p>Loading...</p>
   if (!task) return <p>Task not found.</p>

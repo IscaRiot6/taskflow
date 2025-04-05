@@ -6,16 +6,24 @@ import User from '../models/userModel.js'
 
 // Apply authMiddleware to protect all routes below
 router.use(authMiddleware)
+console.log('✅ Backend GET /api/tasks route is defined')
 
 router.get('/', authMiddleware, async (req, res) => {
+  console.log('✅ Inside /tasks route. req.user:', req.user)
   try {
+    // Debug: Check user info and what we’re querying
+    console.log('User ID:', req.user.userId)
+
     const tasks = await Task.find({
       user: req.user.userId,
       parentTaskId: { $in: [null, undefined] }
       // parentTaskId: { $exists: false } // Only parent tasks (no related tasks)
     }).populate('relatedTasks') // Populate the related tasks
-
     console.log('✅ Authenticated user ID:', req.user.userId)
+
+    // Debug: Log the fetched tasks
+    console.log('User ID:', req.user.userId)
+    console.log('📋 Fetching all parent tasks:', tasks)
 
     res.json(tasks)
   } catch (error) {
@@ -322,3 +330,26 @@ router.get('/favorites', authMiddleware, async (req, res) => {
 })
 
 export default router
+
+// ✅ Protect all routes with authentication
+router.use(authMiddleware)
+
+// ✅ Get related tasks (GET)
+router.get('/:taskId', async (req, res) => {
+  const { taskId } = req.params
+
+  try {
+    console.log('Fetching related tasks for task:', taskId)
+    const task = await Task.findOne({
+      _id: taskId,
+      user: req.user.userId
+    }).populate('relatedTasks')
+    if (!task)
+      return res.status(404).json({ error: 'Task not found or unauthorized' })
+
+    res.json(task.relatedTasks) // ✅ Ensure only the user's related tasks are fetched
+  } catch (error) {
+    console.error('Error fetching related tasks:', error)
+    res.status(500).json({ error: 'Server error' })
+  }
+})

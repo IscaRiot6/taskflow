@@ -23,10 +23,9 @@ const Home = ({ tasks, setTasks }) => {
 
   const indexOfLastTask = currentPage * tasksPerPage
   const indexOfFirstTask = indexOfLastTask - tasksPerPage
-  // const paginatedTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask)
   const paginatedTasks = Array.isArray(filteredTasks)
     ? filteredTasks.slice(indexOfFirstTask, indexOfLastTask)
-    : [] // Fallback to empty array if filteredTasks is not an array
+    : []
 
   // Function to show notification
   const showNotification = (message, type = 'success') => {
@@ -35,6 +34,22 @@ const Home = ({ tasks, setTasks }) => {
   }
 
   const handleAddTask = async taskData => {
+    console.log('Adding task:', taskData)
+
+    // Remove empty parentTaskId so backend doesn't misclassify
+    if (
+      taskData.parentTaskId === undefined ||
+      taskData.parentTaskId === null ||
+      taskData.parentTaskId === ''
+    ) {
+      delete taskData.parentTaskId
+    }
+
+    console.log(
+      '🟡 Final task data to be sent:',
+      JSON.stringify(taskData, null, 2)
+    )
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/tasks`,
@@ -42,7 +57,7 @@ const Home = ({ tasks, setTasks }) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('authToken')}` // Add the auth token if needed
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`
           },
           body: JSON.stringify(taskData)
         }
@@ -54,8 +69,11 @@ const Home = ({ tasks, setTasks }) => {
 
       const addedTask = await response.json()
 
-      // After successfully adding to the backend, update frontend state
-      setTasks(prev => [...prev, addedTask])
+      setTasks(prev => {
+        const updatedTasks = [...prev, addedTask]
+        localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+        return updatedTasks
+      })
 
       setIsFormVisible(false)
       showNotification('Task added successfully!', 'success')
@@ -102,25 +120,44 @@ const Home = ({ tasks, setTasks }) => {
 
   const handleDeleteTask = async id => {
     try {
-      const token = localStorage.getItem('authToken') // Get the auth token
+      // Step 1: Get the auth token
+      const token = localStorage.getItem('authToken')
+      if (!token) {
+        throw new Error('No auth token found')
+      }
 
+      // Step 2: Log the token and task ID for debugging
+      console.log('🔑 Auth Token:', token)
+      console.log('🛑 Task ID being sent:', id)
+
+      // Step 3: Send the DELETE request to the backend
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/tasks/${id}`,
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Bearer ${token}` // Add token here
+            Authorization: `Bearer ${token}` // Send token here
           }
         }
       )
 
+      // Step 4: If response is not ok, log error and show notification
       if (!response.ok) {
-        throw new Error('Failed to delete task')
+        const errorData = await response.json()
+        console.error('Error deleting task:', errorData)
+        throw new Error(errorData.error || 'Failed to delete task')
       }
 
+      // Step 5: Update the local state to remove the deleted task
+      console.log('📋 Tasks before deletion:', tasks)
+
       setTasks(prev => prev.filter(task => task._id !== id))
-      showNotification('Task deleted successfully!', 'success') // Show notification
+      console.log('🧼 Filtering out task with ID:', id)
+
+      // Step 6: Show success notification
+      showNotification('Task deleted successfully!', 'success')
     } catch (error) {
+      // Step 7: Catch and log the error, and show notification
       console.error('Error deleting task:', error)
       showNotification('Failed to delete task.', 'error')
     }

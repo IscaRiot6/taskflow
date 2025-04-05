@@ -1,8 +1,11 @@
 import jwt from 'jsonwebtoken'
 
 const authMiddleware = (req, res, next) => {
+  // console.log('Decoded token:', decoded)
+
   try {
     const authHeader = req.header('Authorization')
+
     console.log('Authorization header:', authHeader)
 
     // Ensure the token exists and starts with "Bearer "
@@ -15,7 +18,7 @@ const authMiddleware = (req, res, next) => {
     // Extract and verify the token
     const token = authHeader.replace('Bearer ', '').trim()
     console.log('Received token:', token)
-
+    console.log('Authorization header:', authHeader)
     if (!token) {
       return res
         .status(401)
