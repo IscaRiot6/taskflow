@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 const RelatedTaskDetails = ({ tasks = [] }) => {
+  const navigate = useNavigate()
   const { relatedId } = useParams() // ✅ Get the relatedId from URL
   const [task, setTask] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -52,9 +54,40 @@ const RelatedTaskDetails = ({ tasks = [] }) => {
   if (loading) return <div className='loader'>Loading...</div>
   if (!task) return <div className='error'>Task not found.</div>
 
+  const images = [task.image, task.image2].filter(Boolean)
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex(prevIndex =>
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+    )
+  }
+
+  const handleNextImage = () => {
+    setCurrentImageIndex(prevIndex =>
+      prevIndex === images.length - 1 ? 0 : prevIndex + 1
+    )
+  }
+
   return (
-    <div className='related-task-details-container'>
+    <div className='task-details-container'>
       <h1>{task.title}</h1>
+      {images.length > 1 ? (
+        <div className='carousel'>
+          <button className='carousel-btn left' onClick={handlePrevImage}>
+            &#10094;
+          </button>
+          <img
+            src={images[currentImageIndex]}
+            alt={task.title}
+            className='task-image'
+          />
+          <button className='carousel-btn right' onClick={handleNextImage}>
+            &#10095;
+          </button>
+        </div>
+      ) : (
+        <img src={task.image} alt={task.title} className='task-image' />
+      )}
       <p>
         <strong>Description:</strong>{' '}
         {task.description || 'No description available.'}
@@ -68,6 +101,17 @@ const RelatedTaskDetails = ({ tasks = [] }) => {
       <p>
         <strong>Score:</strong> {task.yourScore ?? 'N/A'}
       </p>
+      <div className='task-buttons'>
+        <button
+        // className='task-btn edit' onClick={() => setIsModalOpen(true)}
+        >
+          Edit
+        </button>
+
+        <button className='task-btn back-btn' onClick={() => navigate(`/home`)}>
+          Back
+        </button>
+      </div>
     </div>
   )
 }
