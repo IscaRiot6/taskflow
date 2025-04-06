@@ -141,14 +141,14 @@ function App () {
             </PrivateRoute>
           }
         />
-        {/* <Route
-          path='/related-task-details/:taskId'
+        <Route
+          path='/related-task-details/:relatedId'
           element={
-            <PrivateRoute>
-              <RelatedTaskDetails tasks={tasks} />
-            </PrivateRoute>
+            // <PrivateRoute>
+            <RelatedTaskDetails />
+            // </PrivateRoute>
           }
-        /> */}
+        />
         <Route path='/login' element={<LoginPage onLogin={handleLogin} />} />
         <Route path='/signup' element={<SignupPage />} />
         <Route path='/about' element={<About />} />

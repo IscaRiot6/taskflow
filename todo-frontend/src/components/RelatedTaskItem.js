@@ -32,7 +32,7 @@ const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
       <li className='related-task-item'>
         <div className='related-task-info'>
           <Link
-            to={`/related-titles/${task._id}`}
+            to={`/related-task-details/${task._id}`}
             className='related-task-link'
           >
             <h3>{task.title}</h3>

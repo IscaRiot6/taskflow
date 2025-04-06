@@ -2,42 +2,55 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 const RelatedTaskDetails = ({ tasks = [] }) => {
-  const { taskId } = useParams() // Get params from URL
+  const { relatedId } = useParams() // ✅ Get the relatedId from URL
   const [task, setTask] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  console.log('RelatedTaskDetails component mounted!')
-
   useEffect(() => {
-    console.log('Tasks received in RelatedTaskDetails:', tasks)
-    console.log('TaskId from URL:', taskId)
+    const fetchTask = async () => {
+      // Step 1: Get the token
+      const token = localStorage.getItem('authToken')
+      console.log('Token in RelatedTaskDetails:', token) // Confirm token retrieval
 
-    if (!tasks || tasks.length === 0) {
-      console.error('Tasks array is empty or undefined in RelatedTaskDetails.')
-
-      // Try to get tasks from localStorage as a fallback
-      const savedTasks = JSON.parse(localStorage.getItem('tasks')) || []
-
-      if (savedTasks.length > 0) {
-        console.log('Loaded tasks from localStorage:', savedTasks)
-        setTask(
-          savedTasks.find(task => String(task._id) === String(taskId)) || null
-        )
+      // Step 2: Check if token exists
+      if (!token) {
+        console.warn('No token found, skipping fetch')
+        setLoading(false) // Stop loading if no token is found
+        return
       }
 
-      setLoading(false)
-      return
+      // Step 3: Fetch the task details with token
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/related-tasks/related/${relatedId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+
+        if (!res.ok) {
+          const errorText = await res.text()
+          console.error('Fetch failed:', errorText)
+          throw new Error('Failed to fetch task details')
+        }
+
+        const data = await res.json()
+        setTask(data) // Set the task state with fetched data
+        setLoading(false)
+      } catch (err) {
+        console.error('Error fetching task:', err)
+        setLoading(false)
+      }
     }
 
-    const foundTask = tasks.find(task => String(task._id) === String(taskId))
-    console.log('Task found:', foundTask)
+    fetchTask() // Call the async fetch function
+  }, [relatedId]) // Dependency array ensures that fetchTask is called when relatedId changes
 
-    setTask(foundTask)
-    setLoading(false)
-  }, [taskId, tasks])
-
-  if (loading) return <p>Loading...</p>
-  if (!task) return <p>Task not found.</p>
+  if (loading) return <div className='loader'>Loading...</div>
+  if (!task) return <div className='error'>Task not found.</div>
 
   return (
     <div className='related-task-details-container'>

@@ -176,4 +176,25 @@ router.delete('/:taskId/:relatedId', async (req, res) => {
   }
 })
 
+// GET a specific related task by ID
+router.get('/related/:relatedId', authMiddleware, async (req, res) => {
+  const { relatedId } = req.params
+
+  try {
+    const task = await Task.findOne({
+      _id: relatedId,
+      user: req.user.userId
+    })
+
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found or unauthorized' })
+    }
+
+    res.json(task)
+  } catch (error) {
+    console.error('Error fetching individual related task:', error)
+    res.status(500).json({ error: 'Server error' })
+  }
+})
+
 export default router
