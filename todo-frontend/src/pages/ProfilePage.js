@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Profile from '../components/Profile' // Keeps the form
 import ProfileInfo from '../components/ProfileInfo' // Displays saved info
+import FriendsPanel from '../components/FriendsPanel'
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null)
@@ -51,6 +52,9 @@ const ProfilePage = () => {
       <div className='profile-content'>
         <ProfileInfo profile={profile} />
         <Profile profile={profile} setProfile={setProfile} />
+      </div>
+      <div>
+        <FriendsPanel />
       </div>
     </div>
   )

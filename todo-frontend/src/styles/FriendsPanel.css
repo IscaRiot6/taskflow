@@ -1,0 +1,76 @@
+
+.profile__friends-panel {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .friends-panel__heading {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.3rem;
+  }
+  
+  .friends-panel__loading {
+    font-style: italic;
+    color: #888;
+  }
+  
+  .friends-panel__list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+  }
+  
+  .friends-panel__item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .friends-panel__avatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+  }
+  
+  .friends-panel__username {
+    font-weight: bold;
+    color: #222;
+    flex-grow: 1;
+  }
+  
+  .friends-panel__status {
+    color: green;
+    font-weight: 500;
+  }
+  
+  .friends-panel__add-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .friends-panel__add-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .profile-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
