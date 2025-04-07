@@ -18,13 +18,12 @@ import ThemeToggle from './ThemeToggle'
 import '../styles/App.css'
 import { useCallback } from 'react'
 import PrivateRoute from './PrivateRoute'
-// import { ThemeProvider } from './context/ThemeContext'
 
 function App () {
   const [user, setUser] = useState(null)
   const [tasks, setTasks] = useState([])
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  // const [theme, setTheme] = useState('default')
+  const [theme, setTheme] = useState('default')
   const navigate = useNavigate()
 
   const memoizedSetTasks = useCallback(newTasks => {
@@ -105,8 +104,8 @@ function App () {
   }
 
   return (
-    <div>
-      <ThemeToggle />
+    <div className={`app theme-${theme}`}>
+      <ThemeToggle setTheme={setTheme} />
       <BackgroundSetter />
       <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <SideNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />

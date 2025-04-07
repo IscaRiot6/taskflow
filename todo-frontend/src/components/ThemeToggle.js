@@ -1,7 +1,11 @@
+// ThemeToggle.js
 import React from 'react'
+import { useTheme } from '../components/ThemeContext'
 import '../styles/ThemeToggle.css'
 
-const ThemeToggle = ({ setTheme }) => {
+const ThemeToggle = () => {
+  const { setTheme } = useTheme()
+
   return (
     <div className='theme-toggle-container'>
       <button className='theme-btn default' onClick={() => setTheme('default')}>

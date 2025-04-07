@@ -159,3 +159,7 @@ transform: scale(1.03);
   }
 }
 
+.related-task-info p {
+  color: #99237c; /* Light gray to ensure contrast in dark mode */
+}
+

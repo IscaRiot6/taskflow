@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import '../styles/Profile.css'
+import { useTheme } from '../components/ThemeContext'
 
 const Profile = ({ profile, setProfile }) => {
+  const { setTheme } = useTheme()
   const [message, setMessage] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [username, setUsername] = useState('')
@@ -25,6 +27,13 @@ const Profile = ({ profile, setProfile }) => {
       setMessage(
         `Welcome back, ${profile.username}! You can update your profile and settings here.`
       )
+
+      // 🌓 Set theme based on saved darkMode preference
+      if (profile.settings?.darkMode) {
+        setTheme('black') // Or 'dark', depending on your naming
+      } else {
+        setTheme('default')
+      }
     }
   }, [profile]) // ⬅️ Updated dependency
 
@@ -61,6 +70,16 @@ const Profile = ({ profile, setProfile }) => {
       console.error('❌ Error updating profile:', error)
     }
   }
+
+  useEffect(() => {
+    if (!profile?.settings?.notifications) return
+    // Just a fun example:
+    const timer = setTimeout(() => {
+      alert('🔔 Remember to check your tasks today!')
+    }, 2000)
+
+    return () => clearTimeout(timer)
+  }, [profile?.settings?.notifications])
 
   return (
     <div className='profile-container'>

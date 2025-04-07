@@ -55,13 +55,8 @@ const userSchema = new mongoose.Schema({
       taskTitle: { type: String, required: false },
       timestamp: { type: Date, default: Date.now }
     }
-  ]
-  // relatedTasks: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: 'Task' // Referencing the Task model
-  //   }
-  // ]
+  ],
+  friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 })
 
 // Hash password before saving

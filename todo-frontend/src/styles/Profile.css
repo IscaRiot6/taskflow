@@ -173,3 +173,12 @@ button:hover {
   }
 }
 
+.profile-container, 
+.profile-container h2, 
+.profile-container strong, 
+.profile-container p {
+  color: #333 !important; /* or pick another non-white shade */
+}
+
+
+

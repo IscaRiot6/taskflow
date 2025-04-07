@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import '../styles/RelatedTaskDetails.css'
 
 const RelatedTaskDetails = ({ tasks = [] }) => {
   const navigate = useNavigate()
@@ -69,24 +70,24 @@ const RelatedTaskDetails = ({ tasks = [] }) => {
   }
 
   return (
-    <div className='task-details-container'>
+    <div className='child-task-details-container'>
       <h1>{task.title}</h1>
       {images.length > 1 ? (
-        <div className='carousel'>
+        <div className='child-carousel'>
           <button className='carousel-btn left' onClick={handlePrevImage}>
             &#10094;
           </button>
           <img
             src={images[currentImageIndex]}
             alt={task.title}
-            className='task-image'
+            className='child-task-image'
           />
           <button className='carousel-btn right' onClick={handleNextImage}>
             &#10095;
           </button>
         </div>
       ) : (
-        <img src={task.image} alt={task.title} className='task-image' />
+        <img src={task.image} alt={task.title} className='child-task-image' />
       )}
       <p>
         <strong>Description:</strong>{' '}
@@ -101,7 +102,7 @@ const RelatedTaskDetails = ({ tasks = [] }) => {
       <p>
         <strong>Score:</strong> {task.yourScore ?? 'N/A'}
       </p>
-      <div className='task-buttons'>
+      <div className='child-task-buttons'>
         <button
         // className='task-btn edit' onClick={() => setIsModalOpen(true)}
         >

@@ -37,6 +37,16 @@ router.put('/update', authMiddleware, async (req, res) => {
 
     const { profilePic, bio, settings } = req.body
 
+    // Validate settings object
+    if (settings) {
+      if (typeof settings.darkMode !== 'boolean') {
+        return res.status(400).json({ message: 'Invalid darkMode flag' })
+      }
+      if (typeof settings.notifications !== 'boolean') {
+        return res.status(400).json({ message: 'Invalid notifications flag' })
+      }
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { profilePic, bio, settings },
@@ -50,18 +60,5 @@ router.put('/update', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Server error' })
   }
 })
-
-// fetch/ track history logs
-// router.get('/history', authMiddleware, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user.userId).select('history')
-//     if (!user) return res.status(404).json({ message: 'User not found' })
-
-//     res.json(user.history.slice(-10).reverse()) // Last 10 actions (latest first)
-//   } catch (error) {
-//     console.error('Error fetching history:', error)
-//     res.status(500).json({ message: 'Server error' })
-//   }
-// })
 
 export default router
