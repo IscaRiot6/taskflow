@@ -3,7 +3,6 @@ import '../styles/FriendsPanel.css'
 import MutualFriendsModal from '../components/MutualFriendsModal'
 import FriendActions from './FriendActions'
 import FriendCard from './FriendCard'
-// import FriendActions from './FriendActions'
 
 const FriendsPanel = () => {
   const [modalUserId, setModalUserId] = useState(null)

@@ -5,7 +5,13 @@
     background-color: #f9f9f9;
     border-radius: 12px;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+
   }
+
+  /* .profile__friends-panel:hover {
+    box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
+  } */
   
   .friends-panel__heading {
     margin-bottom: 1rem;
@@ -31,41 +37,93 @@
     align-items: center;
     gap: 0.8rem;
     padding: 0.6rem 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #0400f3;
+    border-radius: 6px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* background-color: rgb(143, 141, 141); */
+
+    
+  }
+
+  .friends-panel__item:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background-color: #cacfb8;
+  }
+
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   
   .friends-panel__avatar {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     object-fit: cover;
     border-radius: 50%;
     border: 2px solid #ccc;
+    transition: transform 0.2s ease;
+  }
+
+  .friends-panel__avatar:hover {
+    transform: scale(1.05);
   }
   
   .friends-panel__username-link {
     font-weight: bold;
-    color: #222;
+    color: #1d1d1d;
     flex-grow: 1;
+    transition: color 0.2s ease;
+    text-decoration: none;
+  }
+
+  .friends-panel__username-link:hover {
+    color: #007bff;
   }
   
   .friends-panel__status {
     color: green;
     font-weight: 500;
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .friends-panel__status::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    background-color: green;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 6px green;
   }
   
   .friends-panel__add-button {
+    position: relative;
     background-color: #007bff;
-    color: #fff;
-    padding: 0.3rem 0.6rem;
-    font-size: 0.9rem;
+    color: white;
     border: none;
     border-radius: 5px;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 0 transparent;
   }
   
   .friends-panel__add-button:hover {
     background-color: #0056b3;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+    
   }
   
   .profile-page {
@@ -80,6 +138,7 @@
   
   .friends-panel__reject:hover {
     background-color: #a71d2a;
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.4);
   }
 
   .friends-panel__mutual-wrapper {
@@ -87,13 +146,18 @@
   }
   
   .friends-panel__toggle-mutuals {
-    font-size: 0.8rem;
-    margin-right: 5px;
-    background: transparent;
+    font-size: 0.85rem;
+    margin-left: 4px;
+    background: none;
     border: none;
     color: #555;
     cursor: pointer;
     text-decoration: underline;
+    transition: color 0.2s ease;
+  }
+
+  .friends-panel__toggle-mutuals:hover {
+    color: #111;
   }
   
   .friends-panel__mutual-count {
