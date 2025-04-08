@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react'
 import '../styles/FriendsPanel.css'
 
 const FriendsPanel = () => {
+  const [modalUserId, setModalUserId] = useState(null)
   const [users, setUsers] = useState([])
   const [friends, setFriends] = useState([])
   const [sentRequests, setSentRequests] = useState([])
   const [receivedRequests, setReceivedRequests] = useState([])
   const [loading, setLoading] = useState(true)
+  const [mutualFriendsMap, setMutualFriendsMap] = useState({})
+  const [expandedMutuals, setExpandedMutuals] = useState({})
 
   const token = localStorage.getItem('authToken')
 
@@ -118,13 +121,134 @@ const FriendsPanel = () => {
     }
   }
 
+  const fetchMutualFriends = async otherUserId => {
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/friends/mutual/${otherUserId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      )
+      const data = await res.json()
+      console.log('Mutual Friends:', data)
+      // Optionally update state to show in the UI
+    } catch (err) {
+      console.error('Error fetching mutual friends', err)
+    }
+  }
+
+  const toggleMutualFriends = async userId => {
+    const isExpanded = expandedMutuals[userId]
+
+    if (!isExpanded) {
+      // Fetch only if not already fetched
+      if (!mutualFriendsMap[userId]) {
+        try {
+          const res = await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/friends/mutual/${userId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` }
+            }
+          )
+          const data = await res.json()
+          setMutualFriendsMap(prev => ({ ...prev, [userId]: data }))
+        } catch (err) {
+          console.error('Error loading mutual friends', err)
+        }
+      }
+    }
+
+    setExpandedMutuals(prev => ({ ...prev, [userId]: !isExpanded }))
+  }
+
   const isFriend = id => friends.some(friend => friend._id === id)
   const isSent = id => sentRequests.some(user => user._id === id)
   const isReceived = id => receivedRequests.some(user => user._id === id)
 
+  const renderUserActions = user => {
+    const id = user._id
+
+    if (isFriend(id)) {
+      return (
+        <>
+          <span className='friends-panel__status'>✅ Friend</span>
+
+          {/* Mutual Friends Logic */}
+          <div className='friends-panel__mutual-wrapper'>
+            <button
+              className='friends-panel__toggle-mutuals'
+              onClick={() => toggleMutualFriends(id)}
+            >
+              {expandedMutuals[id]
+                ? 'Hide mutual friends'
+                : 'Show mutual friends'}
+            </button>
+
+            <span
+              className='friends-panel__mutual-count'
+              title={`You have ${
+                mutualFriendsMap[id]?.length || 0
+              } mutual friends`}
+            >
+              {mutualFriendsMap[id]?.length || 0} mutual friends
+            </span>
+
+            {expandedMutuals[id] && (
+              <ul className='friends-panel__mutuals-list'>
+                {mutualFriendsMap[id]?.map(mutual => (
+                  <li key={mutual._id} className='friends-panel__mutual-item'>
+                    <img
+                      src={mutual.profilePic || '/default-avatar.png'}
+                      alt={mutual.username}
+                      className='friends-panel__avatar--small'
+                    />
+                    <span>{mutual.username}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
+      )
+    }
+
+    if (isSent(id)) {
+      return <span className='friends-panel__status'>⏳ Pending</span>
+    }
+
+    if (isReceived(id)) {
+      return (
+        <>
+          <button
+            onClick={() => handleAcceptRequest(id)}
+            className='friends-panel__add-button'
+          >
+            ✅ Accept
+          </button>
+          <button
+            onClick={() => handleRejectRequest(id)}
+            className='friends-panel__add-button friends-panel__reject'
+          >
+            ❌ Reject
+          </button>
+        </>
+      )
+    }
+
+    return (
+      <button
+        className='friends-panel__add-button'
+        onClick={() => handleSendRequest(id)}
+      >
+        ➕ Add Friend
+      </button>
+    )
+  }
+
   return (
     <div className='profile__friends-panel'>
       <h3 className='friends-panel__heading'>Find and Add Friends</h3>
+
       {loading ? (
         <p className='friends-panel__loading'>Loading friends...</p>
       ) : (
@@ -137,39 +261,11 @@ const FriendsPanel = () => {
                 className='friends-panel__avatar'
                 onError={e => {
                   e.target.onerror = null
-                  e.target.src = '/default-avatar.png' // or whatever default you have
+                  e.target.src = '/default-avatar.png'
                 }}
               />
-
               <span className='friends-panel__username'>{user.username}</span>
-
-              {isFriend(user._id) ? (
-                <span className='friends-panel__status'>✅ Friend</span>
-              ) : isSent(user._id) ? (
-                <span className='friends-panel__status'>⏳ Pending</span>
-              ) : isReceived(user._id) ? (
-                <>
-                  <button
-                    onClick={() => handleAcceptRequest(user._id)}
-                    className='friends-panel__add-button'
-                  >
-                    ✅ Accept
-                  </button>
-                  <button
-                    onClick={() => handleRejectRequest(user._id)}
-                    className='friends-panel__add-button friends-panel__reject'
-                  >
-                    ❌ Reject
-                  </button>
-                </>
-              ) : (
-                <button
-                  className='friends-panel__add-button'
-                  onClick={() => handleSendRequest(user._id)}
-                >
-                  ➕ Add Friend
-                </button>
-              )}
+              {renderUserActions(user)}
             </li>
           ))}
         </ul>

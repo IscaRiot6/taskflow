@@ -81,5 +81,45 @@
   .friends-panel__reject:hover {
     background-color: #a71d2a;
   }
+
+  .friends-panel__mutual-wrapper {
+    margin-top: 0.3rem;
+  }
+  
+  .friends-panel__toggle-mutuals {
+    font-size: 0.8rem;
+    margin-right: 5px;
+    background: transparent;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  .friends-panel__mutual-count {
+    font-size: 0.75rem;
+    color: #888;
+    cursor: help;
+  }
+  
+  .friends-panel__mutuals-list {
+    list-style: none;
+    margin-top: 5px;
+    padding-left: 0.5rem;
+  }
+  
+  .friends-panel__mutual-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+  }
+  
+  .friends-panel__avatar--small {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+  }
+  
   
   

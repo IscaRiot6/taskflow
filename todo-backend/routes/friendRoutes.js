@@ -144,4 +144,27 @@ router.get('/pending/received', authMiddleware, async (req, res) => {
   res.json(user.friendRequestsReceived)
 })
 
+// 9. Get mutual friends
+// GET /api/friends/mutual/:otherUserId
+router.get('/mutual/:otherUserId', authMiddleware, async (req, res) => {
+  const userId = req.user.userId
+  const otherUserId = req.params.otherUserId
+
+  try {
+    const user = await User.findById(userId).select('friends')
+    const otherUser = await User.findById(otherUserId).select('friends')
+
+    const mutualIds = user.friends.filter(id => otherUser.friends.includes(id))
+
+    const mutualFriends = await User.find({ _id: { $in: mutualIds } }).select(
+      'username profilePic'
+    )
+
+    res.json(mutualFriends)
+  } catch (err) {
+    console.error('Error fetching mutual friends:', err)
+    res.status(500).json({ message: 'Server error' })
+  }
+})
+
 export default router
