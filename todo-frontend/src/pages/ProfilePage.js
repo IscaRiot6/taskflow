@@ -45,16 +45,17 @@ const ProfilePage = () => {
 
   return (
     <div className='profile-page'>
-      <h1 className='profile-title'>Profile Page</h1>
+      <div className='profile-columns'>
+        <h1 className='profile-title'>Profile Page</h1>
 
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+        {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
-      <div className='profile-content'>
-        <ProfileInfo profile={profile} />
-        <Profile profile={profile} setProfile={setProfile} />
-      </div>
-      <div>
-        <FriendsPanel />
+        <div className='profile-content'>
+          <ProfileInfo profile={profile} />
+
+          <Profile profile={profile} setProfile={setProfile} />
+          <FriendsPanel />
+        </div>
       </div>
     </div>
   )
