@@ -14,7 +14,7 @@ router.get('/list', authMiddleware, async (req, res) => {
 
 // 2. Send friend request
 // POST /api/friends/request/:friendId
-router.post('/request/:friendId', authMiddleware, async (req, res) => {
+router.post('/send-request/:friendId', authMiddleware, async (req, res) => {
   const userId = req.user.userId
   const friendId = req.params.friendId
 
@@ -42,7 +42,7 @@ router.post('/request/:friendId', authMiddleware, async (req, res) => {
 
 // 3. Accept friend request
 // POST /api/friends/accept/:friendId
-router.post('/accept/:friendId', authMiddleware, async (req, res) => {
+router.post('/accept-request/:friendId', authMiddleware, async (req, res) => {
   const userId = req.user.userId
   const friendId = req.params.friendId
 
@@ -72,8 +72,8 @@ router.post('/accept/:friendId', authMiddleware, async (req, res) => {
 })
 
 // 4. Reject friend request/ Cancel
-// POST /api/friends/reject/:friendId
-router.post('/reject/:friendId', authMiddleware, async (req, res) => {
+// POST /api/friends/reject-request/:friendId
+router.post('/reject-request/:friendId', authMiddleware, async (req, res) => {
   const userId = req.user.userId
   const friendId = req.params.friendId
 
@@ -104,12 +104,16 @@ router.get('/friends', authMiddleware, async (req, res) => {
 
 // 6. Remove friend
 // DELETE /api/friends/remove/:friendId
-router.delete('/remove/:friendId', authMiddleware, async (req, res) => {
+router.delete('/remove-friend/:friendId', authMiddleware, async (req, res) => {
   const userId = req.user.userId
   const friendId = req.params.friendId
 
   const user = await User.findById(userId)
   const friend = await User.findById(friendId)
+
+  if (!user || !friend) {
+    return res.status(404).json({ message: 'User or friend not found' })
+  }
 
   user.friends = user.friends.filter(id => id.toString() !== friendId)
   friend.friends = friend.friends.filter(id => id.toString() !== userId)

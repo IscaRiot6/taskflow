@@ -73,4 +73,13 @@
     flex-direction: column;
     gap: 2rem;
   }
+
+  .friends-panel__reject {
+    background-color: #dc3545;
+  }
+  
+  .friends-panel__reject:hover {
+    background-color: #a71d2a;
+  }
+  
   
