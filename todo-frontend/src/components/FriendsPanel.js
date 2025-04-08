@@ -239,7 +239,13 @@ const FriendsPanel = () => {
                   e.target.src = '/default-avatar.png'
                 }}
               />
-              <span className='friends-panel__username'>{user.username}</span>
+              <a
+                href={`/profile/${user._id}`}
+                className='friends-panel__username-link'
+              >
+                {user.username} 🔗
+              </a>
+
               {renderUserActions(user)}
             </li>
           ))}
@@ -255,7 +261,13 @@ const FriendsPanel = () => {
               alt=''
               className='friends-panel__avatar'
             />
-            <span className='friends-panel__username'>{friend.username}</span>
+            <a
+              href={`/profile/${friend._id}`}
+              className='friends-panel__username-link'
+            >
+              {friend.username} 🔗
+            </a>
+
             <button
               className='friends-panel__add-button friends-panel__reject'
               onClick={() => handleRemoveFriend(friend._id)}
