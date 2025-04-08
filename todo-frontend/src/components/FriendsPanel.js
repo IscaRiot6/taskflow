@@ -12,8 +12,6 @@ const FriendsPanel = () => {
   const [sentRequests, setSentRequests] = useState([])
   const [receivedRequests, setReceivedRequests] = useState([])
   const [loading, setLoading] = useState(true)
-  const [mutualFriendsMap, setMutualFriendsMap] = useState({})
-  const [expandedMutuals, setExpandedMutuals] = useState({})
 
   const token = localStorage.getItem('authToken')
 
@@ -125,46 +123,6 @@ const FriendsPanel = () => {
     }
   }
 
-  const fetchMutualFriends = async otherUserId => {
-    try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/friends/mutual/${otherUserId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      )
-      const data = await res.json()
-      console.log('Mutual Friends:', data)
-      // Optionally update state to show in the UI
-    } catch (err) {
-      console.error('Error fetching mutual friends', err)
-    }
-  }
-
-  const toggleMutualFriends = async userId => {
-    const isExpanded = expandedMutuals[userId]
-
-    if (!isExpanded) {
-      // Fetch only if not already fetched
-      if (!mutualFriendsMap[userId]) {
-        try {
-          const res = await fetch(
-            `${process.env.REACT_APP_BACKEND_URL}/api/friends/mutual/${userId}`,
-            {
-              headers: { Authorization: `Bearer ${token}` }
-            }
-          )
-          const data = await res.json()
-          setMutualFriendsMap(prev => ({ ...prev, [userId]: data }))
-        } catch (err) {
-          console.error('Error loading mutual friends', err)
-        }
-      }
-    }
-
-    setExpandedMutuals(prev => ({ ...prev, [userId]: !isExpanded }))
-  }
-
   const isFriend = id => friends.some(friend => friend._id === id)
   const isSent = id => sentRequests.some(user => user._id === id)
   const isReceived = id => receivedRequests.some(user => user._id === id)
@@ -187,7 +145,6 @@ const FriendsPanel = () => {
               handleSendRequest={handleSendRequest}
               handleAcceptRequest={handleAcceptRequest}
               handleRejectRequest={handleRejectRequest}
-              toggleMutualFriends={toggleMutualFriends}
               setModalUserId={setModalUserId}
             />
           ))}
@@ -206,8 +163,8 @@ const FriendsPanel = () => {
       </ul>
       <MutualFriendsModal
         open={!!modalUserId}
+        userId={modalUserId}
         onClose={() => setModalUserId(null)}
-        mutuals={mutualFriendsMap[modalUserId] || []}
       />
     </div>
   )

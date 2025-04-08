@@ -1,6 +1,6 @@
 import React from 'react'
 
-const FriendItem = ({
+const FriendActions = ({
   user,
   isFriend,
   isSent,
@@ -22,7 +22,7 @@ const FriendItem = ({
           <button
             className='friends-panel__toggle-mutuals'
             onClick={() => {
-              toggleMutualFriends(id)
+              
               setModalUserId(id)
             }}
           >
@@ -87,4 +87,4 @@ const FriendItem = ({
   )
 }
 
-export default FriendItem
+export default FriendActions
