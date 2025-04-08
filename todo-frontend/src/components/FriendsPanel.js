@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import '../styles/FriendsPanel.css'
-import MutualFriendsModal from '../components/MutualFriendsModal' // Adjust path if needed
+import MutualFriendsModal from '../components/MutualFriendsModal'
+import FriendActions from './FriendActions'
+import FriendCard from './FriendCard'
+// import FriendActions from './FriendActions'
 
 const FriendsPanel = () => {
   const [modalUserId, setModalUserId] = useState(null)
@@ -166,60 +169,6 @@ const FriendsPanel = () => {
   const isSent = id => sentRequests.some(user => user._id === id)
   const isReceived = id => receivedRequests.some(user => user._id === id)
 
-  const renderUserActions = user => {
-    const id = user._id
-
-    if (isFriend(id)) {
-      return (
-        <>
-          <span className='friends-panel__status'>✅ Friend</span>
-
-          <button
-            className='friends-panel__toggle-mutuals'
-            onClick={() => {
-              toggleMutualFriends(id)
-              setModalUserId(id)
-            }}
-          >
-            👥 View Mutual Friends
-          </button>
-        </>
-      )
-    }
-
-    if (isSent(id)) {
-      return <span className='friends-panel__status'>⏳ Pending</span>
-    }
-
-    if (isReceived(id)) {
-      return (
-        <>
-          <button
-            onClick={() => handleAcceptRequest(id)}
-            className='friends-panel__add-button'
-          >
-            ✅ Accept
-          </button>
-          <button
-            onClick={() => handleRejectRequest(id)}
-            className='friends-panel__add-button friends-panel__reject'
-          >
-            ❌ Reject
-          </button>
-        </>
-      )
-    }
-
-    return (
-      <button
-        className='friends-panel__add-button'
-        onClick={() => handleSendRequest(id)}
-      >
-        ➕ Add Friend
-      </button>
-    )
-  }
-
   return (
     <div className='profile__friends-panel'>
       <h3 className='friends-panel__heading'>Find and Add Friends</h3>
@@ -229,25 +178,18 @@ const FriendsPanel = () => {
       ) : (
         <ul className='friends-panel__list'>
           {users.map(user => (
-            <li key={user._id} className='friends-panel__item'>
-              <img
-                src={user.profilePic || null}
-                alt=''
-                className='friends-panel__avatar'
-                onError={e => {
-                  e.target.onerror = null
-                  e.target.src = '/default-avatar.png'
-                }}
-              />
-              <a
-                href={`/profile/${user._id}`}
-                className='friends-panel__username-link'
-              >
-                {user.username} 🔗
-              </a>
-
-              {renderUserActions(user)}
-            </li>
+            <FriendActions
+              key={user._id}
+              user={user}
+              isFriend={isFriend}
+              isSent={isSent}
+              isReceived={isReceived}
+              handleSendRequest={handleSendRequest}
+              handleAcceptRequest={handleAcceptRequest}
+              handleRejectRequest={handleRejectRequest}
+              toggleMutualFriends={toggleMutualFriends}
+              setModalUserId={setModalUserId}
+            />
           ))}
         </ul>
       )}
@@ -255,26 +197,11 @@ const FriendsPanel = () => {
       <h3 className='friends-panel__heading'>Your Friends</h3>
       <ul className='friends-panel__list'>
         {friends.map(friend => (
-          <li key={friend._id} className='friends-panel__item'>
-            <img
-              src={friend.profilePic}
-              alt=''
-              className='friends-panel__avatar'
-            />
-            <a
-              href={`/profile/${friend._id}`}
-              className='friends-panel__username-link'
-            >
-              {friend.username} 🔗
-            </a>
-
-            <button
-              className='friends-panel__add-button friends-panel__reject'
-              onClick={() => handleRemoveFriend(friend._id)}
-            >
-              ❌ Remove friend
-            </button>
-          </li>
+          <FriendCard
+            key={friend._id}
+            friend={friend}
+            handleRemoveFriend={handleRemoveFriend}
+          />
         ))}
       </ul>
       <MutualFriendsModal
