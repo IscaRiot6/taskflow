@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../styles/FriendsPanel.css'
+import MutualFriendsModal from '../components/MutualFriendsModal' // Adjust path if needed
 
 const FriendsPanel = () => {
   const [modalUserId, setModalUserId] = useState(null)
@@ -173,41 +174,15 @@ const FriendsPanel = () => {
         <>
           <span className='friends-panel__status'>✅ Friend</span>
 
-          {/* Mutual Friends Logic */}
-          <div className='friends-panel__mutual-wrapper'>
-            <button
-              className='friends-panel__toggle-mutuals'
-              onClick={() => toggleMutualFriends(id)}
-            >
-              {expandedMutuals[id]
-                ? 'Hide mutual friends'
-                : 'Show mutual friends'}
-            </button>
-
-            <span
-              className='friends-panel__mutual-count'
-              title={`You have ${
-                mutualFriendsMap[id]?.length || 0
-              } mutual friends`}
-            >
-              {mutualFriendsMap[id]?.length || 0} mutual friends
-            </span>
-
-            {expandedMutuals[id] && (
-              <ul className='friends-panel__mutuals-list'>
-                {mutualFriendsMap[id]?.map(mutual => (
-                  <li key={mutual._id} className='friends-panel__mutual-item'>
-                    <img
-                      src={mutual.profilePic || '/default-avatar.png'}
-                      alt={mutual.username}
-                      className='friends-panel__avatar--small'
-                    />
-                    <span>{mutual.username}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <button
+            className='friends-panel__toggle-mutuals'
+            onClick={() => {
+              toggleMutualFriends(id)
+              setModalUserId(id)
+            }}
+          >
+            👥 View Mutual Friends
+          </button>
         </>
       )
     }
@@ -290,6 +265,11 @@ const FriendsPanel = () => {
           </li>
         ))}
       </ul>
+      <MutualFriendsModal
+        open={!!modalUserId}
+        onClose={() => setModalUserId(null)}
+        mutuals={mutualFriendsMap[modalUserId] || []}
+      />
     </div>
   )
 }
