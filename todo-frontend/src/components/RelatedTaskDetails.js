@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import Modal from './Modal'
 import '../styles/RelatedTaskDetails.css'
 
 const RelatedTaskDetails = ({ tasks = [] }) => {
+  const [editingTask, setEditingTask] = useState(null)
+  const [editSuccess, setEditSuccess] = useState(false)
   const navigate = useNavigate()
   const { relatedId } = useParams() // ✅ Get the relatedId from URL
   const [task, setTask] = useState(null)
@@ -69,6 +72,44 @@ const RelatedTaskDetails = ({ tasks = [] }) => {
     )
   }
 
+  const handleEditModalOpen = () => {
+    setEditingTask(task) // Assuming 'task' holds the full individual task object
+  }
+
+  const handleEditModalClose = () => {
+    setEditingTask(null)
+  }
+
+  const handleUpdateTask = async updatedTaskData => {
+    try {
+      const token = localStorage.getItem('authToken')
+      if (!token) {
+        console.error('No auth token found!')
+        return
+      }
+
+      const response = await fetch(
+        `http://localhost:5000/api/related-tasks/${task.parentTaskId}/${task._id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(updatedTaskData)
+        }
+      )
+
+      const data = await response.json()
+      setTask(data.relatedTask) // Assuming you use setTask to update the view
+      setEditingTask(null) // Close modal
+      setEditSuccess(true)
+      setTimeout(() => setEditSuccess(false), 3000)
+    } catch (err) {
+      console.error('Failed to update task:', err)
+    }
+  }
+
   return (
     <div className='child-task-details-container'>
       <h1>{task.title}</h1>
@@ -103,16 +144,27 @@ const RelatedTaskDetails = ({ tasks = [] }) => {
         <strong>Score:</strong> {task.yourScore ?? 'N/A'}
       </p>
       <div className='child-task-buttons'>
-        <button
-        // className='task-btn edit' onClick={() => setIsModalOpen(true)}
-        >
+        <button className='task-btn edit' onClick={handleEditModalOpen}>
           Edit
         </button>
 
-        <button className='task-btn back-btn' onClick={() => navigate(`/home`)}>
+        <button
+          className='task-btn back-btn'
+          onClick={() => navigate(`/related-titles/${task.parentTaskId}`)}
+        >
           Back
         </button>
       </div>
+      {editingTask && (
+        <Modal
+          task={editingTask}
+          onClose={handleEditModalClose}
+          onSave={handleUpdateTask}
+        />
+      )}
+      {editSuccess && (
+        <div className='edit-success'>Task updated successfully!</div>
+      )}
     </div>
   )
 }

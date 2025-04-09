@@ -3,9 +3,6 @@ import { useState } from 'react'
 import '../styles/RelatedTaskItem.css'
 
 const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
-  // console.log('task object:', task)
-  // console.log('Navigating to task:', task._id)
-
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isFavorite, setIsFavorite] = useState(task.favorite || false) // Track favorite status
 

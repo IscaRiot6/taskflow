@@ -43,9 +43,8 @@ const taskSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Task',
       default: null
-    }, // ✅ New field
+    },
 
-    // The user reference
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User', // Reference to User model

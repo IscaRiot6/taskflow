@@ -114,7 +114,7 @@ router.put('/:taskId/:relatedId', async (req, res) => {
     const relatedTask = await Task.findOne({
       _id: relatedId,
       user: req.user.userId
-    })
+    }).populate('parentTaskId')
     if (!relatedTask)
       return res
         .status(404)

@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import RelatedTaskForm from './RelatedTaskForm'
 import RelatedTaskItem from './RelatedTaskItem'
 import Notification from './Notification'
+import Modal from './Modal'
 
 const RelatedTasks = ({ tasks = [] }) => {
   const [relatedTasks, setRelatedTasks] = useState([])
@@ -12,6 +13,7 @@ const RelatedTasks = ({ tasks = [] }) => {
   const [parentTitle, setParentTitle] = useState('Loading...')
   const [notification, setNotification] = useState(null) // Notification state
   const token = localStorage.getItem('authToken') // Get the token from localStorage
+  const [editingTask, setEditingTask] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -147,8 +149,16 @@ const RelatedTasks = ({ tasks = [] }) => {
     }
   }
 
+  const handleEditModalOpen = task => {
+    setEditingTask(task)
+  }
+
+  const handleEditModalClose = () => {
+    setEditingTask(null)
+  }
+
   // Handle task update (could be a modal or form to edit the title)
-  const handleUpdateTask = async (relatedTaskId, newTitle) => {
+  const handleUpdateTask = async (relatedTaskId, updatedData) => {
     try {
       const token = localStorage.getItem('authToken')
       if (!token) {
@@ -156,7 +166,6 @@ const RelatedTasks = ({ tasks = [] }) => {
         return
       }
 
-      const updatedTask = { title: newTitle }
       const response = await fetch(
         `http://localhost:5000/api/related-tasks/${taskId}/${relatedTaskId}`,
         {
@@ -165,7 +174,7 @@ const RelatedTasks = ({ tasks = [] }) => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}` // Moved inside headers
           },
-          body: JSON.stringify(updatedTask)
+          body: JSON.stringify(updatedData)
         }
       )
 
@@ -247,9 +256,8 @@ const RelatedTasks = ({ tasks = [] }) => {
               key={task._id}
               task={task}
               onDelete={handleDeleteTask}
-              onEdit={task =>
-                handleUpdateTask(task._id, prompt('New title:', task.title))
-              }
+              onEdit={handleEditModalOpen}
+
               // onFavorite={handleFavoriteTask} // Assuming this function exists in your component
             />
           ))
@@ -257,6 +265,15 @@ const RelatedTasks = ({ tasks = [] }) => {
           <p>No related tasks available</p>
         )}
       </ul>
+      {editingTask && (
+        <Modal
+          task={editingTask}
+          onClose={handleEditModalClose}
+          onSave={updatedTaskData =>
+            handleUpdateTask(editingTask._id, updatedTaskData)
+          }
+        />
+      )}
     </div>
   )
 }
