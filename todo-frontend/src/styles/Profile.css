@@ -101,29 +101,49 @@
   /* transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; */
 }
 
+.profile-form strong {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+
 /* Input fields */
 .profile-form input,
 .profile-form textarea {
   width: 100%;
-  padding: 8px;
+  padding: 0.6rem 0.8rem;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Checkbox container */
-.profile-form div {
-  display: flex;
+.profile-form input:focus,
+.profile-form textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+  outline: none;
+}
+
+/* CHECKBOX GROUP */
+.profile-form div:has(input[type="checkbox"]) {
+  flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 }
 
 /* Button styling */
+/* BUTTONS (Shared global styles, but can be isolated if needed) */
 button {
   background: #007bff;
   color: white;
   border: none;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 0.5rem;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
 }
 
 button:hover {
@@ -145,6 +165,24 @@ button:hover {
   font-size: 2rem;
     color: #333;
     transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+}
+
+.profile-container h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+/* SIMPLE ANIMATION FOR FORM REVEAL */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .profile-title:hover{

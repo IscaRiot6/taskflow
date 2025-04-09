@@ -93,7 +93,7 @@ const Profile = ({ profile, setProfile }) => {
       {showForm && (
         <div className='profile-form'>
           {/* Editable sections */}
-          <div>
+          <div className='form-section'>
             <strong>Username:</strong>
             <input
               type='text'
