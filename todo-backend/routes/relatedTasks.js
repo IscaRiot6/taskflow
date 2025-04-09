@@ -18,13 +18,25 @@ router.get('/:taskId', async (req, res) => {
       _id: taskId,
       user: req.user.userId
     }).populate('relatedTasks')
+
     if (!task)
       return res.status(404).json({ error: 'Task not found or unauthorized' })
 
-    // Send both the parent task's title and the related tasks
+    const user = await User.findById(req.user.userId)
+
+    // Convert favoriteTasks to string IDs for easier comparison
+    const favoriteTaskIds = user.favoriteTasks.map(id => id.toString())
+
+    // Map over relatedTasks and add `isFavorite` flag
+    const relatedTasksWithFavorites = task.relatedTasks.map(related => {
+      const taskObj = related.toObject()
+      taskObj.isFavorite = favoriteTaskIds.includes(related._id.toString())
+      return taskObj
+    })
+
     res.json({
-      parentTitle: task.title, // Return the parent task title
-      relatedTasks: task.relatedTasks // Return the populated related tasks
+      parentTitle: task.title,
+      relatedTasks: relatedTasksWithFavorites
     })
   } catch (error) {
     console.error('Error fetching related tasks:', error)

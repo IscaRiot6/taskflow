@@ -1,5 +1,4 @@
 import User from '../models/userModel.js'
-
 import express from 'express'
 const router = express.Router()
 import authMiddleware from '../middleware/authMiddleware.js'
@@ -54,7 +53,7 @@ router.delete('/:taskId/favorite', authMiddleware, async (req, res) => {
     if (!task) return res.status(404).json({ error: 'Task not found' })
 
     // Remove task ID from the user's favoriteTasks array
-    const user = await User.findById(req.user.userId)
+    const user = await User.findById(req.user.userId).populate('favoriteTasks')
     if (!user) return res.status(404).json({ error: 'User not found' })
 
     user.favoriteTasks = user.favoriteTasks.filter(id => !id.equals(task._id))

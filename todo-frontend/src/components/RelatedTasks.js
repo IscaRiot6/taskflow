@@ -321,6 +321,7 @@ const RelatedTasks = ({ tasks = [] }) => {
               task={task}
               onDelete={handleDeleteTask}
               onEdit={handleEditModalOpen}
+              isFavorite={task.isFavorite} // ← coming from backend
               onFavorite={handleFavoriteTask} // Assuming this function exists in your component
             />
           ))

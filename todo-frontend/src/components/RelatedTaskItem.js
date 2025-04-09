@@ -1,12 +1,16 @@
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import '../styles/RelatedTaskItem.css'
 
 const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [isFavorite, setIsFavorite] = useState(task.favorite || false) // Track favorite status
+  const [isFavorite, setIsFavorite] = useState(task.isFavorite || false) // Track favorite status
 
   const images = [task.image, task.image2].filter(img => img) // Only valid images
+
+  useEffect(() => {
+    setIsFavorite(task.isFavorite || false)
+  }, [task.isFavorite])
 
   const nextImage = () => {
     setCurrentImageIndex(prev => (prev + 1) % images.length)
@@ -33,7 +37,10 @@ const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
             to={`/related-task-details/${task._id}`}
             className='related-task-link'
           >
-            <h3>{task.title}</h3>
+            <h3>
+              {isFavorite ? '⭐ ' : ''}
+              {task.title}
+            </h3>
           </Link>
 
           <p>Genres: {task.genres?.join(', ')}</p>
