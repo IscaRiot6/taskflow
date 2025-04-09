@@ -4,9 +4,10 @@ import '../styles/RelatedTaskItem.css'
 
 const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [isFavorite, setIsFavorite] = useState(task.isFavorite || false) // Track favorite status
-
+  const [isFavorite, setIsFavorite] = useState(task.isFavorite || false)
+  const [loading, setLoading] = useState(false)
   const images = [task.image, task.image2].filter(img => img) // Only valid images
+  const [showFavoriteStatus, setShowFavoriteStatus] = useState(false)
 
   useEffect(() => {
     setIsFavorite(task.isFavorite || false)
@@ -21,11 +22,18 @@ const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
   }
 
   // Handle the "Add to Favorites" or "Remove from Favorites" functionality
-  const handleFavoriteClick = () => {
-    if (onFavorite) {
+  const handleFavoriteClick = async () => {
+    if (onFavorite && !loading) {
+      setLoading(true)
       const nextState = !isFavorite
-      onFavorite(task, nextState)
-      setIsFavorite(nextState) // Keep this last to reflect actual change
+      await onFavorite(task, nextState)
+      setIsFavorite(nextState)
+
+      // Show feedback label
+      setShowFavoriteStatus(true)
+      setTimeout(() => setShowFavoriteStatus(false), 2000)
+
+      setLoading(false)
     }
   }
 
@@ -38,7 +46,10 @@ const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
             className='related-task-link'
           >
             <h3>
-              {isFavorite ? '⭐ ' : ''}
+              <span className={`favorite-star ${isFavorite ? 'visible' : ''}`}>
+                ⭐
+              </span>
+              {/* {isFavorite ? '⭐ ' : ''} */}
               {task.title}
             </h3>
           </Link>
@@ -94,11 +105,26 @@ const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
 
           {/* Favorite button */}
           <button
-            className='related-task-btn favorite'
+            className='related-task-btn star-toggle'
             onClick={handleFavoriteClick}
+            disabled={loading}
+            title={isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
           >
-            {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+            {loading ? (
+              <span className='spinner'></span>
+            ) : (
+              <span className={`star-icon ${isFavorite ? 'filled' : ''}`}>
+                {isFavorite ? '⭐' : '☆'}
+              </span>
+            )}
           </button>
+          {showFavoriteStatus && (
+            <div
+              className={`favorite-status ${isFavorite ? 'added' : 'removed'}`}
+            >
+              {isFavorite ? 'Added to Favorites' : 'Removed from Favorites'}
+            </div>
+          )}
         </div>
       </li>
     </div>

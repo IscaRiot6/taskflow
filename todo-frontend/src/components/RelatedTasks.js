@@ -258,36 +258,6 @@ const RelatedTasks = ({ tasks = [] }) => {
     }
   }
 
-  // const handleRemoveFromFavorites = async relatedTask => {
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:5000/api/related-tasks/${taskId}/${relatedTask._id}/favorite`,
-  //       {
-  //         method: 'DELETE',
-  //         headers: {
-  //           Authorization: `Bearer ${token}`
-  //         }
-  //       }
-  //     )
-
-  //     if (response.ok) {
-  //       setRelatedTasks(prevTasks =>
-  //         prevTasks.filter(t => t._id !== relatedTask._id)
-  //       )
-  //       showNotification('Related task removed from favorites', 'success')
-  //     } else {
-  //       console.error('Failed to remove related task from favorites')
-  //       showNotification(
-  //         'Failed to remove related task from favorites',
-  //         'error'
-  //       )
-  //     }
-  //   } catch (error) {
-  //     console.error('Error removing related task from favorites:', error)
-  //     showNotification('Error removing related task from favorites', 'error')
-  //   }
-  // }
-
   return (
     <div className='related-tasks-container'>
       {notification && (
