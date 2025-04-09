@@ -108,7 +108,7 @@ transform: scale(1.03);
 
 
 .related-task-btn {
-  background-color: #007bff;
+  background-color: #d0ff00;
   color: #ffffff;
   padding: 8px 16px;
   border: none;
@@ -135,7 +135,7 @@ transform: scale(1.03);
 
 .related-task-btn.favorite {
   background-color: #ffc107; /* warm gold/yellow */
-  color: #333;
+  color: #000000;
   border: 1px solid #000000; /* ✅ This restores the border */
   transition: background-color 0.2s ease;
 }
