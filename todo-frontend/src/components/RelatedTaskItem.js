@@ -18,9 +18,10 @@ const RelatedTaskItem = ({ task, onDelete, onEdit, onFavorite }) => {
 
   // Handle the "Add to Favorites" or "Remove from Favorites" functionality
   const handleFavoriteClick = () => {
-    setIsFavorite(prev => !prev) // Toggle the favorite status locally
     if (onFavorite) {
-      onFavorite(task, !isFavorite) // Pass the updated favorite status
+      const nextState = !isFavorite
+      onFavorite(task, nextState)
+      setIsFavorite(nextState) // Keep this last to reflect actual change
     }
   }
 

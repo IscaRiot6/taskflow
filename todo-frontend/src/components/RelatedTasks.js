@@ -219,10 +219,74 @@ const RelatedTasks = ({ tasks = [] }) => {
     }
   }
 
-  // Log relatedTasks state on each render
-  console.log('Related tasks state:', relatedTasks)
+  const handleFavoriteTask = async (task, isNowFavorite) => {
+    try {
+      const method = isNowFavorite ? 'PUT' : 'DELETE'
+      const token = localStorage.getItem('authToken')
 
-  // return statement
+      const response = await fetch(
+        `http://localhost:5000/api/tasks/${task._id}/favorite`,
+        {
+          method,
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok)
+        throw new Error(data.message || 'Favorite toggle failed')
+
+      // Update the task in local state
+      setRelatedTasks(prev =>
+        prev.map(t =>
+          t._id === task._id ? { ...t, favorite: isNowFavorite } : t
+        )
+      )
+
+      showNotification(
+        isNowFavorite
+          ? 'Task added to favorites!'
+          : 'Task removed from favorites!',
+        'success'
+      )
+    } catch (error) {
+      console.error('Error toggling favorite:', error)
+      showNotification('Favorite toggle failed', 'error')
+    }
+  }
+
+  // const handleRemoveFromFavorites = async relatedTask => {
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:5000/api/related-tasks/${taskId}/${relatedTask._id}/favorite`,
+  //       {
+  //         method: 'DELETE',
+  //         headers: {
+  //           Authorization: `Bearer ${token}`
+  //         }
+  //       }
+  //     )
+
+  //     if (response.ok) {
+  //       setRelatedTasks(prevTasks =>
+  //         prevTasks.filter(t => t._id !== relatedTask._id)
+  //       )
+  //       showNotification('Related task removed from favorites', 'success')
+  //     } else {
+  //       console.error('Failed to remove related task from favorites')
+  //       showNotification(
+  //         'Failed to remove related task from favorites',
+  //         'error'
+  //       )
+  //     }
+  //   } catch (error) {
+  //     console.error('Error removing related task from favorites:', error)
+  //     showNotification('Error removing related task from favorites', 'error')
+  //   }
+  // }
 
   return (
     <div className='related-tasks-container'>
@@ -257,8 +321,7 @@ const RelatedTasks = ({ tasks = [] }) => {
               task={task}
               onDelete={handleDeleteTask}
               onEdit={handleEditModalOpen}
-
-              // onFavorite={handleFavoriteTask} // Assuming this function exists in your component
+              onFavorite={handleFavoriteTask} // Assuming this function exists in your component
             />
           ))
         ) : (
