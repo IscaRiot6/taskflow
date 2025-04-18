@@ -1,11 +1,27 @@
 import '../styles/TaskItem.css'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
 
 const TaskItem = ({ task, onDelete, onEdit, onFavorite, isFavoritesPage }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isFavorite, setIsFavorite] = useState(task.isFavorite || false)
   const [loading, setLoading] = useState(false)
+  const [favoriteAction, setFavoriteAction] = useState(null) // 'added' or 'removed'
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true)
+  }
+
+  const confirmDelete = () => {
+    onDelete(task._id)
+    setShowDeleteModal(false)
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false)
+  }
 
   const images = [task.image, task.image2].filter(img => img)
 
@@ -30,7 +46,10 @@ const TaskItem = ({ task, onDelete, onEdit, onFavorite, isFavoritesPage }) => {
     setLoading(true)
     await onFavorite(task, nextState)
     setIsFavorite(nextState)
+    setFavoriteAction(nextState ? 'added' : 'removed')
 
+    // Show notification temporarily
+    setTimeout(() => setFavoriteAction(null), 2000)
     setLoading(false)
   }
 
@@ -86,10 +105,18 @@ const TaskItem = ({ task, onDelete, onEdit, onFavorite, isFavoritesPage }) => {
         {!isFavoritesPage && (
           <button
             className='task-btn delete'
-            onClick={() => onDelete(task)} // ← just ask the parent to show the modal
+            onClick={() => onDelete(task._id)}
           >
             Delete
           </button>
+        )}
+
+        {showDeleteModal && (
+          <ConfirmDeleteModal
+            message={`Are you sure you want to delete "${task.title}"?`}
+            onConfirm={confirmDelete}
+            onCancel={cancelDelete}
+          />
         )}
 
         <button
@@ -107,6 +134,14 @@ const TaskItem = ({ task, onDelete, onEdit, onFavorite, isFavoritesPage }) => {
             'Add to Favorites'
           )}
         </button>
+
+        {favoriteAction && (
+          <div className={`favorite-status ${favoriteAction}`}>
+            {favoriteAction === 'added'
+              ? 'Added to Favorites'
+              : 'Removed from Favorites'}
+          </div>
+        )}
       </div>
     </li>
   )

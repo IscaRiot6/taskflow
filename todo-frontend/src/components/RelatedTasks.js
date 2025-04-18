@@ -184,8 +184,10 @@ const RelatedTasks = ({ tasks = [] }) => {
           task._id === relatedTaskId ? data.relatedTask : task
         )
       )
+      showNotification('Task updated successfully!', 'success')
     } catch (error) {
       console.error('Error updating related task:', error)
+      showNotification('Failed to update task.', 'error')
     }
   }
 

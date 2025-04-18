@@ -18,12 +18,6 @@ const Home = ({ tasks, setTasks }) => {
   const [notification, setNotification] = useState(null) // Notification state
   const tasksPerPage = 18
   const [deleteCandidate, setDeleteCandidate] = useState(null)
-  const [deleting, setDeleting] = useState(false)
-
-  // this tells Home “please show me the delete‑confirmation for that one task”
-  const requestDeleteTask = task => {
-    setDeleteCandidate(task)
-  }
 
   useEffect(() => {
     setFilteredTasks(tasks)
@@ -126,42 +120,48 @@ const Home = ({ tasks, setTasks }) => {
     }
   }
 
-  const handleReallyDelete = async id => {
-    setDeleting(true)
+  const handleDeleteTask = async id => {
     try {
+      // Step 1: Get the auth token
       const token = localStorage.getItem('authToken')
-      if (!token) throw new Error('No auth token found')
+      if (!token) {
+        throw new Error('No auth token found')
+      }
 
+      // Step 2: Log the token and task ID for debugging
       console.log('🔑 Auth Token:', token)
       console.log('🛑 Task ID being sent:', id)
 
+      // Step 3: Send the DELETE request to the backend
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/tasks/${id}`,
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}` // Send token here
           }
         }
       )
 
+      // Step 4: If response is not ok, log error and show notification
       if (!response.ok) {
         const errorData = await response.json()
         console.error('Error deleting task:', errorData)
         throw new Error(errorData.error || 'Failed to delete task')
       }
 
-      // remove from state
-      setTasks(prev => prev.filter(task => task._id !== id))
-      console.log('🧼 Task removed locally:', id)
+      // Step 5: Update the local state to remove the deleted task
+      console.log('📋 Tasks before deletion:', tasks)
 
+      setTasks(prev => prev.filter(task => task._id !== id))
+      console.log('🧼 Filtering out task with ID:', id)
+
+      // Step 6: Show success notification
       showNotification('Task deleted successfully!', 'success')
     } catch (error) {
+      // Step 7: Catch and log the error, and show notification
       console.error('Error deleting task:', error)
       showNotification('Failed to delete task.', 'error')
-    } finally {
-      setDeleting(false)
-      setDeleteCandidate(null)
     }
   }
 
@@ -204,6 +204,83 @@ const Home = ({ tasks, setTasks }) => {
     }
   }
 
+  // const handleAddToFavorites = async (task, nextState) => {
+  // DEUTERO
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:5000/api/tasks/${task._id}/favorite`,
+  //       {
+  //         method: 'PUT',
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+  //           'Content-Type': 'application/json'
+  //         },
+  //         body: JSON.stringify({ taskId: task._id })
+  //       }
+  //     )
+
+  //     if (response.ok) {
+  //       // Toggle state in parent too
+  //       setTasks(prevTasks =>
+  //         prevTasks.map(t =>
+  //           t._id === task._id ? { ...t, isFavorite: nextState } : t
+  //         )
+  //       )
+
+  //       showNotification(
+  //         nextState
+  //           ? 'Task has been added to your favorites.'
+  //           : 'Task has been removed from your favorites.',
+  //         'success'
+  //       )
+  //     } else {
+  //       showNotification('Failed to update favorite status.', 'error')
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating favorite status:', error)
+  //     showNotification('Error updating favorite status.', 'error')
+  //   }
+  // }
+
+  // // Add to favorites function
+  // ORIGINAL 1
+  // const handleAddToFavorites = async task => {
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:5000/api/tasks/${task._id}/favorite`,
+  //       {
+  //         method: 'PUT',
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+  //           'Content-Type': 'application/json'
+  //         },
+  //         body: JSON.stringify({ taskId: task._id })
+  //       }
+  //     )
+
+  //     if (response.ok) {
+  //       // Toggle the task's favorite status locally
+  //       setTasks(prevTasks =>
+  //         prevTasks.map(t =>
+  //           // t._id === task._id ? { ...t, favorite: !t.favorite } : t
+  //           t._id === task._id ? { ...t, isFavorite: !t.isFavorite } : t
+  //         )
+  //       )
+  //       console.log('Task favorite status updated')
+  //       // Show success notification
+  //       showNotification('Task has been added to your favorites.', 'success')
+  //     } else {
+  //       console.error('Failed to update favorite status')
+  //       // Show error notification
+  //       showNotification('Failed to add task to favorites.', 'error')
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating favorite status:', error)
+  //     // Show error notification
+  //     showNotification('Error adding task to favorites.', 'error')
+  //   }
+  // }
+
   const openEditModal = task => {
     setEditingTask(task)
     setIsModalOpen(true)
@@ -240,20 +317,10 @@ const Home = ({ tasks, setTasks }) => {
 
         <TaskList
           tasks={paginatedTasks}
-          onDeleteRequest={requestDeleteTask}
+          onDelete={handleDeleteTask}
           onEdit={openEditModal}
           onFavorite={handleAddToFavorites} // Pass onFavorite function here
         />
-
-        {/* only one global modal in Home */}
-        {deleteCandidate && (
-          <ConfirmDeleteModal
-            message={`Are you sure you want to delete “${deleteCandidate.title}”?`}
-            onConfirm={() => handleReallyDelete(deleteCandidate._id)}
-            onCancel={() => setDeleteCandidate(null)}
-            isDeleting={deleting}
-          />
-        )}
 
         <Pagination
           tasks={filteredTasks}

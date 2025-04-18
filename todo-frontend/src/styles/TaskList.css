@@ -18,7 +18,7 @@
     transition: transform 0.2s ease-in-out;
     max-width: 100%;
     max-width: 300px;
-    margin: 0 auto;
+    /* margin: 0 auto; Removed this line AITIA KAKOY STOIXISHS*/  
   }
   
   .task-item:hover {

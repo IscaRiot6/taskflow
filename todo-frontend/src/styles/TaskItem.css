@@ -91,6 +91,33 @@ width: 100%;
   right: 10px;
 }
 
+.forbidden-emoji {
+  font-size: 20px;
+  /* animation: shake 0.5s ease-in-out; */
+  animation: shake 0.3s infinite;
+  display: inline-block;
+}
+
+@keyframes shake {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(-10deg); }
+  40% { transform: rotate(10deg); }
+  60% { transform: rotate(-10deg); }
+  80% { transform: rotate(10deg); }
+  100% { transform: rotate(0deg); }
+}
+
+
+/* Optional: Shake animation */
+/* @keyframes shake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+  75% { transform: rotate(-10deg); }
+  100% { transform: rotate(0deg); }
+} */
+
+
 
 
 

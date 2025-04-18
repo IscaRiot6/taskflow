@@ -9,7 +9,7 @@ const Favorites = ({ favoriteTasks, onFavorite, isFavoritesPage }) => {
           favoriteTasks.map(task => (
             <TaskItem
               key={task._id}
-              task={task}
+              task={{ ...task, isFavorite: true }} // ✅ override just in case
               onFavorite={onFavorite}
               isFavoritesPage={isFavoritesPage} // Pass this prop
             />

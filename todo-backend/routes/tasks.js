@@ -7,20 +7,44 @@ import User from '../models/userModel.js'
 // Apply authMiddleware to protect all routes below
 router.use(authMiddleware)
 
+// router.get('/', authMiddleware, async (req, res) => {
+//   try {
+//     const tasks = await Task.find({
+//       user: req.user.userId,
+//       parentTaskId: { $in: [null, undefined] }
+//       // parentTaskId: { $exists: false } // Only parent tasks (no related tasks)
+//     }).populate('relatedTasks') // Populate the related tasks
+
+//     console.log('✅ Authenticated user ID:', req.user.userId)
+
+//     res.json(tasks)
+//   } catch (error) {
+//     console.error('Error fetching tasks:', error)
+//     res.status(500).json({ error: 'Failed to fetch tasks' })
+//   }
+// })
+
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const tasks = await Task.find({
       user: req.user.userId,
-      parentTaskId: { $in: [null, undefined] }
-      // parentTaskId: { $exists: false } // Only parent tasks (no related tasks)
-    }).populate('relatedTasks') // Populate the related tasks
+      parentTaskId: { $in: [null, undefined] } // Parent tasks only
+    }).populate('relatedTasks')
 
-    console.log('✅ Authenticated user ID:', req.user.userId)
+    const user = await User.findById(req.user.userId)
+    const favoriteTaskIds = user.favoriteTasks.map(id => id.toString())
 
-    res.json(tasks)
+    // Add isFavorite to each task
+    const tasksWithFavorites = tasks.map(task => {
+      const taskObj = task.toObject()
+      taskObj.isFavorite = favoriteTaskIds.includes(task._id.toString())
+      return taskObj
+    })
+
+    res.json(tasksWithFavorites)
   } catch (error) {
-    console.error('Error fetching tasks:', error)
-    res.status(500).json({ error: 'Failed to fetch tasks' })
+    console.error('Error fetching parent tasks:', error)
+    res.status(500).json({ error: 'Failed to fetch parent tasks' })
   }
 })
 
@@ -241,86 +265,5 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete task' })
   }
 })
-
-// // ✅ Add a task to favorites
-// router.put('/:taskId/favorite', authMiddleware, async (req, res) => {
-//   try {
-//     const task = await Task.findById(req.params.taskId)
-
-//     if (!task) {
-//       console.error('Task not found:', taskId) // Log taskId
-//       return res.status(404).json({ message: 'Task not found' })
-//     }
-
-//     // Add task ID to the users favoriteTasks array if it's not already there
-//     const user = await User.findById(req.user.userId)
-//     if (!user) return res.status(404).json({ error: 'User not found' })
-
-//     if (!user.favoriteTasks.includes(task._id)) {
-//       user.favoriteTasks.push(task._id)
-//       await user.save()
-
-//       // ✅ Log action
-//       user.history.push({
-//         action: 'Added to Favorites',
-//         taskId: task._id, // Correct reference
-//         taskTitle: task.title, // ✅ Include title
-//         timestamp: new Date()
-//       })
-//       await user.save()
-//     }
-
-//     res.json({ message: 'Task added to favorites' })
-//   } catch (error) {
-//     console.error('Error in marking task as favorite:', error) // Log error
-
-//     res.status(500).json({ error: 'Error adding task to favorites' })
-//   }
-// })
-
-// // ✅ Remove a task from favorites
-// router.delete('/:taskId/favorite', authMiddleware, async (req, res) => {
-//   try {
-//     console.log('Attempting to delete task with ID:', req.params.taskId)
-//     const task = await Task.findById(req.params.taskId)
-//     console.log('Task found:', task)
-
-//     if (!task) return res.status(404).json({ error: 'Task not found' })
-
-//     // Remove task ID from the user's favoriteTasks array
-//     const user = await User.findById(req.user.userId)
-//     if (!user) return res.status(404).json({ error: 'User not found' })
-
-//     user.favoriteTasks = user.favoriteTasks.filter(id => !id.equals(task._id))
-//     await user.save()
-
-//     // ✅ Log action
-//     user.history.push({
-//       action: 'Removed from Favorites',
-//       taskId: task._id, // ✅ Correct reference
-//       taskTitle: task.title, // ✅ Include title
-//       timestamp: new Date()
-//     })
-//     await user.save()
-//     console.log('Favorite Tasks:', user.favoriteTasks)
-//     console.log('Task ID:', task._id)
-
-//     res.json({ message: 'Task removed from favorites' })
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error removing task from favorites' })
-//   }
-// })
-
-// // Fetch user's favorite tasks
-// router.get('/favorites', authMiddleware, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user.userId).populate('favoriteTasks')
-//     if (!user) return res.status(404).json({ error: 'User not found' })
-
-//     res.json(user.favoriteTasks) // Return the user's favorite tasks
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error fetching favorite tasks' })
-//   }
-// })
 
 export default router
