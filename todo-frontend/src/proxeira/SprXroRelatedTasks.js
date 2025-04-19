@@ -16,8 +16,6 @@ const RelatedTasks = ({ tasks = [] }) => {
   const token = localStorage.getItem('authToken') // Get the token from localStorage
   const [editingTask, setEditingTask] = useState(null)
   const navigate = useNavigate()
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [taskToDelete, setTaskToDelete] = useState(null)
 
   useEffect(() => {
     let allTasks = tasks || []
@@ -194,42 +192,33 @@ const RelatedTasks = ({ tasks = [] }) => {
     }
   }
 
-  const handleDeleteClick = taskId => {
-    setTaskToDelete(taskId)
-    setShowDeleteModal(true)
-  }
-
   // Handle task deletion
-  const handleDeleteTask = async () => {
+  const handleDeleteTask = async relatedTaskId => {
     try {
       const token = localStorage.getItem('authToken')
       console.log(
-        `Deleting related task ${taskToDelete} for parent task ${taskId}`
+        `Deleting related task ${relatedTaskId} for parent task ${taskId}`
       )
+      console.log('Stored token:', token)
 
       const response = await fetch(
-        `http://localhost:5000/api/related-tasks/${taskId}/${taskToDelete}`,
+        `http://localhost:5000/api/related-tasks/${taskId}/${relatedTaskId}`,
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}` // Add token here
           }
         }
       )
-
       if (response.ok) {
-        setRelatedTasks(prev => prev.filter(task => task._id !== taskToDelete))
-        showNotification('Task deleted successfully!', 'success')
+        setRelatedTasks(relatedTasks.filter(task => task._id !== relatedTaskId))
       } else {
         console.error('Failed to delete related task')
-        showNotification('Failed to delete task.', 'error')
       }
+      showNotification('Task deleted successfully!', 'success')
     } catch (error) {
       console.error('Error deleting related task:', error)
       showNotification('Failed to delete task.', 'error')
-    } finally {
-      setShowDeleteModal(false)
-      setTaskToDelete(null)
     }
   }
 
@@ -303,7 +292,7 @@ const RelatedTasks = ({ tasks = [] }) => {
             <RelatedTaskItem
               key={task._id}
               task={task}
-              onDelete={handleDeleteClick}
+              onDelete={handleDeleteTask}
               onEdit={handleEditModalOpen}
               isFavorite={task.isFavorite} // ← coming from backend
               onFavorite={handleFavoriteTask} // Assuming this function exists in your component
@@ -320,17 +309,6 @@ const RelatedTasks = ({ tasks = [] }) => {
           onSave={updatedTaskData =>
             handleUpdateTask(editingTask._id, updatedTaskData)
           }
-        />
-      )}
-
-      {showDeleteModal && (
-        <ConfirmDeleteModal
-          message='Are you sure you want to delete this related task?'
-          onConfirm={handleDeleteTask}
-          onCancel={() => {
-            setShowDeleteModal(false)
-            setTaskToDelete(null)
-          }}
         />
       )}
     </div>

@@ -90,14 +90,6 @@ router.post('/:taskId', async (req, res) => {
     user.tasks.push(savedTask._id)
 
     // Add history entry for the new task
-    user.history.push({
-      action: 'Created Related Task',
-      taskId: savedTask._id,
-      taskTitle: savedTask.title,
-      parentTaskId: taskId, // optional
-      type: 'related', // optional
-      timestamp: new Date()
-    })
 
     await user.save()
 
@@ -154,21 +146,6 @@ router.put('/:taskId/:relatedId', async (req, res) => {
 
     const updatedTask = await relatedTask.save()
 
-    // ✅ Push to user history
-    const user = await User.findById(req.user.userId)
-    user.history.push({
-      action: 'Updated Related Task',
-      taskId: updatedTask._id,
-      taskTitle: updatedTask.title,
-      parentTask: {
-        id: task._id,
-        title: task.title
-      },
-      type: 'related',
-      timestamp: new Date()
-    })
-    await user.save()
-
     res.status(200).json({
       message: 'Related task updated successfully',
       relatedTask: updatedTask
@@ -188,13 +165,13 @@ router.delete('/:taskId/:relatedId', async (req, res) => {
     if (!task)
       return res.status(404).json({ error: 'Task not found or unauthorized' })
 
-    // ✅ Remove reference
+    // ✅ Remove the related task reference
     task.relatedTasks = task.relatedTasks.filter(
       id => id.toString() !== relatedId
     )
     await task.save()
 
-    // ✅ Delete the related task itself
+    // ✅ Delete the related task itself (ONLY for this user)
     const deletedTask = await Task.findOneAndDelete({
       _id: relatedId,
       user: req.user.userId
@@ -202,21 +179,7 @@ router.delete('/:taskId/:relatedId', async (req, res) => {
     if (!deletedTask)
       return res.status(404).json({ error: 'Related task not found' })
 
-    // ✅ Remove from user's tasks
-    const user = await User.findById(req.user.userId)
-    user.history.push({
-      action: 'Deleted Related Task',
-      taskId: deletedTask._id,
-      taskTitle: deletedTask.title,
-      parentTask: {
-        id: task._id,
-        title: task.title
-      },
-      type: 'related',
-      timestamp: new Date()
-    })
-    await user.save()
-
+    // ✅ Remove from user's tasks array
     await User.findByIdAndUpdate(req.user.userId, {
       $pull: { tasks: relatedId }
     })

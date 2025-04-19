@@ -43,6 +43,52 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.modal-confirm:focus,
+.modal-cancel:focus,
+.modal-close:focus {
+  outline: 3px solid rgba(41, 128, 185, 0.5); /* blue-ish focus ring */
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.modal-content {
+  position: relative; /* Needed for absolute close button */
+  font-family: 'Poppins', 'Inter', sans-serif; /* Modern font */
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.modal-confirm:hover,
+.modal-cancel:hover {
+  background-color: darken(#e74c3c, 10%);
+  transform: scale(1.04);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.modal-confirm:focus,
+.modal-cancel:focus {
+  transform: scale(1.02);
+}
+
+
+.modal-close:hover,
+.modal-close:focus {
+  color: #333;
+  outline: none;
+}
+
+
 .modal-confirm {
   background-color: #e74c3c;
   color: #fff;

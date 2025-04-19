@@ -115,11 +115,24 @@ const ProfileInfo = ({ profile }) => {
             {historyLog.length > 0 ? (
               <ul>
                 {historyLog.map((entry, index) => (
+                  // <li key={entry._id || index}>
+                  //   <strong>{entry.action}</strong>{' '}
+                  //   {entry.taskTitle
+                  //     ? `(${entry.taskTitle})`
+                  //     : `(Task ID: ${entry.taskId})`}{' '}
+                  //   - {new Date(entry.timestamp).toLocaleString()}
+                  // </li>
                   <li key={entry._id || index}>
                     <strong>{entry.action}</strong>{' '}
                     {entry.taskTitle
                       ? `(${entry.taskTitle})`
-                      : `(Task ID: ${entry.taskId})`}{' '}
+                      : `(Task ID: ${entry.taskId})`}
+                    {entry.parentTaskId && (
+                      <span className='related-info'>
+                        {' '}
+                        → Related to task ID: {entry.parentTaskId}
+                      </span>
+                    )}{' '}
                     - {new Date(entry.timestamp).toLocaleString()}
                   </li>
                 ))}
