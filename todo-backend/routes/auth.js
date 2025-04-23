@@ -72,7 +72,7 @@ router.post('/login', async (req, res) => {
       expiresIn: '7d'
     })
     console.log('🔑 Token Generated:', token) // Log token
-    res.status(200).json({ token, username: user.username })
+    res.status(200).json({ token, user })
   } catch (error) {
     console.error('Error in login route:', error)
     res.status(500).json({ message: 'Server error' })

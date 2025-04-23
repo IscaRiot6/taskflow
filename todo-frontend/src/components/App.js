@@ -18,7 +18,6 @@ import ThemeToggle from './ThemeToggle'
 import '../styles/App.css'
 import { useCallback } from 'react'
 import PrivateRoute from './PrivateRoute'
-// import { ThemeProvider } from './context/ThemeContext'
 
 function App () {
   const [user, setUser] = useState(null)
@@ -33,20 +32,34 @@ function App () {
 
   // Check if the user is already logged in on initial load (from localStorage)
   useEffect(() => {
-    // console.log('Tasks before passing to RelatedTaskDetails:', tasks)
-
     const token = localStorage.getItem('authToken')
+    const userRaw = localStorage.getItem('user')
+
+    // console.log('🔐 token:', token)
+    // console.log('👤 user raw:', userRaw)
+
+    try {
+      const parsedUser = JSON.parse(userRaw)
+      if (parsedUser && parsedUser._id) {
+        setUser(parsedUser)
+      } else {
+        throw new Error('Invalid user object')
+      }
+    } catch (err) {
+      console.warn('⚠️ Could not parse user:', err)
+      localStorage.removeItem('user')
+    }
+
     if (token) {
       setIsLoggedIn(true)
-      // Optionally, set user info here (e.g., setUser(tokenUsername))
     } else {
-      setTasks([]) // Clear tasks if no token is found
+      setTasks([])
     }
   }, [])
 
-  const handleLogin = username => {
+  const handleLogin = user => {
     setIsLoggedIn(true)
-    setUser(username) // Optionally store the username or other user data
+    setUser(user) // instead of just username
   }
 
   const handleLogout = () => {

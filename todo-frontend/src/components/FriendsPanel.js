@@ -3,6 +3,8 @@ import '../styles/FriendsPanel.css'
 import MutualFriendsModal from '../components/MutualFriendsModal'
 import FriendActions from './FriendActions'
 import FriendCard from './FriendCard'
+import ChatModal from './Chat/ChatModal'
+import { useNavigate } from 'react-router-dom'
 
 const FriendsPanel = () => {
   const [modalUserId, setModalUserId] = useState(null)
@@ -11,6 +13,56 @@ const FriendsPanel = () => {
   const [sentRequests, setSentRequests] = useState([])
   const [receivedRequests, setReceivedRequests] = useState([])
   const [loading, setLoading] = useState(true)
+  const [selectedFriend, setSelectedFriend] = useState(null) //GIA PAME PAPA
+  const [showChatModal, setShowChatModal] = useState(false) //GIA PAME
+  const [currentUser, setCurrentUser] = useState(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem('user')
+      if (!storedUser) {
+        console.warn('User not found in localStorage → redirecting')
+        navigate('/login')
+        return
+      }
+
+      const parsedUser = JSON.parse(storedUser)
+      if (!parsedUser || !parsedUser._id) {
+        throw new Error('Invalid user object in localStorage')
+      }
+
+      setCurrentUser(parsedUser)
+    } catch (err) {
+      console.error('❌ Failed to load user from localStorage:', err)
+      localStorage.removeItem('user')
+      navigate('/login')
+    }
+  }, [])
+
+  useEffect(() => {
+    console.log('🔁 currentUser loaded:', currentUser)
+  }, [currentUser])
+
+  const handleOpenChat = friend => {
+    if (!currentUser) {
+      console.warn("⛔ Can't open chat before user is loaded")
+      return
+    }
+    setSelectedFriend(friend)
+  }
+
+  useEffect(() => {
+    if (selectedFriend && currentUser) {
+      setShowChatModal(true)
+    }
+  }, [selectedFriend, currentUser])
+
+  const handleCloseChat = () => {
+    setShowChatModal(false)
+    setSelectedFriend(null)
+  }
+  console.log('🧠 Opening chat modal for:', currentUser, selectedFriend)
 
   const token = localStorage.getItem('authToken')
 
@@ -126,6 +178,11 @@ const FriendsPanel = () => {
   const isSent = id => sentRequests.some(user => user._id === id)
   const isReceived = id => receivedRequests.some(user => user._id === id)
 
+  if (!currentUser) {
+    console.log('🕒 Waiting for currentUser...')
+    return <div>Loading your profile...</div>
+  }
+
   return (
     <div className='profile__friends-panel'>
       <h3 className='friends-panel__heading'>Find and Add Friends</h3>
@@ -156,9 +213,19 @@ const FriendsPanel = () => {
           <FriendCard
             key={friend._id}
             friend={friend}
+            onClick={() => handleOpenChat(friend)}
+            currentUser={currentUser} // ✅ this fixes the issue PROSOXH EDW
+            handleOpenChat={handleOpenChat} // PAPPAPAPAA
             handleRemoveFriend={handleRemoveFriend}
           />
         ))}
+        {showChatModal && selectedFriend && (
+          <ChatModal
+            currentUser={currentUser}
+            friend={selectedFriend}
+            onClose={handleCloseChat}
+          />
+        )}
       </ul>
       <MutualFriendsModal
         open={!!modalUserId}

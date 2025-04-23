@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
+import ChatWindow from './Chat/ChatWindow'
 
-const FriendCard = ({ friend, handleRemoveFriend }) => {
+const FriendCard = ({ friend, currentUser, handleRemoveFriend, handleOpenChat }) => {
+  const [showChat, setShowChat] = useState(false)
+  
+
   return (
     <li className='friends-panel__item'>
       <img
@@ -25,6 +29,25 @@ const FriendCard = ({ friend, handleRemoveFriend }) => {
       >
         ❌ Remove friend
       </button>
+
+      {/* <button
+        className='friends-panel__add-button'
+        onClick={() => setShowChat(prev => !prev)}
+      >
+        💬 {showChat ? 'Hide Chat' : 'Chat'}
+      </button> */}
+
+<button
+  className='friends-panel__add-button'
+  onClick={() => handleOpenChat(friend)}
+>
+  💬 Chat
+</button>
+
+
+      {showChat && (
+        <ChatWindow currentUser={currentUser} friend={friend} />
+      )}
     </li>
   )
 }

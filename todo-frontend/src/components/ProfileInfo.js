@@ -51,7 +51,7 @@ const ProfileInfo = ({ profile }) => {
         if (historyRes.ok) {
           const historyData = await historyRes.json()
           // 🔍 Debugging: Log the response from the backend
-          console.log('Fetched History Log Data:', historyData)
+          // console.log('Fetched History Log Data:', historyData)
           setHistoryLog(historyData) // Assuming backend returns an array of log entries
         }
       } catch (error) {
