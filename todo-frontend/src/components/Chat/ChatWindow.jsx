@@ -6,12 +6,7 @@ import './ChatWindow.css'
 
 
 const ChatWindow = ({ currentUser, friend }) => {
-  // console.log("🧩 ChatWindow render IDs:", {
-  //   currentUserId: currentUser?._id,
-  //   friendId: friend?._id,
-  // })
-  
-  const [messages, setMessages] = useState([])
+    const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
 
 
@@ -50,11 +45,36 @@ const ChatWindow = ({ currentUser, friend }) => {
     }
   }
   
+  // 👀
   useEffect(() => {
     if (currentUser && friend) {
+      setMessages([]) // clear old messages
       fetchHistory()
+      
+      // 👀 Mark messages from friend as seen
+      fetch('http://localhost:5000/api/messages/mark-seen', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify({
+          from: friend._id,
+          to: currentUser._id
+        })
+      }).then(res => {
+        if (!res.ok) throw new Error('Failed to mark seen')
+        console.log('✅ Marked messages as seen')
+      // Fetch updated messages to reflect seen status
+      fetchHistory();
+      }).catch(err => {
+        console.error('❌ Error marking seen:', err)
+      })
     }
   }, [currentUser, friend])
+  
+  
+  
   
   
   
@@ -77,6 +97,7 @@ const ChatWindow = ({ currentUser, friend }) => {
   
     const handleMessage = msg => {
       console.log('📥 Received msg:', msg)
+  
       const msgFrom = msg.from?.toString()
       const msgTo = msg.to?.toString()
       const userId = currentUser._id.toString()
@@ -86,12 +107,10 @@ const ChatWindow = ({ currentUser, friend }) => {
         (msgFrom === userId && msgTo === friendId) ||
         (msgFrom === friendId && msgTo === userId)
   
-      console.log("🧪 Message is relevant?", isRelevant)
-  
       if (isRelevant) {
         setMessages(prev => [...prev, msg])
       } else {
-        console.log("🚫 Message discarded")
+        console.log("📤 Ignored message not for this chat:", msg)
       }
     }
   
@@ -106,32 +125,40 @@ const ChatWindow = ({ currentUser, friend }) => {
   
   
   const sendMessage = () => {
-    
     if (input.trim()) {
-
-      console.log('🛫 Sending message:', {
-        from: currentUser?._id,
-        to: friend?._id,
-        text: input
+      const newMessage = {
+        from: currentUser._id,
+        to: friend._id,
+        text: input,
+        message: input, // in case you check `.message`
+        createdAt: new Date().toISOString()
+      }
+  
+      // 1. Emit via socket
+      socket.emit('chatMessage', {
+        from: newMessage.from,
+        to: newMessage.to,
+        text: newMessage.text
       })
-      
-      
-        socket.emit('chatMessage', {
-          
-            // from: currentUser?._id,
-            to: friend?._id,
-            text: input
-
-          })
+  
+      // 2. Optimistically update chat window
+      setMessages(prev => [...prev, newMessage])
+  
+      // 3. Clear input
       setInput('')
     }
   }
-
+  
   const messagesEndRef = useRef(null)
 
-useEffect(() => {
-  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-}, [messages])
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  }, [messages]);
+  
+
+  
 
 useEffect(() => {
   console.log("💡 useEffect triggered with:", {
@@ -148,39 +175,42 @@ useEffect(() => {
 
 
 
-  return (
-    <div className="chat-window">
+
+return (
+  <div className="chat-window">
       <div className="chat-header">💬 Chat with <strong>{friend?.username}</strong></div>
   
-      <div className="chat-messages">
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`chat-message ${msg.from === currentUser._id ? 'sent' : 'received'}`}
-          >
-            {/* <span className="chat-bubble">{msg.text}</span> */}
-            <span className="chat-bubble">
-  {msg.message || msg.text || '[no content]'}
-</span>
-
-
-
-          </div>
-        ))}
-      </div>
-  
-      <div className="chat-input-bar">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          placeholder='Type a message...'
-          onKeyDown={e => e.key === 'Enter' && sendMessage()}
-        />
-        <button onClick={sendMessage}>📤</button>
-      </div>
-      <div ref={messagesEndRef} />
-
+    <div className="chat-messages" ref={messagesEndRef}>
+      {messages.map((msg, i) => (
+        <div
+          key={i}
+          className={`chat-message ${msg.from === currentUser._id ? 'sent' : 'received'}`}
+        >
+            
+          <span className="chat-bubble">
+              {msg.message || msg.text || '[no content]'}
+            
+            <span className="timestamp">
+              {new Date(msg.timestamp).toLocaleTimeString()}
+              {msg.from === currentUser._id && msg.seen && ' ✓'}
+            </span>
+          </span>
+            
+        </div>
+      ))}
     </div>
+     
+    <div className="chat-input-bar">
+      <input
+        value={input}
+        onChange={e => setInput(e.target.value)}
+        placeholder='Type a message...'
+        onKeyDown={e => e.key === 'Enter' && sendMessage()}
+      />
+        <button onClick={sendMessage}>📤</button>     
+    </div>
+      {/* <div ref={messagesEndRef} /> */}      
+  </div>
   )
   
 }

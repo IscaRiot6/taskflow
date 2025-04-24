@@ -19,4 +19,19 @@ router.get('/:user1/:user2', authMiddleware, async (req, res) => {
   }
 })
 
+// PATCH /api/messages/mark-seen
+router.patch('/mark-seen', authMiddleware, async (req, res) => {
+  const { from, to } = req.body
+
+  try {
+    const result = await Message.updateMany(
+      { from, to, seen: false },
+      { $set: { seen: true } }
+    )
+    res.json({ updated: result.modifiedCount })
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to mark messages as seen' })
+  }
+})
+
 export default router

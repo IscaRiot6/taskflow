@@ -31,10 +31,8 @@ export default function setupSocket (server) {
   io.on('connection', socket => {
     console.log('🟢 Connected:', socket.id)
     console.log('Current user in socket connection:', socket.user)
-    const userId = socket.user.userId || socket.user._id
-    socket.userId = userId // Store userId on socket
 
-    users.set(userId, socket.id)
+    users.set(socket.user.userId || socket.user._id, socket.id)
 
     socket.on('chatMessage', async ({ to, text }) => {
       const from = socket.user.userId || socket.user._id
@@ -73,7 +71,7 @@ export default function setupSocket (server) {
     })
 
     socket.on('disconnect', () => {
-      users.delete(socket.userId) // Use stored userId
+      users.delete(socket.user.id)
       console.log('🔴 Disconnected:', socket.id)
     })
   })
