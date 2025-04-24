@@ -131,7 +131,9 @@ const ChatWindow = ({ currentUser, friend }) => {
         to: friend._id,
         text: input,
         message: input, // in case you check `.message`
-        createdAt: new Date().toISOString()
+        // createdAt: new Date().toISOString()
+        timestamp: new Date().toISOString()  // 🛠️ instead of createdAt
+
       }
   
       // 1. Emit via socket
