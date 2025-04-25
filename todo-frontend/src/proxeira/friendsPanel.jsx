@@ -16,6 +16,8 @@ const FriendsPanel = () => {
   const [selectedFriend, setSelectedFriend] = useState(null) //GIA PAME PAPA
   const [showChatModal, setShowChatModal] = useState(false) //GIA PAME
   const [currentUser, setCurrentUser] = useState(null)
+  // const [unseenMap, setUnseenMap] = useState({})
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -45,11 +47,18 @@ const FriendsPanel = () => {
   }, [currentUser])
 
   const handleOpenChat = friend => {
-    if (!currentUser) return <div>Loading user...</div>
-
+    if (!currentUser) {
+      console.warn("⛔ Can't open chat before user is loaded")
+      return
+    }
     setSelectedFriend(friend)
-    setShowChatModal(true)
   }
+
+  useEffect(() => {
+    if (selectedFriend && currentUser) {
+      setShowChatModal(true)
+    }
+  }, [selectedFriend, currentUser])
 
   const handleCloseChat = () => {
     setShowChatModal(false)
@@ -58,6 +67,8 @@ const FriendsPanel = () => {
   console.log('🧠 Opening chat modal for:', currentUser, selectedFriend)
 
   const token = localStorage.getItem('authToken')
+
+  
 
   const fetchData = async () => {
     try {
@@ -171,6 +182,11 @@ const FriendsPanel = () => {
   const isSent = id => sentRequests.some(user => user._id === id)
   const isReceived = id => receivedRequests.some(user => user._id === id)
 
+  if (!currentUser) {
+    console.log('🕒 Waiting for currentUser...')
+    return <div>Loading your profile...</div>
+  }
+
   return (
     <div className='profile__friends-panel'>
       <h3 className='friends-panel__heading'>Find and Add Friends</h3>
@@ -201,7 +217,7 @@ const FriendsPanel = () => {
           <FriendCard
             key={friend._id}
             friend={friend}
-            // onClick={() => currentUser && handleOpenChat(friend)}
+            onClick={() => handleOpenChat(friend)}
             currentUser={currentUser} // ✅ this fixes the issue PROSOXH EDW
             handleOpenChat={handleOpenChat} // PAPPAPAPAA
             handleRemoveFriend={handleRemoveFriend}

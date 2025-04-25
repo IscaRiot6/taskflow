@@ -1,7 +1,7 @@
 import express from 'express'
 import User from '../models/userModel.js'
 import authMiddleware from '../middleware/authMiddleware.js'
-import Task from '../models/taskModel.js' // Adjust path if necessary
+import Task from '../models/taskModel.js'
 
 const router = express.Router()
 

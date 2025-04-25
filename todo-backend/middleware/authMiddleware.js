@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken'
 
 const authMiddleware = (req, res, next) => {
+  // console.log('🔒 Entered authMiddleware')
   // console.log('Decoded token:', decoded)
 
   try {
     const authHeader = req.header('Authorization')
 
-    console.log('Authorization header:', authHeader)
+    // console.log('Authorization header:', authHeader)
 
     // Ensure the token exists and starts with "Bearer "
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -17,8 +18,9 @@ const authMiddleware = (req, res, next) => {
 
     // Extract and verify the token
     const token = authHeader.replace('Bearer ', '').trim()
-    console.log('Received token:', token)
-    console.log('Authorization header:', authHeader)
+    // temporary patched . i will bring them back
+    // console.log('Received token:', token)
+    // console.log('Authorization header:', authHeader)
     if (!token) {
       return res
         .status(401)
@@ -26,7 +28,7 @@ const authMiddleware = (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    console.log('Decoded token:', decoded)
+    // console.log('Decoded token:', decoded)
 
     req.user = decoded // Attach user info to request
     next()
