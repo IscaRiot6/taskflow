@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import ChatWindow from './Chat/ChatWindow'
+import Badge from '@mui/material/Badge';
+import MailIcon from '@mui/icons-material/Mail';
+
 
 const FriendCard = ({ friend, currentUser, handleRemoveFriend, handleOpenChat,  unseenCount }) => {
   const [showChat, setShowChat] = useState(false)
@@ -12,8 +15,8 @@ const FriendCard = ({ friend, currentUser, handleRemoveFriend, handleOpenChat,  
         alt=''
         className='friends-panel__avatar'
         onError={e => {
-          e.target.onerror = null
-          e.target.src = '/default-avatar.png'
+          e.target.onerror = null;
+          e.target.src = '/default-avatar.png';
         }}
       />
       <a
@@ -21,7 +24,6 @@ const FriendCard = ({ friend, currentUser, handleRemoveFriend, handleOpenChat,  
         className='friends-panel__username-link'
       >
         {friend.username} 🔗
-        
       </a>
 
       <button
@@ -35,20 +37,16 @@ const FriendCard = ({ friend, currentUser, handleRemoveFriend, handleOpenChat,  
         className='friends-panel__add-button'
         onClick={() => handleOpenChat(friend)}
       >
-        💬 Chat
-        {unseenCount > 0 && (
-          <span className="chat-notify-dot">
-            🟢 {unseenCount}
-          </span>
-        )}
+        <Badge badgeContent={unseenCount} color="success">
+          <MailIcon />
+        </Badge>
       </button>
-
 
       {showChat && (
         <ChatWindow currentUser={currentUser} friend={friend} />
       )}
     </li>
-  )
+  );
 }
 
 export default FriendCard

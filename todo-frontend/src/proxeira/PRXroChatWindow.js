@@ -42,10 +42,33 @@ const ChatWindow = ({ currentUser, friend }) => {
     }
   }
 
+  // 👀
   useEffect(() => {
     if (currentUser && friend) {
-      setMessages([]) // 💥 Clear previous messages
+      setMessages([]) // clear old messages
       fetchHistory()
+
+      // 👀 Mark messages from friend as seen
+      fetch('http://localhost:5000/api/messages/mark-seen', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify({
+          from: friend._id,
+          to: currentUser._id
+        })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to mark seen')
+          console.log('✅ Marked messages as seen')
+          // Fetch updated messages to reflect seen status
+          fetchHistory()
+        })
+        .catch(err => {
+          console.error('❌ Error marking seen:', err)
+        })
     }
   }, [currentUser, friend])
 
@@ -89,17 +112,26 @@ const ChatWindow = ({ currentUser, friend }) => {
 
   const sendMessage = () => {
     if (input.trim()) {
-      console.log('🛫 Sending message:', {
-        from: currentUser?._id,
-        to: friend?._id,
-        text: input
+      const newMessage = {
+        from: currentUser._id,
+        to: friend._id,
+        text: input,
+        message: input, // in case you check `.message`
+        // createdAt: new Date().toISOString()
+        timestamp: new Date().toISOString() // 🛠️ instead of createdAt
+      }
+
+      // 1. Emit via socket
+      socket.emit('chatMessage', {
+        from: newMessage.from,
+        to: newMessage.to,
+        text: newMessage.text
       })
 
-      socket.emit('chatMessage', {
-        from: currentUser?._id, // telika ti tha ginei me auto
-        to: friend?._id,
-        text: input
-      })
+      // 2. Optimistically update chat window
+      setMessages(prev => [...prev, newMessage])
+
+      // 3. Clear input
       setInput('')
     }
   }
@@ -107,7 +139,9 @@ const ChatWindow = ({ currentUser, friend }) => {
   const messagesEndRef = useRef(null)
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight
+    }
   }, [messages])
 
   useEffect(() => {
@@ -127,7 +161,7 @@ const ChatWindow = ({ currentUser, friend }) => {
         💬 Chat with <strong>{friend?.username}</strong>
       </div>
 
-      <div className='chat-messages'>
+      <div className='chat-messages' ref={messagesEndRef}>
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -137,10 +171,12 @@ const ChatWindow = ({ currentUser, friend }) => {
           >
             <span className='chat-bubble'>
               {msg.message || msg.text || '[no content]'}
+
+              <span className='timestamp'>
+                {new Date(msg.timestamp).toLocaleTimeString()}
+                {msg.from === currentUser._id && msg.seen && ' ✓'}
+              </span>
             </span>
-            {/* <span className="timestamp">
-  {new Date(msg.createdAt).toLocaleTimeString()}
-</span> */}
           </div>
         ))}
       </div>
@@ -154,7 +190,7 @@ const ChatWindow = ({ currentUser, friend }) => {
         />
         <button onClick={sendMessage}>📤</button>
       </div>
-      <div ref={messagesEndRef} />
+      {/* <div ref={messagesEndRef} /> */}
     </div>
   )
 }

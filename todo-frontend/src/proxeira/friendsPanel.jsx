@@ -16,7 +16,7 @@ const FriendsPanel = () => {
   const [selectedFriend, setSelectedFriend] = useState(null) //GIA PAME PAPA
   const [showChatModal, setShowChatModal] = useState(false) //GIA PAME
   const [currentUser, setCurrentUser] = useState(null)
-  // const [unseenMap, setUnseenMap] = useState({})
+  const [unseenMap, setUnseenMap] = useState({})
 
   const navigate = useNavigate()
 
@@ -43,7 +43,8 @@ const FriendsPanel = () => {
   }, [])
 
   useEffect(() => {
-    console.log('🔁 currentUser loaded:', currentUser)
+    // important add this back later Lucas
+    // console.log('🔁 currentUser loaded:', currentUser)
   }, [currentUser])
 
   const handleOpenChat = friend => {
@@ -64,11 +65,51 @@ const FriendsPanel = () => {
     setShowChatModal(false)
     setSelectedFriend(null)
   }
-  console.log('🧠 Opening chat modal for:', currentUser, selectedFriend)
+  // important add this back later Lucas
+  // console.log('🧠 Opening chat modal for:', currentUser, selectedFriend)
 
   const token = localStorage.getItem('authToken')
 
-  
+  // Fetch unseen messages for current user
+  useEffect(() => {
+    if (!currentUser || !currentUser._id) return // ✅ safely exit if not ready
+    const fetchUnseen = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/messages/unseen/${currentUser._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('authToken')}`
+            }
+          }
+        )
+
+        const data = await res.json()
+        console.log('Raw response:', data)
+
+        if (!res.ok) {
+          throw new Error(data?.error || 'Failed to fetch unseen messages')
+        }
+
+        if (!Array.isArray(data)) {
+          console.error('Expected an array, got:', data)
+          return
+        }
+
+        const unseen = {}
+        data.forEach(entry => {
+          unseen[entry._id] = entry.count
+        })
+        console.log('Raw response:', data)
+
+        setUnseenMap(unseen)
+      } catch (err) {
+        console.error('Failed to fetch unseen messages:', err)
+      }
+    }
+
+    fetchUnseen()
+  }, [currentUser])
 
   const fetchData = async () => {
     try {
@@ -221,6 +262,8 @@ const FriendsPanel = () => {
             currentUser={currentUser} // ✅ this fixes the issue PROSOXH EDW
             handleOpenChat={handleOpenChat} // PAPPAPAPAA
             handleRemoveFriend={handleRemoveFriend}
+            // hasUnseen={!!unseenMap[friend._id]}
+            unseenCount={unseenMap[friend._id] || 0}
           />
         ))}
         {showChatModal && selectedFriend && (
