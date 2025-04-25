@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ChatWindow from './Chat/ChatWindow'
 
-const FriendCard = ({ friend, currentUser, handleRemoveFriend, handleOpenChat, hasUnseen  }) => {
+const FriendCard = ({ friend, currentUser, handleRemoveFriend, handleOpenChat,  unseenCount }) => {
   const [showChat, setShowChat] = useState(false)
   
 
@@ -21,8 +21,6 @@ const FriendCard = ({ friend, currentUser, handleRemoveFriend, handleOpenChat, h
         className='friends-panel__username-link'
       >
         {friend.username} 🔗
-        {/* {hasUnseen && <span className="chat-notify-dot">🟢</span>} */}
-        {/* {hasUnseen && <span className="chat-notify-dot">🟢</span>} */}
         
       </a>
 
@@ -36,8 +34,13 @@ const FriendCard = ({ friend, currentUser, handleRemoveFriend, handleOpenChat, h
       <button
         className='friends-panel__add-button'
         onClick={() => handleOpenChat(friend)}
-        >
-        💬 Chat {hasUnseen && <span className="chat-notify-dot">🟢</span>}
+      >
+        💬 Chat
+        {unseenCount > 0 && (
+          <span className="chat-notify-dot">
+            🟢 {unseenCount}
+          </span>
+        )}
       </button>
 
 

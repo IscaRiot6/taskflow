@@ -262,7 +262,8 @@ const FriendsPanel = () => {
             currentUser={currentUser} // ✅ this fixes the issue PROSOXH EDW
             handleOpenChat={handleOpenChat} // PAPPAPAPAA
             handleRemoveFriend={handleRemoveFriend}
-            hasUnseen={!!unseenMap[friend._id]}
+            // hasUnseen={!!unseenMap[friend._id]}
+            unseenCount={unseenMap[friend._id] || 0}
           />
         ))}
         {showChatModal && selectedFriend && (
