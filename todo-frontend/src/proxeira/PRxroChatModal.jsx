@@ -3,7 +3,7 @@ import { React , useEffect }from 'react'
 import ChatWindow from './ChatWindow'
 import './ChatModal' // optional styling
 
-const ChatModal = ({ currentUser, friend, onClose, onMessagesSeen }) => {
+const ChatModal = ({ currentUser, friend, onClose }) => {
   useEffect(() => {
     if (currentUser && friend) {
       console.log("🪟 ChatModal opened with:", { currentUser, friend })
@@ -18,8 +18,7 @@ const ChatModal = ({ currentUser, friend, onClose, onMessagesSeen }) => {
   return (
     <div className="chat-modal-overlay">
       <div className="chat-modal-window">
-        <ChatWindow currentUser={currentUser} friend={friend}
-        onMessagesSeen={onMessagesSeen} />
+        <ChatWindow currentUser={currentUser} friend={friend} />
         <button className="chat-modal-close" onClick={onClose}>❌ Close</button>
       </div>
     </div>

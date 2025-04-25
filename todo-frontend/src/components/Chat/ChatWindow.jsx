@@ -5,7 +5,7 @@ import './ChatWindow.css'
 
 
 
-const ChatWindow = ({ currentUser, friend }) => {
+const ChatWindow = ({ currentUser, friend, onMessagesSeen }) => {
     const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
 
@@ -48,30 +48,36 @@ const ChatWindow = ({ currentUser, friend }) => {
   // 👀
   useEffect(() => {
     if (currentUser && friend) {
-      setMessages([]) // clear old messages
-      fetchHistory()
-      
-      // 👀 Mark messages from friend as seen
-      fetch('http://localhost:5000/api/messages/mark-seen', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`
-        },
-        body: JSON.stringify({
-          from: friend._id,
-          to: currentUser._id
-        })
-      }).then(res => {
-        if (!res.ok) throw new Error('Failed to mark seen')
-        console.log('✅ Marked messages as seen')
-      // Fetch updated messages to reflect seen status
+      setMessages([]); // Clear old messages
       fetchHistory();
-      }).catch(err => {
-        console.error('❌ Error marking seen:', err)
-      })
+  
+      const markMessagesAsSeen = async () => {
+        try {
+          const res = await fetch('http://localhost:5000/api/messages/mark-seen', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('authToken')}`
+            },
+            body: JSON.stringify({
+              from: friend._id,
+              to: currentUser._id
+            })
+          });
+  
+          if (!res.ok) throw new Error('Failed to mark messages as seen');
+  
+          console.log('✅ Marked messages as seen');
+          fetchHistory(); // Fetch updated messages
+        } catch (err) {
+          console.error('❌ Error marking messages as seen:', err);
+        }
+      };
+  
+      markMessagesAsSeen();
     }
-  }, [currentUser, friend])
+  }, [currentUser, friend]);
+  
   
   
   
@@ -108,6 +114,11 @@ const ChatWindow = ({ currentUser, friend }) => {
         (msgFrom === friendId && msgTo === userId)
   
       if (isRelevant) {
+        // Assign timestamp if missing
+        if (!msg.timestamp) {
+          msg.timestamp = new Date().toISOString();
+        }
+
         setMessages(prev => [...prev, msg])
       } else {
         console.log("📤 Ignored message not for this chat:", msg)
@@ -203,12 +214,14 @@ return (
     </div>
      
     <div className="chat-input-bar">
-      <input
-        value={input}
-        onChange={e => setInput(e.target.value)}
-        placeholder='Type a message...'
-        onKeyDown={e => e.key === 'Enter' && sendMessage()}
-      />
+    <input
+  value={input}
+  onChange={e => setInput(e.target.value)}
+  placeholder='Type a message...'
+  onKeyDown={e => e.key === 'Enter' && sendMessage()}
+  onFocus={() => onMessagesSeen && onMessagesSeen(friend._id)} // Mark as read
+/>
+
         <button onClick={sendMessage}>📤</button>     
     </div>
       {/* <div ref={messagesEndRef} /> */}      
