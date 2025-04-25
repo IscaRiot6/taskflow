@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema({
     darkMode: { type: Boolean, default: false },
     notifications: { type: Boolean, default: true }
   },
+  online: { type: Boolean, default: false },
   // Add a reference to the tasks collection
   tasks: [
     {

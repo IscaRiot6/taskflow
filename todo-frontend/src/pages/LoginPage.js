@@ -37,8 +37,8 @@ const LoginPage = ({ onLogin }) => {
 
       onLogin(data.user)
 
-      console.log('✅ Token stored:', localStorage.getItem('authToken'))
-      console.log('✅ User stored:', localStorage.getItem('user'))
+      // console.log('✅ Token stored:', localStorage.getItem('authToken'))
+      // console.log('✅ User stored:', localStorage.getItem('user'))
 
       navigate('/home')
     } catch (error) {

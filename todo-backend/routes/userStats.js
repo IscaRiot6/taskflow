@@ -27,4 +27,16 @@ router.get('/favorites', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Server error', error })
   }
 })
+
+// 🟢🟢 FETCH ONLINE USERS 🔴🔴
+router.get('/online/:userId', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId)
+    if (!user) return res.status(404).json({ error: 'User not found' })
+    res.json({ online: user.online })
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' })
+  }
+})
+
 export default router

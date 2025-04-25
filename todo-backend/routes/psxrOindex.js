@@ -1,6 +1,7 @@
 import { Server } from 'socket.io'
 import jwt from 'jsonwebtoken'
 import Message from '../models/messageModel.js'
+import User from '../models/userModel.js'
 
 const users = new Map()
 
@@ -31,8 +32,15 @@ export default function setupSocket (server) {
   io.on('connection', socket => {
     console.log('🟢 Connected:', socket.id)
     console.log('Current user in socket connection:', socket.user)
+    const userId = socket.user.userId || socket.user._id
+    socket.userId = userId // Store userId on socket
 
-    users.set(socket.user.userId || socket.user._id, socket.id)
+    //Update user online status to true when they connect
+    User.findByIdAndUpdate(userId, { online: true }, { new: true }).then(user =>
+      console.log(`User ${user.username} is now online`)
+    )
+
+    users.set(userId, socket.id)
 
     socket.on('chatMessage', async ({ to, text }) => {
       const from = socket.user.userId || socket.user._id
@@ -63,6 +71,11 @@ export default function setupSocket (server) {
         io.to(targetSocketId).emit('chatMessage', msgPayload)
       }
 
+      // Emit events when a user's status changes.
+      io.emit('user-status-update', { userId, online: true })
+      // On connection
+      io.emit('user-status-update', { userId, online: false }) // On disconnection
+
       // 🔁 ALSO send to sender (echo back)
       // if (senderSocketId) {
       //   io.to(senderSocketId).emit('chatMessage', msgPayload)
@@ -70,9 +83,11 @@ export default function setupSocket (server) {
       console.log('🔍 Sending message to target:', msgPayload)
     })
 
+    // When the socket disconnects, mark the user as offline
     socket.on('disconnect', () => {
-      users.delete(socket.user.id)
-      console.log('🔴 Disconnected:', socket.id)
+      User.findByIdAndUpdate(userId, { online: false }, { new: true }).then(
+        user => console.log(`User ${user.username} is now offline`)
+      )
     })
   })
 }

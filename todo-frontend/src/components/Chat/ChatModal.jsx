@@ -1,7 +1,7 @@
 
 import { React , useEffect }from 'react'
 import ChatWindow from './ChatWindow'
-import './ChatModal' // optional styling
+import '../../styles/ChatModal.css';
 
 const ChatModal = ({ currentUser, friend, onClose, onMessagesSeen }) => {
   useEffect(() => {

@@ -1,0 +1,41 @@
+.chat-modal-window {
+    background-image: url('https://picfiles.alphacoders.com/403/thumb-1920-403854.jpg'); /* or use online URL */
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    backdrop-filter: blur(6px); /* Optional: adds a glassy effect */
+    color: black
+  }
+
+  .chat-modal-window::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 0;
+    border-radius: inherit;
+  }
+  .chat-modal-window > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 8px;
+  }
+  
+  .status-indicator.green {
+    background-color: #4caf50; /* Green */
+  }
+  
+  .status-indicator.red {
+    background-color: #f44336; /* Red */
+  }
+  
+  

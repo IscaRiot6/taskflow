@@ -1,8 +1,9 @@
 import { Server } from 'socket.io'
 import jwt from 'jsonwebtoken'
 import Message from '../models/messageModel.js'
+import User from '../models/userModel.js'
 
-const users = new Map()
+const users = new Map() // Map<userId, Set<socket.id>>
 
 export default function setupSocket (server) {
   const io = new Server(server, {
@@ -13,37 +14,43 @@ export default function setupSocket (server) {
     }
   })
 
-  // ✅ AUTH FIRST
+  // ✅ AUTHENTICATION MIDDLEWARE
   io.use((socket, next) => {
     const token = socket.handshake.auth.token
     if (!token) return next(new Error('Authentication error'))
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET)
       socket.user = decoded
-      console.log('Authenticated socket user:', socket.user) // dDebug
       next()
     } catch (err) {
       next(new Error('Authentication failed'))
     }
   })
 
-  // ✅ HANDLERS AFTER AUTH
+  // ✅ CONNECTION HANDLER
   io.on('connection', socket => {
-    console.log('🟢 Connected:', socket.id)
-    console.log('Current user in socket connection:', socket.user)
     const userId = socket.user.userId || socket.user._id
-    socket.userId = userId // Store userId on socket
+    socket.userId = userId
 
-    users.set(userId, socket.id)
+    // Add socket.id to the user's set of connections
+    if (!users.has(userId)) {
+      users.set(userId, new Set())
+    }
+    users.get(userId).add(socket.id)
 
+    // If this is the first connection, mark user as online
+    if (users.get(userId).size === 1) {
+      User.findByIdAndUpdate(userId, { online: true }, { new: true }).then(
+        user => {
+          console.log(`User ${user.username} is now online`)
+          io.emit('user-status-update', { userId, online: true })
+        }
+      )
+    }
+
+    // ✅ MESSAGE HANDLER
     socket.on('chatMessage', async ({ to, text }) => {
       const from = socket.user.userId || socket.user._id
-
-      console.log('💬 Received message from client:', {
-        from,
-        to,
-        text
-      })
 
       const newMsg = new Message({
         from,
@@ -54,27 +61,38 @@ export default function setupSocket (server) {
       await newMsg.save()
 
       const msgPayload = { from, to, message: text }
-      console.log('🔍 Sending message to target:', msgPayload)
 
-      const targetSocketId = users.get(to)
-
-      // const senderSocketId = users.get(from)
-
-      // 🔄 Send to recipient
-      if (targetSocketId) {
-        io.to(targetSocketId).emit('chatMessage', msgPayload)
+      const targetSockets = users.get(to)
+      if (targetSockets) {
+        for (const socketId of targetSockets) {
+          io.to(socketId).emit('chatMessage', msgPayload)
+        }
       }
 
-      // 🔁 ALSO send to sender (echo back)
-      // if (senderSocketId) {
-      //   io.to(senderSocketId).emit('chatMessage', msgPayload)
-      // }
-      console.log('🔍 Sending message to target:', msgPayload)
+      // Optionally, emit the message back to the sender
+      const senderSockets = users.get(from)
+      if (senderSockets) {
+        for (const socketId of senderSockets) {
+          io.to(socketId).emit('chatMessage', msgPayload)
+        }
+      }
     })
 
+    // ✅ DISCONNECT HANDLER
     socket.on('disconnect', () => {
-      users.delete(socket.userId) // Use stored userId
-      console.log('🔴 Disconnected:', socket.id)
+      const userSockets = users.get(userId)
+      if (userSockets) {
+        userSockets.delete(socket.id)
+        if (userSockets.size === 0) {
+          users.delete(userId)
+          User.findByIdAndUpdate(userId, { online: false }, { new: true }).then(
+            user => {
+              console.log(`User ${user.username} is now offline`)
+              io.emit('user-status-update', { userId, online: false })
+            }
+          )
+        }
+      }
     })
   })
 }
