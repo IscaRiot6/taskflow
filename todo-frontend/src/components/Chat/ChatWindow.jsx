@@ -44,6 +44,7 @@ const ChatWindow = ({ currentUser, friend, onMessagesSeen }) => {
       console.error('⚠️ Error fetching chat history:', err);
     }
   }
+
   
   // 👀
   useEffect(() => {
@@ -78,12 +79,7 @@ const ChatWindow = ({ currentUser, friend, onMessagesSeen }) => {
     }
   }, [currentUser, friend]);
   
-  
-  
-  
-  
-  
-  
+
   
   socket.onAny((event, ...args) => {
     
@@ -183,9 +179,6 @@ useEffect(() => {
 useEffect(() => {
   console.log("💬 Current messages array:", messages)
 }, [messages])
-
-
-
 
 
 

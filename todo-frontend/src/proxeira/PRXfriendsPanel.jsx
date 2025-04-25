@@ -70,7 +70,7 @@ const FriendsPanel = () => {
 
   const token = localStorage.getItem('authToken')
 
-  // Fetch unseen messages for current user
+  // 💬 Fetch unseen messages for current user 💬
   useEffect(() => {
     if (!currentUser || !currentUser._id) return // ✅ safely exit if not ready
     const fetchUnseen = async () => {
@@ -110,6 +110,13 @@ const FriendsPanel = () => {
 
     fetchUnseen()
   }, [currentUser])
+
+  const handleMessagesSeen = friendId => {
+    setUnseenMap(prev => ({
+      ...prev,
+      [friendId]: 0
+    }))
+  }
 
   const fetchData = async () => {
     try {
@@ -271,6 +278,7 @@ const FriendsPanel = () => {
             currentUser={currentUser}
             friend={selectedFriend}
             onClose={handleCloseChat}
+            onMessagesSeen={handleMessagesSeen}
           />
         )}
       </ul>

@@ -5,6 +5,7 @@ import FriendActions from './FriendActions'
 import FriendCard from './FriendCard'
 import ChatModal from './Chat/ChatModal'
 import { useNavigate } from 'react-router-dom'
+import socket from './../socket/socket'
 
 const FriendsPanel = () => {
   const [modalUserId, setModalUserId] = useState(null)
@@ -109,6 +110,23 @@ const FriendsPanel = () => {
     }
 
     fetchUnseen()
+  }, [currentUser])
+
+  useEffect(() => {
+    const handleNewMessage = msg => {
+      if (msg.to === currentUser._id) {
+        setUnseenMap(prev => ({
+          ...prev,
+          [msg.from]: (prev[msg.from] || 0) + 1
+        }))
+      }
+    }
+
+    socket.on('chatMessage', handleNewMessage)
+
+    return () => {
+      socket.off('chatMessage', handleNewMessage)
+    }
   }, [currentUser])
 
   const handleMessagesSeen = friendId => {
