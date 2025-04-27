@@ -1,0 +1,125 @@
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .task-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .task-btn {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+  }
+  
+  .task-btn.edit {
+    background-color: #3498db; /* Blue */
+    color: white;
+  }
+  
+  .task-btn.delete {
+    background-color: #e74c3c; /* Red */
+    color: white;
+  }
+  
+  .task-btn:hover {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  
+  .carousel-container {
+  width: 100%;
+  max-width: 300px; /* Adjust this as needed */
+  margin: auto;
+  }
+  
+  .image-carousel {
+    position: relative; /* Ensures buttons position relative to this container */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the image */
+    width: fit-content;
+  }
+  
+  .carousel-image {
+  width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block; /* Removes inline spacing issues */
+  }
+  
+  .task-carousel-button {
+    position: absolute; /* Now positioned relative to .image-carousel */
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    font-size: 16px;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .task-carousel-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .taskItem-left {
+    left: 10px;
+  }
+  
+  .taskItem-right {
+    right: 10px;
+  }
+  
+  .forbidden-emoji {
+    font-size: 20px;
+    /* animation: shake 0.5s ease-in-out; */
+    animation: shake 0.3s infinite;
+    display: inline-block;
+  }
+  
+  @keyframes shake {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(-10deg); }
+    40% { transform: rotate(10deg); }
+    60% { transform: rotate(-10deg); }
+    80% { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
+  }
+  
+  
+  /* Optional: Shake animation */
+  /* @keyframes shake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
+    75% { transform: rotate(-10deg); }
+    100% { transform: rotate(0deg); }
+  } */
+  
+  
+  
+  
+  
+  
+  

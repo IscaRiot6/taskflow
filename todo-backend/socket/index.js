@@ -32,7 +32,6 @@ export default function setupSocket (server) {
     const userId = socket.user.userId || socket.user._id
     socket.userId = userId
 
-    // Add socket.id to the user's set of connections
     if (!users.has(userId)) {
       users.set(userId, new Set())
     }
@@ -40,12 +39,25 @@ export default function setupSocket (server) {
 
     // If this is the first connection, mark user as online
     if (users.get(userId).size === 1) {
-      User.findByIdAndUpdate(userId, { online: true }, { new: true }).then(
-        user => {
+      User.findByIdAndUpdate(userId, { online: true }, { new: true })
+        .populate('friends', '_id username')
+        .then(user => {
           console.log(`User ${user.username} is now online`)
           io.emit('user-status-update', { userId, online: true })
-        }
-      )
+
+          // Notify online friends
+          user.friends.forEach(friend => {
+            const friendSockets = users.get(friend._id.toString())
+            if (friendSockets) {
+              friendSockets.forEach(socketId => {
+                io.to(socketId).emit('friend-online', {
+                  friendId: user._id,
+                  username: user.username
+                })
+              })
+            }
+          })
+        })
     }
 
     // ✅ MESSAGE HANDLER

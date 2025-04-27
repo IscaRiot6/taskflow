@@ -3,6 +3,8 @@ import ChatWindow from './Chat/ChatWindow'
 import Badge from '@mui/material/Badge';
 import MailIcon from '@mui/icons-material/Mail';
 import socket from './../socket/socket'
+import { toast } from 'react-toastify';
+
 
 
 const FriendCard = ({ friend, currentUser, handleRemoveFriend, handleOpenChat,  unseenCount }) => {
@@ -44,6 +46,30 @@ const FriendCard = ({ friend, currentUser, handleRemoveFriend, handleOpenChat,  
     };
   }, [socket, friend._id]);
   
+  // add an event listener for the friend-online event to display a notification when a friend comes online
+  // useEffect(() => {
+  //   const handleFriendOnline = ({ friendId, username }) => {
+  //     if (friendId === friend._id) {
+  //       // Display a notification or update the UI accordingly
+  //       alert(`Your friend ${username} is now online`);
+  //     }
+  //   };
+
+  useEffect(() => {
+    const handleFriendOnline = ({ friendId, username }) => {
+      if (friendId === friend._id) {
+        toast.info(`Your friend ${username} is now online!`);
+      }
+    };
+
+    
+  
+    socket.on('friend-online', handleFriendOnline);
+  
+    return () => {
+      socket.off('friend-online', handleFriendOnline);
+    };
+  }, [friend._id]);
   
 
   return (

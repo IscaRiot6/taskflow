@@ -18,9 +18,6 @@ import ThemeToggle from './ThemeToggle'
 import '../styles/App.css'
 import { useCallback } from 'react'
 import PrivateRoute from './PrivateRoute'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-// import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App () {
   const [user, setUser] = useState(null)
@@ -121,86 +118,73 @@ function App () {
   }
 
   return (
-    <>
-      <ToastContainer
-        position='top-right'
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      <div>
-        <ThemeToggle />
-        <BackgroundSetter />
-        <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-        <SideNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-        <Routes>
-          <Route path='/' element={<Welcome />} />{' '}
-          {/* Make Welcome the main page */}
-          <Route
-            path='/home'
-            element={
-              <PrivateRoute>
-                <HomePage
-                  tasks={tasks}
-                  setTasks={setTasks}
-                  handleEditTask={handleEditTask}
-                />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path='/task/:id'
-            element={
-              <PrivateRoute>
-                <TaskDetails tasks={tasks} onEdit={handleEditTask} />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            // EDW KOITAKSE
-            path='/related-titles/:taskId'
-            element={
-              <PrivateRoute>
-                <RelatedTasks tasks={tasks} onAdd={handleEditTask} />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path='/related-task-details/:relatedId'
-            element={
-              // <PrivateRoute>
-              <RelatedTaskDetails />
-              // </PrivateRoute>
-            }
-          />
-          <Route path='/login' element={<LoginPage onLogin={handleLogin} />} />
-          <Route path='/signup' element={<SignupPage />} />
-          <Route path='/about' element={<About />} />
-          <Route path='/contact' element={<ContactPage />} />
-          <Route
-            path='/favorites'
-            element={
-              <PrivateRoute>
-                <FavoritesPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path='/profile'
-            element={
-              <PrivateRoute>
-                <ProfilePage />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </div>
-    </>
+    <div>
+      <ThemeToggle />
+      <BackgroundSetter />
+      <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      <SideNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      <Routes>
+        <Route path='/' element={<Welcome />} />{' '}
+        {/* Make Welcome the main page */}
+        <Route
+          path='/home'
+          element={
+            <PrivateRoute>
+              <HomePage
+                tasks={tasks}
+                setTasks={setTasks}
+                handleEditTask={handleEditTask}
+              />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/task/:id'
+          element={
+            <PrivateRoute>
+              <TaskDetails tasks={tasks} onEdit={handleEditTask} />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          // EDW KOITAKSE
+          path='/related-titles/:taskId'
+          element={
+            <PrivateRoute>
+              <RelatedTasks tasks={tasks} onAdd={handleEditTask} />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/related-task-details/:relatedId'
+          element={
+            // <PrivateRoute>
+            <RelatedTaskDetails />
+            // </PrivateRoute>
+          }
+        />
+        <Route path='/login' element={<LoginPage onLogin={handleLogin} />} />
+        <Route path='/signup' element={<SignupPage />} />
+        <Route path='/about' element={<About />} />
+        <Route path='/contact' element={<ContactPage />} />
+        <Route
+          path='/favorites'
+          element={
+            <PrivateRoute>
+              <FavoritesPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path='/profile'
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </div>
   )
 }
 

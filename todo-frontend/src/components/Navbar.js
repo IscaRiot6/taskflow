@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import '../styles/Navbar.css'
+// import 'bootstrap/dist/css/bootstrap.min.css'
 
 const Navbar = ({ isLoggedIn, onLogout }) => {
   const [scrolled, setScrolled] = useState(false)
