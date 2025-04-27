@@ -7,23 +7,6 @@ import User from '../models/userModel.js'
 // Apply authMiddleware to protect all routes below
 router.use(authMiddleware)
 
-// router.get('/', authMiddleware, async (req, res) => {
-//   try {
-//     const tasks = await Task.find({
-//       user: req.user.userId,
-//       parentTaskId: { $in: [null, undefined] }
-//       // parentTaskId: { $exists: false } // Only parent tasks (no related tasks)
-//     }).populate('relatedTasks') // Populate the related tasks
-
-//     console.log('✅ Authenticated user ID:', req.user.userId)
-
-//     res.json(tasks)
-//   } catch (error) {
-//     console.error('Error fetching tasks:', error)
-//     res.status(500).json({ error: 'Failed to fetch tasks' })
-//   }
-// })
-
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const tasks = await Task.find({
