@@ -26,6 +26,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
       <Link to='/about'>About</Link>
       <Link to='/contact'>Contact</Link>
       <Link to='/profile'>Profile</Link>
+      <Link to='/forum'>Forum</Link>
       {isLoggedIn ? (
         <button onClick={onLogout}>Log Out</button>
       ) : (

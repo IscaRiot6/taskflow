@@ -20,6 +20,7 @@ import { useCallback } from 'react'
 import PrivateRoute from './PrivateRoute'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import ForumPage from '../pages/ForumPage'
 // import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App () {
@@ -195,6 +196,14 @@ function App () {
             element={
               <PrivateRoute>
                 <ProfilePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/forum'
+            element={
+              <PrivateRoute>
+                <ForumPage />
               </PrivateRoute>
             }
           />

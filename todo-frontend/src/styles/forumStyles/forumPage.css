@@ -1,0 +1,17 @@
+.forumPage-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .forumPage-title {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .forumPage-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
