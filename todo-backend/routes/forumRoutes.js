@@ -40,7 +40,7 @@ router.get('/', authMiddleware, async (req, res) => {
 // Add a reply to a post
 router.post('/:postId/reply', authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId) // <-- corrected here
+    const user = await User.findById(req.user.userId)
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
@@ -65,12 +65,17 @@ router.post('/:postId/reply', authMiddleware, async (req, res) => {
   }
 })
 
-// In your Express route file (e.g., routes/forumRoutes.js)
+// Get all replies
 router.get('/:postId/replies', authMiddleware, async (req, res) => {
   try {
     const postId = req.params.postId
-    const replies = await Reply.find({ postId }) // assuming Reply is the model for replies
-    res.json(replies)
+    const post = await Post.findById(postId)
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    res.json(post.replies) // ✅ send the replies array
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch replies', error })
   }

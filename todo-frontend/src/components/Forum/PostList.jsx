@@ -28,7 +28,8 @@ const PostList = () => {
 
   const handleReplyClick = (postId) => {
     console.log(`Reply clicked for post ${postId}`);
-    // Here you can implement the reply logic when it becomes active
+    // Here you would show a modal or input form to add a reply
+    // After the reply is added, you would trigger a re-fetch of the replies for the post.
   };
 
   const handleLikeClick = (postId) => {

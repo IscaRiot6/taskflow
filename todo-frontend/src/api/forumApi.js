@@ -84,7 +84,8 @@ const forumApi = () => {
       })
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch replies. Status: ${response.status}`)
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to fetch replies')
       }
 
       const data = await response.json()
@@ -99,8 +100,8 @@ const forumApi = () => {
   return {
     createPost,
     getAllPosts,
-    addReply
-    // getRepliesByPostId
+    addReply,
+    getRepliesByPostId
   }
 }
 
