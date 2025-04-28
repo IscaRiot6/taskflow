@@ -1,7 +1,7 @@
 const forumApi = () => {
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'
 
-  // Create a new post
+  // 1. Create a new post
   const createPost = async (title, content) => {
     try {
       const response = await fetch(`${API_URL}/api/forum`, {
@@ -25,7 +25,7 @@ const forumApi = () => {
     }
   }
 
-  // Get all posts
+  // 2.  Get all posts
   const getAllPosts = async () => {
     try {
       const response = await fetch(`${API_URL}/api/forum`, {
@@ -48,7 +48,7 @@ const forumApi = () => {
     }
   }
 
-  // Add a reply to a post
+  // 3.  Add a reply to a post
   const addReply = async (postId, content) => {
     try {
       const response = await fetch(`${API_URL}/api/forum/${postId}/reply`, {
@@ -72,11 +72,35 @@ const forumApi = () => {
     }
   }
 
+  // 4. Get all replies
+  const getRepliesByPostId = async postId => {
+    try {
+      const response = await fetch(`${API_URL}/api/forum/${postId}/replies`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch replies. Status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error('Error fetching replies:', error)
+      throw error
+    }
+  }
+
   // Return all the API functions
   return {
     createPost,
     getAllPosts,
     addReply
+    // getRepliesByPostId
   }
 }
 

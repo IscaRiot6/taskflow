@@ -65,4 +65,15 @@ router.post('/:postId/reply', authMiddleware, async (req, res) => {
   }
 })
 
+// In your Express route file (e.g., routes/forumRoutes.js)
+router.get('/:postId/replies', authMiddleware, async (req, res) => {
+  try {
+    const postId = req.params.postId
+    const replies = await Reply.find({ postId }) // assuming Reply is the model for replies
+    res.json(replies)
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch replies', error })
+  }
+})
+
 export default router

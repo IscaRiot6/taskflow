@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import forumApi from '../../api/forumApi';
 import '../../styles/forumStyles/CreatePost.css';
 import { toast } from 'react-toastify';
-const CreatePost = () => {
+
+const CreatePost = ({ refreshPosts }) => {
   const { createPost } = forumApi();
 
   const [title, setTitle] = useState('');
@@ -19,7 +20,8 @@ const CreatePost = () => {
       await createPost(title, content);
       setTitle('');
       setContent('');
-      toast.success('Post created!'); // 🎯 show success notification
+      toast.success('Post created!');
+      await refreshPosts(); // Ensure this is awaited
     } catch (err) {
       setError('Failed to create post. Please try again.');
     } finally {
@@ -58,7 +60,6 @@ const CreatePost = () => {
       </button>
     </form>
   );
-  
 };
 
 export default CreatePost;
