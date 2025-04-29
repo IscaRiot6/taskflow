@@ -66,6 +66,60 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 })
 
+// Update a post
+router.put('/:postId', authMiddleware, async (req, res) => {
+  try {
+    const { postId } = req.params
+    const { title, content, tags } = req.body
+    const userId = req.user.userId
+
+    const post = await Post.findById(postId)
+    if (!post) return res.status(404).json({ message: 'Post not found' })
+
+    // Check if the current user is the author
+    if (post.author.toString() !== userId) {
+      return res.status(403).json({ message: 'Unauthorized to edit this post' })
+    }
+
+    // Update fields
+    if (title) post.title = title
+    if (content) post.content = content
+    if (tags) {
+      post.tags = Array.isArray(tags)
+        ? tags.map(tag => tag.trim())
+        : tags.split(',').map(tag => tag.trim())
+    }
+
+    await post.save()
+    res.status(200).json({ message: 'Post updated successfully', post })
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating post', error })
+  }
+})
+
+// Delete a post
+router.delete('/:postId', authMiddleware, async (req, res) => {
+  try {
+    const { postId } = req.params
+    const userId = req.user.userId
+
+    const post = await Post.findById(postId)
+    if (!post) return res.status(404).json({ message: 'Post not found' })
+
+    // Check if the current user is the author
+    if (post.author.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ message: 'Unauthorized to delete this post' })
+    }
+
+    await Post.findByIdAndDelete(postId)
+    res.status(200).json({ message: 'Post deleted successfully' })
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting post', error })
+  }
+})
+
 // Add a reply to a post
 router.post('/:postId/reply', authMiddleware, async (req, res) => {
   try {
