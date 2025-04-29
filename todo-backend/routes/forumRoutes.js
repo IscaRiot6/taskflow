@@ -2,7 +2,7 @@ import express from 'express'
 import Post from '../models/postModel.js'
 const router = express.Router()
 import authMiddleware from '../middleware/authMiddleware.js'
-import User from '../models/userModel.js' // Import the User model
+import User from '../models/userModel.js'
 
 // Create a new post
 router.post('/', authMiddleware, async (req, res) => {
@@ -26,8 +26,7 @@ router.post('/', authMiddleware, async (req, res) => {
       title,
       content,
       tags: tagArray,
-      authorId: user.id,
-      authorUsername: user.username
+      author: user._id
     })
 
     await newPost.save()
@@ -47,7 +46,10 @@ router.get('/', authMiddleware, async (req, res) => {
     if (sortBy === 'votes') sortOption = { votes: -1 }
     else if (sortBy === 'replies') sortOption = { 'replies.length': -1 }
 
-    const posts = await Post.find().sort(sortOption)
+    const posts = await Post.find()
+      .sort(sortOption)
+      .populate('author', 'username profilePic')
+
     const postsWithUserVote = posts.map(post => {
       const userVote = post.voters.find(
         voter => voter.user.toString() === userId

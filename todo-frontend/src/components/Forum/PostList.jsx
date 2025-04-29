@@ -126,6 +126,8 @@ const PostList = () => {
         tags={post.tags}
         onVote={(type) => handleVote(post._id, type)}
         userVoteType={post.userVoteType}
+        // authorUsername={post.author.username}
+        // authorProfilePic={post.author.profilePic}
       />
 
         <div className="post-actions">
@@ -136,7 +138,7 @@ const PostList = () => {
         </div>
 
   
-        {activeReplyPostId === post._id && (
+          {activeReplyPostId === post._id && (
             <div className="reply-form">
               <textarea
                 value={replyContent}
@@ -148,9 +150,9 @@ const PostList = () => {
             </div>
           )}
 
-{visibleReplies[post._id] && (
-  <ReplyList postId={post._id} replies={postReplies[post._id] || []} />
-)}
+          {visibleReplies[post._id] && (
+            <ReplyList postId={post._id} replies={postReplies[post._id] ||  []} />
+          )}
 
         </div>
       ))}
