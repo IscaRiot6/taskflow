@@ -5,7 +5,7 @@ import PostItem from './PostItem';
 import ReplyList from './ReplyList';
 
 const PostList = () => {
-  const { getAllPosts , addReply } = forumApi();
+  const { getAllPosts , addReply , votePost } = forumApi();
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,9 +34,6 @@ const PostList = () => {
 
   const handleReplyClick = (postId) => {
     setActiveReplyPostId(postId);
-    console.log(`Reply clicked for post ${postId}`);
-    // Here you would show a modal or input form to add a reply
-    // After the reply is added, you would trigger a re-fetch of the replies for the post.
   };
 
   const handleReplySubmit = async () => {
@@ -46,12 +43,8 @@ const PostList = () => {
     }
   
     try {
-      console.log(`Submitting reply to post ${activeReplyPostId}: ${replyContent}`);
-  
-      await addReply(activeReplyPostId, replyContent); // important
-      await fetchReplies(activeReplyPostId); // direct rendering
-  
-      console.log('Reply successfully submitted!');
+      await addReply(activeReplyPostId, replyContent);
+      await fetchReplies(activeReplyPostId);
       setReplyContent('');
       setActiveReplyPostId(null);
     } catch (err) {
@@ -63,7 +56,7 @@ const PostList = () => {
     try {
       const { getRepliesByPostId } = forumApi();
       const data = await getRepliesByPostId(postId);
-      setPostReplies(prev => ({ ...prev, [postId]: data }));
+      setPostReplies((prev) => ({ ...prev, [postId]: data }));
     } catch (err) {
       console.error('Failed to fetch replies:', err);
     }
@@ -75,21 +68,23 @@ const PostList = () => {
         await fetchReplies(post._id);
       }
     };
-  
+
     if (posts.length) fetchAllReplies();
   }, [posts]);
   
   
   
-
-  const handleLikeClick = (postId) => {
-    console.log(`Like clicked for post ${postId}`);
-    // Implement 'like' functionality here
-  };
-
-  const handleReactClick = (postId) => {
-    console.log(`React clicked for post ${postId}`);
-    // Implement 'react' functionality here
+  const handleUpvote = async (postId) => {
+    try {
+      const updatedPost = await votePost(postId);
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId ? { ...post, votes: updatedPost.votes } : post
+        )
+      );
+    } catch (err) {
+      console.error('Failed to upvote post:', err);
+    }
   };
 
   if (loading) return <p className="postList-loading">Loading posts...</p>;
@@ -98,17 +93,21 @@ const PostList = () => {
 
   return (
     <div className="postList-container">
-      {posts.map((post) => (
-        <div key={post._id}>
-          <PostItem title={post.title} content={post.content} />
-          <div className="post-actions">
-            <button onClick={() => handleReplyClick(post._id)}>Reply</button>
-            <button onClick={() => handleLikeClick(post._id)}>Like</button>
-            <button onClick={() => handleReactClick(post._id)}>React</button>
-          </div>
+    {posts.map((post) => (
+      <div key={post._id}>
+        <PostItem
+          title={post.title}
+          content={post.content}
+          votes={post.votes}
+          onUpvote={() => handleUpvote(post._id)}
+        />
+        <div className="post-actions">
+          <button onClick={() => handleReplyClick(post._id)}>
+            Reply ({postReplies[post._id]?.length || 0})
+          </button>
+        </div>
   
-          {/* ⬇️ Move the reply form here */}
-          {activeReplyPostId === post._id && (
+        {activeReplyPostId === post._id && (
             <div className="reply-form">
               <textarea
                 value={replyContent}
@@ -119,9 +118,8 @@ const PostList = () => {
               <button onClick={() => setActiveReplyPostId(null)}>Cancel</button>
             </div>
           )}
-  
-          <ReplyList postId={post._id} replies={postReplies[post._id] || []} />
 
+          <ReplyList postId={post._id} replies={postReplies[post._id] || []} />
         </div>
       ))}
     </div>

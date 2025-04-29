@@ -96,12 +96,36 @@ const forumApi = () => {
     }
   }
 
+  // 5. Upvote a post
+  const votePost = async postId => {
+    try {
+      const response = await fetch(`${API_URL}/api/forum/${postId}/vote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to vote on post')
+      }
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error('Error voting on post:', error)
+      throw error
+    }
+  }
+
   // Return all the API functions
   return {
     createPost,
     getAllPosts,
     addReply,
-    getRepliesByPostId
+    getRepliesByPostId,
+    votePost
   }
 }
 
