@@ -13,6 +13,8 @@ const PostList = () => {
   const [activeReplyPostId, setActiveReplyPostId] = useState(null);
   const [replyContent, setReplyContent] = useState('');
   const [postReplies, setPostReplies] = useState({});
+  const [visibleReplies, setVisibleReplies] = useState({});
+
 
 
   useEffect(() => {
@@ -34,7 +36,12 @@ const PostList = () => {
 
   const handleReplyClick = (postId) => {
     setActiveReplyPostId(postId);
+    setVisibleReplies((prev) => ({
+      ...prev,
+      [postId]: true
+    }));
   };
+  
 
   const handleReplySubmit = async () => {
     if (!replyContent.trim()) {
@@ -73,6 +80,15 @@ const PostList = () => {
   }, [posts]);
   
   
+  const toggleReplies = (postId) => {
+    setVisibleReplies((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
+
+  
+  
   
   const handleUpvote = async (postId) => {
     try {
@@ -102,10 +118,12 @@ const PostList = () => {
           onUpvote={() => handleUpvote(post._id)}
         />
         <div className="post-actions">
-          <button onClick={() => handleReplyClick(post._id)}>
-            Reply ({postReplies[post._id]?.length || 0})
+          <button onClick={() => handleReplyClick(post._id)}>Reply</button>
+          <button onClick={() => toggleReplies(post._id)}>
+            {visibleReplies[post._id] ? 'Hide Replies' : 'Show Replies'} ({postReplies[post._id]?.length || 0})
           </button>
         </div>
+
   
         {activeReplyPostId === post._id && (
             <div className="reply-form">
@@ -119,7 +137,10 @@ const PostList = () => {
             </div>
           )}
 
-          <ReplyList postId={post._id} replies={postReplies[post._id] || []} />
+{visibleReplies[post._id] && (
+  <ReplyList postId={post._id} replies={postReplies[post._id] || []} />
+)}
+
         </div>
       ))}
     </div>
