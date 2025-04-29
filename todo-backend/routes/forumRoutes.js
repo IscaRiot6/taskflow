@@ -41,13 +41,24 @@ router.post('/', authMiddleware, async (req, res) => {
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const { sortBy } = req.query
+    const userId = req.user.userId
 
     let sortOption = { createdAt: -1 } // default: newest first
     if (sortBy === 'votes') sortOption = { votes: -1 }
     else if (sortBy === 'replies') sortOption = { 'replies.length': -1 }
 
     const posts = await Post.find().sort(sortOption)
-    res.status(200).json(posts)
+    const postsWithUserVote = posts.map(post => {
+      const userVote = post.voters.find(
+        voter => voter.user.toString() === userId
+      )
+      return {
+        ...post.toObject(),
+        userVoteType: userVote ? userVote.voteType : null
+      }
+    })
+
+    res.status(200).json(postsWithUserVote)
   } catch (error) {
     res.status(500).json({ message: 'Error fetching posts', error })
   }
@@ -110,15 +121,14 @@ router.post('/:postId/vote', authMiddleware, async (req, res) => {
       voter => voter.user.toString() === userId
     )
 
-    // check if user has already voted
     if (existingVoteIndex !== -1) {
       const existingVote = post.voters[existingVoteIndex]
       if (existingVote.voteType === voteType) {
-        return res
-          .status(400)
-          .json({ message: 'You have already voted this way.' })
+        // User is retracting their vote
+        post.votes += voteType === 'up' ? -1 : 1
+        post.voters.splice(existingVoteIndex, 1)
       } else {
-        // Change vote
+        // User is switching vote direction
         post.votes += voteType === 'up' ? 2 : -2
         post.voters[existingVoteIndex].voteType = voteType
       }

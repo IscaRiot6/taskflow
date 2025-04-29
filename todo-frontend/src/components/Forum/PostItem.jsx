@@ -2,7 +2,7 @@ import React from 'react';
 import '../../styles/forumStyles/PostItem.css';
 import { formatDistanceToNow } from 'date-fns';
 
-const PostItem = ({ title, content, votes, createdAt, tags = [], onVote }) => {
+const PostItem = ({ title, content, votes, createdAt, tags = [], onVote, userVoteType }) => {
   return (
     <div className="postItem-container">
       <h3 className="postItem-title">{title}</h3>
@@ -25,13 +25,22 @@ const PostItem = ({ title, content, votes, createdAt, tags = [], onVote }) => {
       )}
 
       <div className="postItem-votes">
-        <button className="vote-button upvote" onClick={() => onVote('up')} title="Upvote">
-          ▲
-        </button>
-        <span className="vote-count">{votes}</span>
-        <button className="vote-button downvote" onClick={() => onVote('down')} title="Downvote">
-          ▼
-        </button>
+      <button
+  className={`vote-button upvote ${userVoteType === 'up' ? 'active' : ''}`}
+  onClick={() => onVote('up')}
+  title="Upvote"
+>
+  ▲
+</button>
+<span className="vote-count">{votes}</span>
+<button
+  className={`vote-button downvote ${userVoteType === 'down' ? 'active' : ''}`}
+  onClick={() => onVote('down')}
+  title="Downvote"
+>
+  ▼
+</button>
+
       </div>
     </div>
   );

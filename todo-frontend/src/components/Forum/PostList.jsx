@@ -93,13 +93,21 @@ const PostList = () => {
       const updatedPost = await votePost(postId, voteType);
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
-          post._id === postId ? { ...post, votes: updatedPost.votes } : post
+          post._id === postId
+            ? {
+                ...post,
+                votes: updatedPost.votes,
+                userVoteType:
+                  post.userVoteType === voteType ? null : voteType,
+              }
+            : post
         )
       );
     } catch (err) {
       console.error(`Failed to ${voteType}vote post:`, err);
     }
   };
+  
   
 
   if (loading) return <p className="postList-loading">Loading posts...</p>;
@@ -111,13 +119,14 @@ const PostList = () => {
     {posts.map((post) => (
       <div key={post._id}>
         <PostItem
-  title={post.title}
-  content={post.content}
-  votes={post.votes}
-  createdAt={post.createdAt}
-  tags={post.tags}
-  onVote={(type) => handleVote(post._id, type)}
-/>
+        title={post.title}
+        content={post.content}
+        votes={post.votes}
+        createdAt={post.createdAt}
+        tags={post.tags}
+        onVote={(type) => handleVote(post._id, type)}
+        userVoteType={post.userVoteType}
+      />
 
         <div className="post-actions">
           <button onClick={() => handleReplyClick(post._id)}>Reply</button>

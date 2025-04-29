@@ -42,6 +42,22 @@
     margin: 0 10px;
     font-weight: bold;
   }
+
+  
+  .vote-button.upvote.active {
+    color: rgb(2, 100, 2);
+    font-weight: bold;
+    background-color: hsl(120, 47%, 62%);
+  }
+  
+  .vote-button.downvote.active {
+    color: rgb(104, 1, 1);
+    font-weight: bold;
+    background-color: #f37171f8;
+  }
+  
+  
+  
   
   .postItem-tags {
     margin-top: 8px;
