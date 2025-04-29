@@ -2,7 +2,7 @@ const forumApi = () => {
   const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'
 
   // 1. Create a new post
-  const createPost = async (title, content) => {
+  const createPost = async (title, content, tags) => {
     try {
       const response = await fetch(`${API_URL}/api/forum`, {
         method: 'POST',
@@ -10,7 +10,7 @@ const forumApi = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('authToken')}`
         },
-        body: JSON.stringify({ title, content })
+        body: JSON.stringify({ title, content, tags })
       })
 
       if (!response.ok) {
@@ -96,15 +96,16 @@ const forumApi = () => {
     }
   }
 
-  // 5. Upvote a post
-  const votePost = async postId => {
+  // 5. Vote
+  const votePost = async (postId, voteType) => {
     try {
       const response = await fetch(`${API_URL}/api/forum/${postId}/vote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('authToken')}`
-        }
+        },
+        body: JSON.stringify({ voteType })
       })
 
       if (!response.ok) {

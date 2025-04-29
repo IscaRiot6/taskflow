@@ -12,10 +12,20 @@ router.post('/', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'User not found' })
     }
 
-    const { title, content } = req.body
+    const { title, content, tags } = req.body
+
+    // Handle tags being either a string or an array
+    let tagArray = []
+    if (Array.isArray(tags)) {
+      tagArray = tags.map(tag => tag.trim())
+    } else if (typeof tags === 'string') {
+      tagArray = tags.split(',').map(tag => tag.trim())
+    }
+
     const newPost = new Post({
       title,
       content,
+      tags: tagArray,
       authorId: user.id,
       authorUsername: user.username
     })
@@ -30,7 +40,13 @@ router.post('/', authMiddleware, async (req, res) => {
 // Get all posts
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const posts = await Post.find().sort({ createdAt: -1 })
+    const { sortBy } = req.query
+
+    let sortOption = { createdAt: -1 } // default: newest first
+    if (sortBy === 'votes') sortOption = { votes: -1 }
+    else if (sortBy === 'replies') sortOption = { 'replies.length': -1 }
+
+    const posts = await Post.find().sort(sortOption)
     res.status(200).json(posts)
   } catch (error) {
     res.status(500).json({ message: 'Error fetching posts', error })
@@ -81,17 +97,39 @@ router.get('/:postId/replies', authMiddleware, async (req, res) => {
   }
 })
 
-// Upvote a post
+// Upvote or downvote a post
 router.post('/:postId/vote', authMiddleware, async (req, res) => {
   try {
+    const { voteType } = req.body // 'up' or 'down'
+    const userId = req.user.userId
+
     const post = await Post.findById(req.params.postId)
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' })
+    if (!post) return res.status(404).json({ message: 'Post not found' })
+
+    const existingVoteIndex = post.voters.findIndex(
+      voter => voter.user.toString() === userId
+    )
+
+    // check if user has already voted
+    if (existingVoteIndex !== -1) {
+      const existingVote = post.voters[existingVoteIndex]
+      if (existingVote.voteType === voteType) {
+        return res
+          .status(400)
+          .json({ message: 'You have already voted this way.' })
+      } else {
+        // Change vote
+        post.votes += voteType === 'up' ? 2 : -2
+        post.voters[existingVoteIndex].voteType = voteType
+      }
+    } else {
+      // New vote
+      post.votes += voteType === 'up' ? 1 : -1
+      post.voters.push({ user: userId, voteType })
     }
 
-    post.votes += 1
     await post.save()
-    res.status(200).json({ message: 'Post upvoted', votes: post.votes })
+    res.status(200).json({ message: 'Vote registered', votes: post.votes })
   } catch (error) {
     res.status(500).json({ message: 'Error voting on post', error })
   }
