@@ -21,7 +21,8 @@ const postSchema = new mongoose.Schema({
   },
   authorUsername: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  replies: [replySchema] // embedded replies
+  replies: [replySchema],
+  votes: { type: Number, default: 0 }
 })
 
 export default mongoose.model('Post', postSchema)

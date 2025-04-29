@@ -81,4 +81,20 @@ router.get('/:postId/replies', authMiddleware, async (req, res) => {
   }
 })
 
+// Upvote a post
+router.post('/:postId/vote', authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId)
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    post.votes += 1
+    await post.save()
+    res.status(200).json({ message: 'Post upvoted', votes: post.votes })
+  } catch (error) {
+    res.status(500).json({ message: 'Error voting on post', error })
+  }
+})
+
 export default router

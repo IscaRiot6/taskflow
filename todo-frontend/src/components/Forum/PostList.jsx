@@ -5,11 +5,15 @@ import PostItem from './PostItem';
 import ReplyList from './ReplyList';
 
 const PostList = () => {
-  const { getAllPosts } = forumApi();
+  const { getAllPosts , addReply } = forumApi();
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeReplyPostId, setActiveReplyPostId] = useState(null);
+  const [replyContent, setReplyContent] = useState('');
+  const [postReplies, setPostReplies] = useState({});
+
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -26,11 +30,57 @@ const PostList = () => {
     fetchPosts();
   }, []);
 
+
+
   const handleReplyClick = (postId) => {
+    setActiveReplyPostId(postId);
     console.log(`Reply clicked for post ${postId}`);
     // Here you would show a modal or input form to add a reply
     // After the reply is added, you would trigger a re-fetch of the replies for the post.
   };
+
+  const handleReplySubmit = async () => {
+    if (!replyContent.trim()) {
+      console.warn('Reply content is empty.');
+      return;
+    }
+  
+    try {
+      console.log(`Submitting reply to post ${activeReplyPostId}: ${replyContent}`);
+  
+      await addReply(activeReplyPostId, replyContent); // important
+      await fetchReplies(activeReplyPostId); // direct rendering
+  
+      console.log('Reply successfully submitted!');
+      setReplyContent('');
+      setActiveReplyPostId(null);
+    } catch (err) {
+      console.error('Failed to submit reply', err);
+    }
+  };
+
+  const fetchReplies = async (postId) => {
+    try {
+      const { getRepliesByPostId } = forumApi();
+      const data = await getRepliesByPostId(postId);
+      setPostReplies(prev => ({ ...prev, [postId]: data }));
+    } catch (err) {
+      console.error('Failed to fetch replies:', err);
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllReplies = async () => {
+      for (const post of posts) {
+        await fetchReplies(post._id);
+      }
+    };
+  
+    if (posts.length) fetchAllReplies();
+  }, [posts]);
+  
+  
+  
 
   const handleLikeClick = (postId) => {
     console.log(`Like clicked for post ${postId}`);
@@ -56,11 +106,27 @@ const PostList = () => {
             <button onClick={() => handleLikeClick(post._id)}>Like</button>
             <button onClick={() => handleReactClick(post._id)}>React</button>
           </div>
-          <ReplyList postId={post._id} />
+  
+          {/* ⬇️ Move the reply form here */}
+          {activeReplyPostId === post._id && (
+            <div className="reply-form">
+              <textarea
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
+                placeholder="Write your reply..."
+              />
+              <button onClick={handleReplySubmit}>Submit Reply</button>
+              <button onClick={() => setActiveReplyPostId(null)}>Cancel</button>
+            </div>
+          )}
+  
+          <ReplyList postId={post._id} replies={postReplies[post._id] || []} />
+
         </div>
       ))}
     </div>
   );
+  
 };
 
 export default PostList;
