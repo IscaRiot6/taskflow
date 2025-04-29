@@ -1,10 +1,18 @@
 import React from 'react';
 import '../../styles/forumStyles/PostItem.css';
 import { formatDistanceToNow } from 'date-fns';
+// import 'bootstrap/dist/css/bootstrap.min.css'
 
-const PostItem = ({ title, content, votes, createdAt, tags = [], onVote, userVoteType }) => {
+const PostItem = ({ title, content, votes, createdAt, tags = [], onVote, userVoteType, authorUsername,
+  authorProfilePic }) => {
   return (
     <div className="postItem-container">
+      <div className="postItem-author">
+        {authorProfilePic && (
+        <img src={authorProfilePic} alt={authorUsername} className="author-avatar" />
+        )}
+         <span className="author-name">@{authorUsername}</span>
+      </div>
       <h3 className="postItem-title">{title}</h3>
       <p className="postItem-preview">
         {content.length > 100 ? content.slice(0, 100) + '...' : content}
@@ -25,21 +33,21 @@ const PostItem = ({ title, content, votes, createdAt, tags = [], onVote, userVot
       )}
 
       <div className="postItem-votes">
-      <button
-  className={`vote-button upvote ${userVoteType === 'up' ? 'active' : ''}`}
-  onClick={() => onVote('up')}
-  title="Upvote"
->
-  ▲
-</button>
-<span className="vote-count">{votes}</span>
-<button
-  className={`vote-button downvote ${userVoteType === 'down' ? 'active' : ''}`}
-  onClick={() => onVote('down')}
-  title="Downvote"
->
-  ▼
-</button>
+        <button
+          className={`vote-button upvote ${userVoteType === 'up' ? 'active' : ''}`}
+          onClick={() => onVote('up')}
+         title="Upvote"
+        >
+         ▲
+        </button>
+        <span className="vote-count">{votes}</span>
+        <button
+        className={`vote-button downvote ${userVoteType === 'down' ? 'active' : ''}`}
+        onClick={() => onVote('down')}
+         title="Downvote"
+        >
+           ▼
+        </button>
 
       </div>
     </div>

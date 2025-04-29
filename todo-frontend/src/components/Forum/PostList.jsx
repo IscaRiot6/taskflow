@@ -3,6 +3,7 @@ import forumApi from '../../api/forumApi';
 import '../../styles/forumStyles/PostList.css'; 
 import PostItem from './PostItem';
 import ReplyList from './ReplyList';
+// import 'bootstrap/dist/css/bootstrap.min.css'
 
 const PostList = () => {
   const { getAllPosts , addReply , votePost } = forumApi();
@@ -126,8 +127,8 @@ const PostList = () => {
         tags={post.tags}
         onVote={(type) => handleVote(post._id, type)}
         userVoteType={post.userVoteType}
-        // authorUsername={post.author.username}
-        // authorProfilePic={post.author.profilePic}
+        authorUsername={post.author?.username}  // Safe access
+        authorProfilePic={post.author?.profilePic}
       />
 
         <div className="post-actions">

@@ -3,6 +3,7 @@ import forumApi from '../api/forumApi';
 import CreatePost from '../components/Forum/CreatePost';
 import PostList from '../components/Forum/PostList';
 import '../styles/forumStyles/forumPage.css';
+//  import 'bootstrap/dist/css/bootstrap.min.css'
 
 const ForumPage = () => {
   const { getAllPosts } = forumApi();
