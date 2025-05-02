@@ -5,6 +5,7 @@ import PostItem from './PostItem';
 import ReplyList from './ReplyList';
 import { getCurrentUserId } from '../../utils/auth';
 import { toast } from 'react-toastify';
+import ConfirmDeleteModal from '../ConfirmDeleteModal';
 
 
 const PostList = ({ posts, refreshPosts }) => {
@@ -14,6 +15,10 @@ const PostList = ({ posts, refreshPosts }) => {
   const [replyContent, setReplyContent] = useState('');
   const [postReplies, setPostReplies] = useState({});
   const [visibleReplies, setVisibleReplies] = useState({});
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
+
+  
 
   const handleReplyClick = (postId) => {
     setActiveReplyPostId(postId);
@@ -86,16 +91,33 @@ const PostList = ({ posts, refreshPosts }) => {
     }
   };
 
-  const handleDelete = async (postId) => {
+  const handleDeleteClick = (postId) => {
+    setPostToDelete(postId);
+    setShowDeleteModal(true);
+  };
+  
+  const handleConfirmDelete = async () => {
     try {
-      await deletePost(postId);
+      await deletePost(postToDelete);
       toast.success('Post deleted successfully!');
       refreshPosts();
     } catch (err) {
       toast.error('Failed to delete post.');
       console.error('Failed to delete post:', err);
+    } finally {
+      setShowDeleteModal(false);
+      setPostToDelete(null);
     }
   };
+  
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+    setPostToDelete(null);
+  };
+  
+  
+  
+  
 
   if (posts.length === 0) return <p className="postList-empty">No posts yet.</p>;
 
@@ -115,11 +137,18 @@ const PostList = ({ posts, refreshPosts }) => {
             authorUsername={post.author?.username}
             authorProfilePic={post.author?.profilePic}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={() => {
+              setPostToDelete(post._id);
+              setShowDeleteModal(true);
+            }}
             isAuthor={post.author?._id === getCurrentUserId()}
-
-
           />
+          {/* <ConfirmDeleteModal
+  show={showDeleteModal}
+  onConfirm={handleConfirmDelete}
+  onCancel={handleCancelDelete}
+/> */}
+          
 
           <div className="post-actions">
             <button onClick={() => handleReplyClick(post._id)}>Reply</button>
@@ -143,8 +172,16 @@ const PostList = ({ posts, refreshPosts }) => {
           {visibleReplies[post._id] && (
             <ReplyList postId={post._id} replies={postReplies[post._id] || []} />
           )}
+
         </div>
       ))}
+      {showDeleteModal && (
+        <ConfirmDeleteModal
+          message="Are you sure you want to delete this post?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </div>
   );
 };

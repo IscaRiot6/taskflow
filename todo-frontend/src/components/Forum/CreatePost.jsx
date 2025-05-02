@@ -42,6 +42,7 @@ const CreatePost = ({ refreshPosts }) => {
   };
 
   return (
+    
     <form onSubmit={handleSubmit} className="forumPost-form">
       <div className="forumPost-inputWrapper">
         <input

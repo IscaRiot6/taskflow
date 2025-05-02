@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import forumApi from '../api/forumApi';
 import CreatePost from '../components/Forum/CreatePost';
 import PostList from '../components/Forum/PostList';
-import '../styles/forumStyles/forumPage.css';
+import '../styles/forumStyles/ForumPage.css';
 //  import 'bootstrap/dist/css/bootstrap.min.css'
 
 const ForumPage = () => {

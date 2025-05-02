@@ -6,9 +6,11 @@ import { formatDistanceToNow } from 'date-fns';
 const PostItem = ({ postId, title, content, votes, createdAt, tags = [], onVote, userVoteType, authorUsername,
   authorProfilePic, onEdit, onDelete, isAuthor }) => {
     const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(title);
-  const [editedContent, setEditedContent] = useState(content);
-  const [editedTags, setEditedTags] = useState(tags.join(', '));
+    const [editedTitle, setEditedTitle] = useState(title);
+    const [editedContent, setEditedContent] = useState(content);
+    const [editedTags, setEditedTags] = useState(tags.join(', '));
+    
+
 
   const handleEditSubmit = () => {
     onEdit(postId, {
@@ -98,6 +100,8 @@ const PostItem = ({ postId, title, content, votes, createdAt, tags = [], onVote,
             <div className="postItem-actions">
               <button onClick={() => setIsEditing(true)}>Edit</button>
               <button onClick={() => onDelete(postId)}>Delete</button>
+             
+
             </div>
           )}
         </>

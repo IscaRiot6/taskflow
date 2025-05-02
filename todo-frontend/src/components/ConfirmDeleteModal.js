@@ -2,7 +2,7 @@ import '../styles/ConfirmDeleteModal.css'
 
 const ConfirmDeleteModal = ({ message, onConfirm, onCancel }) => {
   return (
-    <div className='modal-backdrop'>
+    <div className='modal-backdrop' onClick={onCancel}>
       <div className='modal-content'>
         <button
           className='modal-close'
