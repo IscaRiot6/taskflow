@@ -40,7 +40,8 @@ const ForumPage = () => {
       <h1 className="forumPage-title">Forum</h1>
       <div className="forumPage-content">
         <CreatePost refreshPosts={refreshPosts} />  
-        <PostList posts={posts} />
+        <PostList posts={posts} refreshPosts={refreshPosts} />
+
       </div>
     </div>
   );

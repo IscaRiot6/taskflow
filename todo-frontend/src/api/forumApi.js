@@ -48,7 +48,53 @@ const forumApi = () => {
     }
   }
 
-  // 3.  Add a reply to a post
+  // 3. Update a post
+  const updatePost = async (postId, updatedData) => {
+    try {
+      const response = await fetch(`${API_URL}/api/forum/${postId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify(updatedData)
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to update post. Status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error('Error updating post:', error)
+      throw error
+    }
+  }
+
+  // 4. Delete a post
+  const deletePost = async postId => {
+    try {
+      const response = await fetch(`${API_URL}/api/forum/${postId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete post. Status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error('Error deleting post:', error)
+      throw error
+    }
+  }
+
+  // 5.  Add a reply to a post
   const addReply = async (postId, content) => {
     try {
       const response = await fetch(`${API_URL}/api/forum/${postId}/reply`, {
@@ -72,7 +118,7 @@ const forumApi = () => {
     }
   }
 
-  // 4. Get all replies
+  // 6. Get all replies
   const getRepliesByPostId = async postId => {
     try {
       const response = await fetch(`${API_URL}/api/forum/${postId}/replies`, {
@@ -96,7 +142,7 @@ const forumApi = () => {
     }
   }
 
-  // 5. Vote
+  // 7. Vote
   const votePost = async (postId, voteType) => {
     try {
       const response = await fetch(`${API_URL}/api/forum/${postId}/vote`, {
@@ -126,7 +172,9 @@ const forumApi = () => {
     getAllPosts,
     addReply,
     getRepliesByPostId,
-    votePost
+    votePost,
+    updatePost,
+    deletePost
   }
 }
 

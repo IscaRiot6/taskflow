@@ -34,6 +34,7 @@ const LoginPage = ({ onLogin }) => {
       // Store both the auth token and the user object
       localStorage.setItem('authToken', data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
+      // localStorage.setItem('userId', user._id);
 
       onLogin(data.user)
 

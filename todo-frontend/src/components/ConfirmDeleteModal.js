@@ -1,4 +1,3 @@
-// ConfirmModal.js
 import '../styles/ConfirmDeleteModal.css'
 
 const ConfirmDeleteModal = ({ message, onConfirm, onCancel }) => {

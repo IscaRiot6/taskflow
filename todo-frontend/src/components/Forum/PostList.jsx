@@ -1,39 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import forumApi from '../../api/forumApi';
-import '../../styles/forumStyles/PostList.css'; 
+import '../../styles/forumStyles/PostList.css';
 import PostItem from './PostItem';
 import ReplyList from './ReplyList';
-// import 'bootstrap/dist/css/bootstrap.min.css'
+import { getCurrentUserId } from '../../utils/auth';
+import { toast } from 'react-toastify';
 
-const PostList = () => {
-  const { getAllPosts , addReply , votePost } = forumApi();
 
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const PostList = ({ posts, refreshPosts }) => {
+  const { addReply, votePost, updatePost, deletePost } = forumApi();
+
   const [activeReplyPostId, setActiveReplyPostId] = useState(null);
   const [replyContent, setReplyContent] = useState('');
   const [postReplies, setPostReplies] = useState({});
   const [visibleReplies, setVisibleReplies] = useState({});
-
-
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const data = await getAllPosts();
-        setPosts(data);
-      } catch (err) {
-        setError('Failed to load posts.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
-
 
   const handleReplyClick = (postId) => {
     setActiveReplyPostId(postId);
@@ -42,14 +22,13 @@ const PostList = () => {
       [postId]: true
     }));
   };
-  
 
   const handleReplySubmit = async () => {
     if (!replyContent.trim()) {
       console.warn('Reply content is empty.');
       return;
     }
-  
+
     try {
       await addReply(activeReplyPostId, replyContent);
       await fetchReplies(activeReplyPostId);
@@ -79,8 +58,7 @@ const PostList = () => {
 
     if (posts.length) fetchAllReplies();
   }, [posts]);
-  
-  
+
   const toggleReplies = (postId) => {
     setVisibleReplies((prev) => ({
       ...prev,
@@ -88,57 +66,68 @@ const PostList = () => {
     }));
   };
 
-  
   const handleVote = async (postId, voteType) => {
     try {
       const updatedPost = await votePost(postId, voteType);
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId
-            ? {
-                ...post,
-                votes: updatedPost.votes,
-                userVoteType:
-                  post.userVoteType === voteType ? null : voteType,
-              }
-            : post
-        )
-      );
+      refreshPosts();
     } catch (err) {
       console.error(`Failed to ${voteType}vote post:`, err);
     }
   };
-  
-  
 
-  if (loading) return <p className="postList-loading">Loading posts...</p>;
-  if (error) return <p className="postList-error">{error}</p>;
+  const handleEdit = async (postId, updatedData) => {
+    try {
+      await updatePost(postId, updatedData);
+      toast.success('Post updated successfully!');
+      refreshPosts();
+    } catch (err) {
+      toast.error('Failed to update post.');
+      console.error('Failed to update post:', err);
+    }
+  };
+
+  const handleDelete = async (postId) => {
+    try {
+      await deletePost(postId);
+      toast.success('Post deleted successfully!');
+      refreshPosts();
+    } catch (err) {
+      toast.error('Failed to delete post.');
+      console.error('Failed to delete post:', err);
+    }
+  };
+
   if (posts.length === 0) return <p className="postList-empty">No posts yet.</p>;
 
   return (
     <div className="postList-container">
-    {posts.map((post) => (
-      <div key={post._id}>
-        <PostItem
-        title={post.title}
-        content={post.content}
-        votes={post.votes}
-        createdAt={post.createdAt}
-        tags={post.tags}
-        onVote={(type) => handleVote(post._id, type)}
-        userVoteType={post.userVoteType}
-        authorUsername={post.author?.username}  // Safe access
-        authorProfilePic={post.author?.profilePic}
-      />
+      {posts.map((post) => (
+        <div key={post._id}>
+          <PostItem
+            postId={post._id}
+            title={post.title}
+            content={post.content}
+            votes={post.votes}
+            createdAt={post.createdAt}
+            tags={post.tags}
+            onVote={(type) => handleVote(post._id, type)}
+            userVoteType={post.userVoteType}
+            authorUsername={post.author?.username}
+            authorProfilePic={post.author?.profilePic}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            isAuthor={post.author?._id === getCurrentUserId()}
 
-        <div className="post-actions">
-          <button onClick={() => handleReplyClick(post._id)}>Reply</button>
-          <button onClick={() => toggleReplies(post._id)}>
-            {visibleReplies[post._id] ? 'Hide Replies' : 'Show Replies'} ({postReplies[post._id]?.length || 0})
-          </button>
-        </div>
 
-  
+          />
+
+          <div className="post-actions">
+            <button onClick={() => handleReplyClick(post._id)}>Reply</button>
+            <button onClick={() => toggleReplies(post._id)}>
+              {visibleReplies[post._id] ? 'Hide Replies' : 'Show Replies'} ({postReplies[post._id]?.length || 0})
+            </button>
+          </div>
+
           {activeReplyPostId === post._id && (
             <div className="reply-form">
               <textarea
@@ -152,14 +141,12 @@ const PostList = () => {
           )}
 
           {visibleReplies[post._id] && (
-            <ReplyList postId={post._id} replies={postReplies[post._id] ||  []} />
+            <ReplyList postId={post._id} replies={postReplies[post._id] || []} />
           )}
-
         </div>
       ))}
     </div>
   );
-  
 };
 
 export default PostList;
