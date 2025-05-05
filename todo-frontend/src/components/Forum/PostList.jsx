@@ -114,10 +114,6 @@ const PostList = ({ posts, refreshPosts }) => {
     setShowDeleteModal(false);
     setPostToDelete(null);
   };
-  
-  
-  
-  
 
   if (posts.length === 0) return <p className="postList-empty">No posts yet.</p>;
 
@@ -143,13 +139,7 @@ const PostList = ({ posts, refreshPosts }) => {
             }}
             isAuthor={post.author?._id === getCurrentUserId()}
           />
-          {/* <ConfirmDeleteModal
-  show={showDeleteModal}
-  onConfirm={handleConfirmDelete}
-  onCancel={handleCancelDelete}
-/> */}
-          
-
+        
           <div className="post-actions">
             <button onClick={() => handleReplyClick(post._id)}>Reply</button>
             <button onClick={() => toggleReplies(post._id)}>

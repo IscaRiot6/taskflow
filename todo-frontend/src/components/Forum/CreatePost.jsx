@@ -42,8 +42,9 @@ const CreatePost = ({ refreshPosts }) => {
   };
 
   return (
-    
-    <form onSubmit={handleSubmit} className="forumPost-form">
+    <div className="card mb-3">
+  <div className="card-body">
+  <form onSubmit={handleSubmit} className="forumPost-form">
       <div className="forumPost-inputWrapper">
         <input
           type="text"
@@ -80,6 +81,10 @@ const CreatePost = ({ refreshPosts }) => {
         {loading ? 'Posting...' : 'Create Post'}
       </button>
     </form>
+  </div>
+</div>
+
+    
   );
 };
 

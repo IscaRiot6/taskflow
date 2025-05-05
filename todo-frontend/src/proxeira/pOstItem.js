@@ -82,14 +82,15 @@ const PostItem = ({
               </span>
 
               <div className='postItem-footer'>
-                <div className='postItem-tags'>
-                  {tags.length > 0 &&
-                    tags.map((tag, idx) => (
+                {tags.length > 0 && (
+                  <div className='postItem-tags'>
+                    {tags.map((tag, idx) => (
                       <span key={idx} className='tag'>
                         #{tag}
                       </span>
                     ))}
-                </div>
+                  </div>
+                )}
 
                 <div className='postItem-votes'>
                   <button
@@ -117,14 +118,12 @@ const PostItem = ({
                   </button>
                 </div>
 
-                <div className='postItem-actions'>
-                  {isAuthor && (
-                    <>
-                      <button onClick={() => setIsEditing(true)}>Edit</button>
-                      <button onClick={() => onDelete(postId)}>Delete</button>
-                    </>
-                  )}
-                </div>
+                {isAuthor && (
+                  <div className='postItem-actions'>
+                    <button onClick={() => setIsEditing(true)}>Edit</button>
+                    <button onClick={() => onDelete(postId)}>Delete</button>
+                  </div>
+                )}
               </div>
             </>
           )}

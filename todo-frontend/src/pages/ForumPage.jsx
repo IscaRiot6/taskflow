@@ -36,6 +36,8 @@ const ForumPage = () => {
   if (error) return <p>{error}</p>;
 
   return (
+
+    
     <div className="forumPage-wrapper">
       <h1 className="forumPage-title">Forum</h1>
       <div className="forumPage-content">
