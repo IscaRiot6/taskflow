@@ -17,4 +17,4 @@ const connectDB = async () => {
   }
 }
 
-export default connectDB // Ensure you're exporting the function as default
+export default connectDB

@@ -9,7 +9,7 @@ import ConfirmDeleteModal from '../ConfirmDeleteModal';
 
 
 const PostList = ({ posts, refreshPosts }) => {
-  const { addReply, votePost, updatePost, deletePost } = forumApi();
+  const { addReply, votePost, updatePost, deletePost, updateReply, deleteReply, handleVoteReply } = forumApi();
 
   const [activeReplyPostId, setActiveReplyPostId] = useState(null);
   const [replyContent, setReplyContent] = useState('');
@@ -115,56 +115,91 @@ const PostList = ({ posts, refreshPosts }) => {
     setPostToDelete(null);
   };
 
+
+const handleEditReply = async (postId, replyId, updatedData) => {
+  try {
+    await updateReply(replyId, updatedData);
+    toast.success('Reply updated successfully!');
+    await fetchReplies(postId); // Refresh replies
+  } catch (error) {
+    toast.error('Failed to update reply.');
+    console.error('Failed to edit reply:', error);
+  }
+};
+
+
+const handleDeleteReply = async (postId, replyId) => {
+  try {
+    await deleteReply(replyId);
+    toast.success('Reply deleted successfully!');
+    await fetchReplies(postId); // Refresh replies for the post
+  } catch (error) {
+    toast.error('Failed to delete reply.');
+    console.error('Failed to delete reply:', error);
+  }
+};
+
+
+
+
   if (posts.length === 0) return <p className="postList-empty">No posts yet.</p>;
 
   return (
     <div className="postList-container">
       {posts.map((post) => (
-        <div key={post._id}>
-          <PostItem
-            postId={post._id}
-            title={post.title}
-            content={post.content}
-            votes={post.votes}
-            createdAt={post.createdAt}
-            tags={post.tags}
-            onVote={(type) => handleVote(post._id, type)}
-            userVoteType={post.userVoteType}
-            authorUsername={post.author?.username}
-            authorProfilePic={post.author?.profilePic}
-            onEdit={handleEdit}
-            onDelete={() => {
-              setPostToDelete(post._id);
-              setShowDeleteModal(true);
-            }}
-            isAuthor={post.author?._id === getCurrentUserId()}
-          />
-        
-          <div className="post-actions">
-            <button onClick={() => handleReplyClick(post._id)}>Reply</button>
-            <button onClick={() => toggleReplies(post._id)}>
-              {visibleReplies[post._id] ? 'Hide Replies' : 'Show Replies'} ({postReplies[post._id]?.length || 0})
-            </button>
-          </div>
+  <div key={post._id}>
+    <PostItem
+      postId={post._id}
+      title={post.title}
+      content={post.content}
+      votes={post.votes}
+      createdAt={post.createdAt}
+      tags={post.tags}
+      onVote={(type) => handleVote(post._id, type)}
+      userVoteType={post.userVoteType}
+      authorUsername={post.author?.username}
+      authorProfilePic={post.author?.profilePic}
+      onEdit={handleEdit}
+      onDelete={() => {
+        setPostToDelete(post._id);
+        setShowDeleteModal(true);
+      }}
+      isAuthor={post.author?._id === getCurrentUserId()}
+    />
 
-          {activeReplyPostId === post._id && (
-            <div className="reply-form">
-              <textarea
-                value={replyContent}
-                onChange={(e) => setReplyContent(e.target.value)}
-                placeholder="Write your reply..."
-              />
-              <button onClick={handleReplySubmit}>Submit Reply</button>
-              <button onClick={() => setActiveReplyPostId(null)}>Cancel</button>
-            </div>
-          )}
+    <div className="post-actions">
+      <button onClick={() => handleReplyClick(post._id)}>Reply</button>
+      <button onClick={() => toggleReplies(post._id)}>
+        {visibleReplies[post._id] ? 'Hide Replies' : 'Show Replies'} ({postReplies[post._id]?.length || 0})
+      </button>
+    </div>
 
-          {visibleReplies[post._id] && (
-            <ReplyList postId={post._id} replies={postReplies[post._id] || []} />
-          )}
+    {activeReplyPostId === post._id && (
+      <div className="reply-form">
+        <textarea
+          value={replyContent}
+          onChange={(e) => setReplyContent(e.target.value)}
+          placeholder="Write your reply..."
+        />
+        <button onClick={handleReplySubmit}>Submit Reply</button>
+        <button onClick={() => setActiveReplyPostId(null)}>Cancel</button>
+      </div>
+    )}
 
-        </div>
-      ))}
+    {visibleReplies[post._id] && (
+     <ReplyList
+     postId={post._id}
+     replies={postReplies[post._id] || []}
+     onVote={handleVoteReply}
+     onEdit={(replyId, updatedData) => handleEditReply(post._id, replyId, updatedData)}
+     onDelete={handleDeleteReply}
+     currentUserId={getCurrentUserId()}
+   />
+   
+    )}
+  </div>
+))}
+
       {showDeleteModal && (
         <ConfirmDeleteModal
           message="Are you sure you want to delete this post?"
@@ -172,6 +207,7 @@ const PostList = ({ posts, refreshPosts }) => {
           onCancel={handleCancelDelete}
         />
       )}
+      
     </div>
   );
 };

@@ -17,7 +17,8 @@ import friendRoutes from './routes/friendRoutes.js'
 import favoriteRoutes from './routes/favoriteRoutes.js'
 import setupSocket from './socket/index.js'
 import messageRoutes from './routes/messageRoutes.js'
-import forumRoutes from './routes/forumRoutes.js'
+// import forumRoutes from './routes/forumRoutes.js'
+import forumRoutes from './routes/forumRoutes/forumIndex.js' // FORUM MODULARIZATION
 
 // ✅ app first
 const app = express()
@@ -55,6 +56,7 @@ app.use('/api/related-tasks', relatedTaskRoutes)
 app.use('/api/friends', friendRoutes)
 app.use('/api/tasks', favoriteRoutes) // ✅
 app.use('/api/messages', messageRoutes) // ✅
+// app.use('/api/forum', forumRoutes)
 app.use('/api/forum', forumRoutes)
 
 // Start server
