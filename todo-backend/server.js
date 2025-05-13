@@ -56,7 +56,6 @@ app.use('/api/related-tasks', relatedTaskRoutes)
 app.use('/api/friends', friendRoutes)
 app.use('/api/tasks', favoriteRoutes) // ✅
 app.use('/api/messages', messageRoutes) // ✅
-// app.use('/api/forum', forumRoutes)
 app.use('/api/forum', forumRoutes)
 
 // Start server

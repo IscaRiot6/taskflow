@@ -18,7 +18,7 @@ const ReplyList = ({ postId, replies, onVote, onEdit, onDelete, currentUserId })
             authorProfilePic={reply.author?.profilePic}
             votes={reply.votes}
             userVoteType={reply.userVoteType}
-            onVote={(type) => onVote(reply._id, type)}
+            onVote={(type) => onVote(reply._id, type, postId)}
             onEdit={onEdit}
             onDelete={() => onDelete(postId, reply._id)} 
             isAuthor={reply.author?._id === currentUserId}

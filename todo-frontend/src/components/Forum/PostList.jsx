@@ -9,7 +9,7 @@ import ConfirmDeleteModal from '../ConfirmDeleteModal';
 
 
 const PostList = ({ posts, refreshPosts }) => {
-  const { addReply, votePost, updatePost, deletePost, updateReply, deleteReply, handleVoteReply } = forumApi();
+  const { addReply, votePost, updatePost, deletePost, updateReply, deleteReply, voteReply } = forumApi();
 
   const [activeReplyPostId, setActiveReplyPostId] = useState(null);
   const [replyContent, setReplyContent] = useState('');
@@ -136,6 +136,40 @@ const handleDeleteReply = async (postId, replyId) => {
   } catch (error) {
     toast.error('Failed to delete reply.');
     console.error('Failed to delete reply:', error);
+  }
+};
+
+const handleVoteReply = async (replyId, voteType, postId) => {
+  try {
+    const response = await voteReply(replyId, voteType);
+
+    // Update local state using voteType from the request
+    setPostReplies(prevReplies => {
+      const updatedReplies = { ...prevReplies };
+      const repliesForPost = updatedReplies[postId]?.map(reply => {
+        if (reply._id === replyId) {
+          let newUserVoteType;
+
+          // Determine if vote was retracted or switched
+          if (reply.userVoteType === voteType) {
+            newUserVoteType = null; // retracted
+          } else {
+            newUserVoteType = voteType; // new or switched
+          }
+
+          return {
+            ...reply,
+            votes: response.votes,
+            userVoteType: newUserVoteType
+          };
+        }
+        return reply;
+      });
+      updatedReplies[postId] = repliesForPost;
+      return updatedReplies;
+    });
+  } catch (error) {
+    console.error('Error voting on reply:', error);
   }
 };
 

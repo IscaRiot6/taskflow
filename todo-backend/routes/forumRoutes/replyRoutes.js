@@ -35,13 +35,23 @@ router.post('/:postId/reply', authMiddleware, async (req, res) => {
 // 2. Get all replies
 router.get('/:postId/replies', authMiddleware, async (req, res) => {
   try {
+    const userId = req.user.userId // ✅ Fix added here
+
     const replies = await Reply.find({ post: req.params.postId })
       .populate('author', 'username profilePic')
       .sort({ createdAt: 1 })
 
-    res.json(replies)
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch replies', error })
+    const enrichedReplies = replies.map(reply => {
+      const voter = reply.voters.find(v => v.user.toString() === userId)
+      return {
+        ...reply.toObject(),
+        userVoteType: voter ? voter.voteType : null
+      }
+    })
+
+    res.status(200).json(enrichedReplies)
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching replies', error: err })
   }
 })
 
@@ -121,7 +131,11 @@ router.post('/:replyId/vote', authMiddleware, async (req, res) => {
     }
 
     await reply.save()
-    res.status(200).json({ message: 'Vote registered', votes: reply.votes })
+    res.status(200).json({
+      message: 'Vote registered',
+      votes: reply.votes
+      // userVoteType: null
+    })
   } catch (error) {
     res.status(500).json({ message: 'Error voting on reply', error })
   }
