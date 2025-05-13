@@ -95,7 +95,7 @@ const forumApi = () => {
   }
 
   // 5.  Add a reply to a post
-  const addReply = async (postId, content) => {
+  const addReply = async (postId, content, parentReplyId = null) => {
     try {
       const response = await fetch(
         `${API_URL}/api/forum/replies/${postId}/reply`,
@@ -105,7 +105,7 @@ const forumApi = () => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('authToken')}`
           },
-          body: JSON.stringify({ content })
+          body: JSON.stringify({ content, parentReplyId })
         }
       )
 

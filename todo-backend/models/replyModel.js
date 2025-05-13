@@ -4,6 +4,11 @@ const replySchema = new mongoose.Schema({
   content: { type: String, required: true },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
+  parentReply: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Reply',
+    default: null
+  },
   createdAt: { type: Date, default: Date.now },
   votes: { type: Number, default: 0 },
   voters: [

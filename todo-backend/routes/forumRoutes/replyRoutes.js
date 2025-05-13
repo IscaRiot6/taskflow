@@ -4,6 +4,7 @@ import Reply from '../../models/replyModel.js'
 const router = express.Router()
 import authMiddleware from '../../middleware/authMiddleware.js'
 import User from '../../models/userModel.js'
+import buildReplyTree from '../../utils/buildReplyTree.js'
 
 // 1. Add a reply to a post
 router.post('/:postId/reply', authMiddleware, async (req, res) => {
@@ -13,7 +14,7 @@ router.post('/:postId/reply', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'User not found' })
     }
 
-    const { content } = req.body
+    const { content, parentReplyId } = req.body
     const post = await Post.findById(req.params.postId)
     if (!post) {
       return res.status(404).json({ message: 'Post not found' })
@@ -22,7 +23,8 @@ router.post('/:postId/reply', authMiddleware, async (req, res) => {
     const reply = new Reply({
       content,
       author: user._id,
-      post: post._id
+      post: post._id,
+      parentReply: parentReplyId || null
     })
 
     await reply.save()
@@ -41,6 +43,7 @@ router.get('/:postId/replies', authMiddleware, async (req, res) => {
       .populate('author', 'username profilePic')
       .sort({ createdAt: 1 })
 
+    // First enrich with user vote type
     const enrichedReplies = replies.map(reply => {
       const voter = reply.voters.find(v => v.user.toString() === userId)
       return {
@@ -49,7 +52,10 @@ router.get('/:postId/replies', authMiddleware, async (req, res) => {
       }
     })
 
-    res.status(200).json(enrichedReplies)
+    // Then build the nested tree
+    const nestedReplies = buildReplyTree(enrichedReplies)
+
+    res.status(200).json(nestedReplies)
   } catch (err) {
     res.status(500).json({ message: 'Error fetching replies', error: err })
   }
