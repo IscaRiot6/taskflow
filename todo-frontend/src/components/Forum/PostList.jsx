@@ -17,6 +17,9 @@ const PostList = ({ posts, refreshPosts }) => {
   const [visibleReplies, setVisibleReplies] = useState({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+  const [replyToDelete, setReplyToDelete] = useState(null); 
+  const [showReplyDeleteModal, setShowReplyDeleteModal] = useState(false);
+
 
   
 
@@ -173,6 +176,24 @@ const handleVoteReply = async (replyId, voteType, postId) => {
   }
 };
 
+const handleConfirmDeleteReply = async () => {
+  try {
+    await deleteReply(replyToDelete.replyId);
+    toast.success('Reply deleted successfully!');
+    refreshPosts(); // Or reload replies if more granular
+  } catch (err) {
+    toast.error('Failed to delete reply.');
+    console.error('Failed to delete reply:', err);
+  } finally {
+    setShowReplyDeleteModal(false);
+    setReplyToDelete(null);
+  }
+};
+
+const handleCancelDeleteReply = () => {
+  setShowReplyDeleteModal(false);
+  setReplyToDelete(null);
+};
 
 
 
@@ -226,7 +247,11 @@ const handleVoteReply = async (replyId, voteType, postId) => {
      replies={postReplies[post._id] || []}
      onVote={handleVoteReply}
      onEdit={(replyId, updatedData) => handleEditReply(post._id, replyId, updatedData)}
-     onDelete={handleDeleteReply}
+    //  onDelete={handleDeleteReply}
+    onDelete={(postId, replyId) => {
+      setReplyToDelete({ postId, replyId });
+      setShowReplyDeleteModal(true);
+    }}
      currentUserId={getCurrentUserId()}
    />
    
@@ -241,6 +266,15 @@ const handleVoteReply = async (replyId, voteType, postId) => {
           onCancel={handleCancelDelete}
         />
       )}
+
+{showReplyDeleteModal && (
+  <ConfirmDeleteModal
+    message="Are you sure you want to delete this reply?"
+    onConfirm={handleConfirmDeleteReply}
+    onCancel={handleCancelDeleteReply}
+  />
+)}
+
       
     </div>
   );

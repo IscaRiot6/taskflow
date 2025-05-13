@@ -1,16 +1,28 @@
 .replyItem-container {
     border-left: 2px solid #ccc;
+    border-radius: 5px;
     margin-left: 20px;
     padding-left: 15px;
+    padding: 1rem;
     margin-top: 10px;
     background-color: #f9f9f9;
-    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
+
+  .replyItem-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
   }
   
   .replyItem-author {
     display: flex;
-    align-items: center;
-    margin-bottom: 5px;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 1rem;
+  width: 60px;
+  padding-right: 1rem;
+  border-right: 1px solid #720909;
   }
   
   .author-avatar {
@@ -26,9 +38,11 @@
   
   .replyItem-main {
     margin-top: 5px;
+    flex: 1;
   }
   
   .replyItem-content {
+    font-size: 1rem;
     margin-bottom: 5px;
   }
   
@@ -39,14 +53,20 @@
   
   .replyItem-footer {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    margin-top: 5px;
+    margin-top: 0.5rem;
   }
   
   .replyItem-votes {
     display: flex;
     align-items: center;
     margin-right: 15px;
+  }
+
+  .replyItem-actions {
+    display: flex;
+    gap: 0.5rem;
   }
   
   .vote-button {
@@ -81,5 +101,19 @@
     font-weight: bold;
     background-color: #f37171f8;
   }
+
+  @media (max-width: 600px) {
+    .replyItem-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .replyItem-author {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 0.5rem;
+    }
+  }
+  
   
   

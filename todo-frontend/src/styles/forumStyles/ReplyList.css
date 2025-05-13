@@ -1,5 +1,8 @@
-.replyList-container {
-    margin-top: 10px;
-    padding-left: 20px;
+
+  .replyList-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
   
+ 
