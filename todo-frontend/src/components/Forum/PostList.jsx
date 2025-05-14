@@ -142,39 +142,80 @@ const handleDeleteReply = async (postId, replyId) => {
   }
 };
 
+const updateNestedReplyVotes = (replies, replyId, updatedVotes, voteType) => {
+  return replies.map(reply => {
+    if (reply._id === replyId) {
+      let newUserVoteType = reply.userVoteType === voteType ? null : voteType;
+      return {
+        ...reply,
+        votes: updatedVotes,
+        userVoteType: newUserVoteType
+      };
+    }
+    if (reply.children && reply.children.length > 0) {
+      return {
+        ...reply,
+        children: updateNestedReplyVotes(reply.children, replyId, updatedVotes, voteType)
+      };
+    }
+    return reply;
+  });
+};
+
+
+// const handleVoteReply = async (replyId, voteType, postId) => {
+//   try {
+//     const response = await voteReply(replyId, voteType);
+
+//     // Update local state using voteType from the request
+//     setPostReplies(prevReplies => {
+//       const updatedReplies = { ...prevReplies };
+//       const repliesForPost = updatedReplies[postId]?.map(reply => {
+//         if (reply._id === replyId) {
+//           let newUserVoteType;
+
+//           // Determine if vote was retracted or switched
+//           if (reply.userVoteType === voteType) {
+//             newUserVoteType = null; // retracted
+//           } else {
+//             newUserVoteType = voteType; // new or switched
+//           }
+
+//           return {
+//             ...reply,
+//             votes: response.votes,
+//             userVoteType: newUserVoteType
+//           };
+//         }
+//         return reply;
+//       });
+//       updatedReplies[postId] = repliesForPost;
+//       return updatedReplies;
+//     });
+//   } catch (error) {
+//     console.error('Error voting on reply:', error);
+//   }
+// };
+
 const handleVoteReply = async (replyId, voteType, postId) => {
   try {
     const response = await voteReply(replyId, voteType);
 
-    // Update local state using voteType from the request
     setPostReplies(prevReplies => {
       const updatedReplies = { ...prevReplies };
-      const repliesForPost = updatedReplies[postId]?.map(reply => {
-        if (reply._id === replyId) {
-          let newUserVoteType;
-
-          // Determine if vote was retracted or switched
-          if (reply.userVoteType === voteType) {
-            newUserVoteType = null; // retracted
-          } else {
-            newUserVoteType = voteType; // new or switched
-          }
-
-          return {
-            ...reply,
-            votes: response.votes,
-            userVoteType: newUserVoteType
-          };
-        }
-        return reply;
-      });
-      updatedReplies[postId] = repliesForPost;
+      updatedReplies[postId] = updateNestedReplyVotes(
+        updatedReplies[postId],
+        replyId,
+        response.votes,
+        voteType
+      );
       return updatedReplies;
     });
   } catch (error) {
     console.error('Error voting on reply:', error);
   }
 };
+
 
 const handleConfirmDeleteReply = async () => {
   try {
@@ -194,6 +235,13 @@ const handleCancelDeleteReply = () => {
   setShowReplyDeleteModal(false);
   setReplyToDelete(null);
 };
+
+const refreshReplies = (postId) => {
+  forumApi().getRepliesByPostId(postId).then((updatedReplies) => {
+    setPostReplies(prev => ({ ...prev, [postId]: updatedReplies }));
+  });
+};
+
 
 
 
@@ -255,11 +303,10 @@ const handleCancelDeleteReply = () => {
      currentUserId={getCurrentUserId()}
      onReply={(parentReplyId, content) => {
       forumApi().addReply(post._id, content, parentReplyId).then(() => {
-        forumApi().getRepliesByPostId(post._id).then((updatedReplies) => {
-          setPostReplies(prev => ({ ...prev, [post._id]: updatedReplies }));
-        });
+        refreshReplies(post._id);
       });
     }}
+    
    />
    
     )}
