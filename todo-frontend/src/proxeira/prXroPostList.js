@@ -24,6 +24,8 @@ const PostList = ({ posts, refreshPosts }) => {
   const [visibleReplies, setVisibleReplies] = useState({})
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [postToDelete, setPostToDelete] = useState(null)
+  const [replyToDelete, setReplyToDelete] = useState(null)
+  const [showReplyDeleteModal, setShowReplyDeleteModal] = useState(false)
 
   const handleReplyClick = postId => {
     setActiveReplyPostId(postId)
@@ -142,28 +144,109 @@ const PostList = ({ posts, refreshPosts }) => {
     }
   }
 
-  const handleVoteReply = async (replyId, voteType, postId) => {
-    try {
-      const updatedReply = await voteReply(replyId, voteType)
-      // Update the specific reply in postReplies
-      setPostReplies(prevReplies => {
-        const updatedReplies = { ...prevReplies }
-        if (updatedReplies[postId]) {
-          updatedReplies[postId] = updatedReplies[postId].map(reply =>
-            reply._id === replyId
-              ? {
-                  ...reply,
-                  votes: updatedReply.votes,
-                  userVoteType: updatedReply.userVoteType
-                }
-              : reply
+  const updateNestedReplyVotes = (replies, replyId, updatedVotes, voteType) => {
+    return replies.map(reply => {
+      if (reply._id === replyId) {
+        let newUserVoteType = reply.userVoteType === voteType ? null : voteType
+        return {
+          ...reply,
+          votes: updatedVotes,
+          userVoteType: newUserVoteType
+        }
+      }
+      if (reply.children && reply.children.length > 0) {
+        return {
+          ...reply,
+          children: updateNestedReplyVotes(
+            reply.children,
+            replyId,
+            updatedVotes,
+            voteType
           )
         }
+      }
+      return reply
+    })
+  }
+
+  // const handleVoteReply = async (replyId, voteType, postId) => {
+  //   try {
+  //     const response = await voteReply(replyId, voteType);
+
+  //     // Update local state using voteType from the request
+  //     setPostReplies(prevReplies => {
+  //       const updatedReplies = { ...prevReplies };
+  //       const repliesForPost = updatedReplies[postId]?.map(reply => {
+  //         if (reply._id === replyId) {
+  //           let newUserVoteType;
+
+  //           // Determine if vote was retracted or switched
+  //           if (reply.userVoteType === voteType) {
+  //             newUserVoteType = null; // retracted
+  //           } else {
+  //             newUserVoteType = voteType; // new or switched
+  //           }
+
+  //           return {
+  //             ...reply,
+  //             votes: response.votes,
+  //             userVoteType: newUserVoteType
+  //           };
+  //         }
+  //         return reply;
+  //       });
+  //       updatedReplies[postId] = repliesForPost;
+  //       return updatedReplies;
+  //     });
+  //   } catch (error) {
+  //     console.error('Error voting on reply:', error);
+  //   }
+  // };
+
+  const handleVoteReply = async (replyId, voteType, postId) => {
+    try {
+      const response = await voteReply(replyId, voteType)
+
+      setPostReplies(prevReplies => {
+        const updatedReplies = { ...prevReplies }
+        updatedReplies[postId] = updateNestedReplyVotes(
+          updatedReplies[postId],
+          replyId,
+          response.votes,
+          voteType
+        )
         return updatedReplies
       })
     } catch (error) {
-      console.error(`Failed to ${voteType}vote reply:`, error)
+      console.error('Error voting on reply:', error)
     }
+  }
+
+  const handleConfirmDeleteReply = async () => {
+    try {
+      await deleteReply(replyToDelete.replyId)
+      toast.success('Reply deleted successfully!')
+      refreshPosts() // Or reload replies if more granular
+    } catch (err) {
+      toast.error('Failed to delete reply.')
+      console.error('Failed to delete reply:', err)
+    } finally {
+      setShowReplyDeleteModal(false)
+      setReplyToDelete(null)
+    }
+  }
+
+  const handleCancelDeleteReply = () => {
+    setShowReplyDeleteModal(false)
+    setReplyToDelete(null)
+  }
+
+  const refreshReplies = postId => {
+    forumApi()
+      .getRepliesByPostId(postId)
+      .then(updatedReplies => {
+        setPostReplies(prev => ({ ...prev, [postId]: updatedReplies }))
+      })
   }
 
   if (posts.length === 0) return <p className='postList-empty'>No posts yet.</p>
@@ -219,8 +302,19 @@ const PostList = ({ posts, refreshPosts }) => {
               onEdit={(replyId, updatedData) =>
                 handleEditReply(post._id, replyId, updatedData)
               }
-              onDelete={handleDeleteReply}
+              //  onDelete={handleDeleteReply}
+              onDelete={(postId, replyId) => {
+                setReplyToDelete({ postId, replyId })
+                setShowReplyDeleteModal(true)
+              }}
               currentUserId={getCurrentUserId()}
+              onReply={(parentReplyId, content) => {
+                forumApi()
+                  .addReply(post._id, content, parentReplyId)
+                  .then(() => {
+                    refreshReplies(post._id)
+                  })
+              }}
             />
           )}
         </div>
@@ -231,6 +325,14 @@ const PostList = ({ posts, refreshPosts }) => {
           message='Are you sure you want to delete this post?'
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
+        />
+      )}
+
+      {showReplyDeleteModal && (
+        <ConfirmDeleteModal
+          message='Are you sure you want to delete this reply?'
+          onConfirm={handleConfirmDeleteReply}
+          onCancel={handleCancelDeleteReply}
         />
       )}
     </div>
