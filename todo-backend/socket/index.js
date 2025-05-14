@@ -5,7 +5,7 @@ import User from '../models/userModel.js'
 
 const users = new Map() // Map<userId, Set<socket.id>>
 
-export default function setupSocket (server) {
+function setupSocket (server) {
   const io = new Server(server, {
     cors: {
       origin: 'http://localhost:3000',
@@ -108,3 +108,5 @@ export default function setupSocket (server) {
     })
   })
 }
+
+export default setupSocket

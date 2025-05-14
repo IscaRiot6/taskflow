@@ -5,4 +5,20 @@
     gap: 1.5rem;
   }
   
- 
+  .replyList-container.depth-1 { margin-left: 20px; }
+  .replyList-container.depth-2 { margin-left: 40px; }
+/* ...or use a more flexible SCSS loop */
+
+.replyList-container {
+  border-left: 1px solid #ccc;
+  padding-left: 10px;
+}
+.depth-1 {
+  margin-left: 20px;
+}
+.depth-2 {
+  margin-left: 40px;
+}
+.depth-3 {
+  margin-left: 60px;
+}

@@ -253,6 +253,13 @@ const handleCancelDeleteReply = () => {
       setShowReplyDeleteModal(true);
     }}
      currentUserId={getCurrentUserId()}
+     onReply={(parentReplyId, content) => {
+      forumApi().addReply(post._id, content, parentReplyId).then(() => {
+        forumApi().getRepliesByPostId(post._id).then((updatedReplies) => {
+          setPostReplies(prev => ({ ...prev, [post._id]: updatedReplies }));
+        });
+      });
+    }}
    />
    
     )}
