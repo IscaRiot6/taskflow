@@ -26,6 +26,8 @@ const PostList = ({ posts, refreshPosts }) => {
   const [postToDelete, setPostToDelete] = useState(null)
   const [replyToDelete, setReplyToDelete] = useState(null)
   const [showReplyDeleteModal, setShowReplyDeleteModal] = useState(false)
+  const [loadingReplies, setLoadingReplies] = useState({});
+
 
   const handleReplyClick = postId => {
     setActiveReplyPostId(postId)
@@ -51,15 +53,24 @@ const PostList = ({ posts, refreshPosts }) => {
     }
   }
 
-  const fetchReplies = async postId => {
+  const fetchReplies = async (postId) => {
+    setLoadingReplies(prev => ({ ...prev, [postId]: true }));
+  
     try {
-      const { getRepliesByPostId } = forumApi()
-      const data = await getRepliesByPostId(postId)
-      setPostReplies(prev => ({ ...prev, [postId]: data }))
+      const { getRepliesByPostId } = forumApi();
+
+ // Simulate slow network for testing spinner visibility
+ await new Promise((res) => setTimeout(res, 2000));
+
+      const data = await getRepliesByPostId(postId);
+      setPostReplies(prev => ({ ...prev, [postId]: data }));
     } catch (err) {
-      console.error('Failed to fetch replies:', err)
+      console.error('Failed to fetch replies:', err);
+    } finally {
+      setLoadingReplies(prev => ({ ...prev, [postId]: false }));
     }
-  }
+  };
+  
 
   useEffect(() => {
     const fetchAllReplies = async () => {
@@ -264,6 +275,7 @@ const PostList = ({ posts, refreshPosts }) => {
             <ReplyList
               postId={post._id}
               replies={postReplies[post._id] || []}
+              loading={loadingReplies[post._id]}
               onVote={handleVoteReply}
               onEdit={(replyId, updatedData) =>
                 handleEditReply(post._id, replyId, updatedData)

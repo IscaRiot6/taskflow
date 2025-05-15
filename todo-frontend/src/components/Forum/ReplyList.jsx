@@ -1,9 +1,22 @@
 import React from 'react';
 import ReplyItem from './ReplyItem';
 import '../../styles/forumStyles/ReplyList.css';
+import ForumSpinner from './forumUtils/ForumSpinner';
 
-const ReplyList = ({ postId, replies, onVote, onEdit, onDelete, currentUserId, onReply, depth = 0 }) => {
-  if (!replies) return <p>Loading replies...</p>;
+const ReplyList = ({ postId, replies, onVote, onEdit, onDelete, currentUserId, onReply, loading, depth = 0 }) => {
+  if (loading) {
+    // console.log(`Loading replies for postId ${postId}`);
+    return (
+      <div>
+        <ForumSpinner />
+        <p>Loading replies...</p>
+      </div>
+    );
+  }
+  
+  
+   if (!replies) return null;
+  // if (!replies) return <p>Loading replies...</p>;
 
   return (
     <div className={`replyList-container depth-${depth}`}>

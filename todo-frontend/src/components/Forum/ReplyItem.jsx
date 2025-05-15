@@ -19,7 +19,7 @@ const ReplyItem = ({
   const [isEditing, setIsEditing] = useState(false)
   const [editedContent, setEditedContent] = useState(content)
   const [isReplying, setIsReplying] = useState(false)
-  const [replyContent, setReplyContent] = useState('');
+  const [replyContent, setReplyContent] = useState('')
 
   const handleEditSubmit = () => {
     onEdit(replyId, { content: editedContent })
@@ -27,17 +27,15 @@ const ReplyItem = ({
   }
 
   const handleNestedReplySubmit = () => {
-    if (!replyContent.trim()) return;
-    onReply(replyId, replyContent);  // Pass replyId as parent
-    setReplyContent('');
-    setIsReplying(false);
-  };
-  
+    if (!replyContent.trim()) return
+    onReply(replyId, replyContent) // Pass replyId as parent
+    setReplyContent('')
+    setIsReplying(false)
+  }
 
   return (
     <div className='replyItem-container'>
       <div className='replyItem-content'>
-        
         <div className='replyItem-author'>
           {authorProfilePic && (
             <img
@@ -48,9 +46,6 @@ const ReplyItem = ({
           )}
           <span className='author-name'>@{authorUsername}</span>
         </div>
-
-       
-
 
         <div className='replyItem-main'>
           {isEditing ? (
@@ -65,20 +60,19 @@ const ReplyItem = ({
             </div>
           ) : (
             <>
-
-{isReplying ? (
-  <div className="nested-reply-form">
-    <textarea
-      value={replyContent}
-      onChange={(e) => setReplyContent(e.target.value)}
-      placeholder="Write a reply..."
-    />
-    <button onClick={handleNestedReplySubmit}>Submit</button>
-    <button onClick={() => setIsReplying(false)}>Cancel</button>
-  </div>
-) : (
-  <button onClick={() => setIsReplying(true)}>Reply</button>
-)}
+              {isReplying ? (
+                <div className='nested-reply-form'>
+                  <textarea
+                    value={replyContent}
+                    onChange={e => setReplyContent(e.target.value)}
+                    placeholder='Write a reply...'
+                  />
+                  <button onClick={handleNestedReplySubmit}>Submit</button>
+                  <button onClick={() => setIsReplying(false)}>Cancel</button>
+                </div>
+              ) : (
+                <button onClick={() => setIsReplying(true)}>Reply</button>
+              )}
               <p className='replyItem-content'>{content}</p>
               <span className='timestamp'>
                 Replied{' '}
