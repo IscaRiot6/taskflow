@@ -121,11 +121,13 @@ const forumApi = () => {
     }
   }
 
-  // 6. Get all replies
-  const getRepliesByPostId = async postId => {
+  //6. Get replies with pagination
+  const getRepliesByPostId = async (postId, page = 1, limit = 10) => {
+    console.log('Fetching page', page)
+
     try {
       const response = await fetch(
-        `${API_URL}/api/forum/replies/${postId}/replies`,
+        `${API_URL}/api/forum/replies/${postId}/replies?page=${page}&limit=${limit}`,
         {
           method: 'GET',
           headers: {

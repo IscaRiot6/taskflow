@@ -37,26 +37,61 @@ router.post('/:postId/reply', authMiddleware, async (req, res) => {
 // 2. Get all replies
 router.get('/:postId/replies', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.userId // ✅ Fix added here
+    const userId = req.user.userId
+    const { page = 1, limit = 10 } = req.query
+    console.log(
+      `Fetching replies for postId: ${req.params.postId}, page: ${page}, limit: ${limit}`
+    )
 
-    const replies = await Reply.find({ post: req.params.postId })
+    const allReplies = await Reply.find({ post: req.params.postId })
       .populate('author', 'username profilePic')
       .sort({ createdAt: 1 })
 
-    // First enrich with user vote type
-    const enrichedReplies = replies.map(reply => {
+    const enrichedReplies = allReplies.map(reply => {
       const voter = reply.voters.find(v => v.user.toString() === userId)
       return {
         ...reply.toObject(),
         userVoteType: voter ? voter.voteType : null
       }
     })
+    console.log('Total replies found:', enrichedReplies.length)
 
-    // Then build the nested tree
-    const nestedReplies = buildReplyTree(enrichedReplies)
+    const topLevelRepliesRaw = enrichedReplies.filter(
+      r => r.parentReply == null
+    )
+    console.log('Top-level:', topLevelRepliesRaw.length)
 
-    res.status(200).json(nestedReplies)
+    const nestedRepliesRaw = enrichedReplies.filter(r => r.parentReply != null)
+    console.log('Nested:', nestedRepliesRaw.length)
+
+    const paginatedTopLevel = topLevelRepliesRaw.slice(
+      (page - 1) * limit,
+      page * limit
+    )
+
+    const replyTree = buildReplyTree([
+      ...paginatedTopLevel,
+      ...nestedRepliesRaw
+    ])
+
+    const paginatedReplies = replyTree.filter(reply =>
+      paginatedTopLevel.some(top => top._id.toString() === reply._id.toString())
+    )
+
+    const totalTopLevelReplies = topLevelRepliesRaw.length
+    const totalPages = Math.ceil(totalTopLevelReplies / limit)
+
+    // ✅ NOW these will log
+    console.log(`Total top-level replies: ${totalTopLevelReplies}`)
+    console.log(`Sending page ${page} of ${totalPages}`)
+
+    res.status(200).json({
+      replies: paginatedReplies,
+      currentPage: Number(page),
+      totalPages: totalPages
+    })
   } catch (err) {
+    console.error('Error in GET /:postId/replies:', err)
     res.status(500).json({ message: 'Error fetching replies', error: err })
   }
 })

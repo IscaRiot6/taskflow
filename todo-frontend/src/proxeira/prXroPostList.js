@@ -6,10 +6,12 @@ import ReplyList from './ReplyList'
 import { getCurrentUserId } from '../../utils/auth'
 import { toast } from 'react-toastify'
 import ConfirmDeleteModal from '../ConfirmDeleteModal'
+import ForumSpinner from './forumUtils/ForumSpinner'
 
 const PostList = ({ posts, refreshPosts }) => {
   const {
     addReply,
+    getRepliesByPostId,
     votePost,
     updatePost,
     deletePost,
@@ -26,6 +28,8 @@ const PostList = ({ posts, refreshPosts }) => {
   const [postToDelete, setPostToDelete] = useState(null)
   const [replyToDelete, setReplyToDelete] = useState(null)
   const [showReplyDeleteModal, setShowReplyDeleteModal] = useState(false)
+  const [loadingReplies, setLoadingReplies] = useState({})
+  const [paginationState, setPaginationState] = useState({})
 
   const handleReplyClick = postId => {
     setActiveReplyPostId(postId)
@@ -51,13 +55,36 @@ const PostList = ({ posts, refreshPosts }) => {
     }
   }
 
+  // fetchReplies()
   const fetchReplies = async postId => {
+    setLoadingReplies(prev => ({ ...prev, [postId]: true }))
+
     try {
-      const { getRepliesByPostId } = forumApi()
-      const data = await getRepliesByPostId(postId)
-      setPostReplies(prev => ({ ...prev, [postId]: data }))
+      // const { getRepliesByPostId } = forumApi()
+
+      const data = await getRepliesByPostId(postId, 1, 10)
+
+      setPostReplies(prev => ({
+        ...prev,
+        [postId]: data.replies // ✅ only replies here
+      }))
+
+      setPaginationState(prev => ({
+        ...prev,
+        [postId]: {
+          page: data.currentPage,
+          totalPages: data.totalPages
+        }
+      }))
+      console.log(`Updated pagination state for ${postId}:`, {
+        page: data.currentPage,
+        totalPages: data.totalPages
+      })
     } catch (err) {
+      console.log('paginationState (fetchReplies)', paginationState[postId])
       console.error('Failed to fetch replies:', err)
+    } finally {
+      setLoadingReplies(prev => ({ ...prev, [postId]: false }))
     }
   }
 
@@ -76,6 +103,51 @@ const PostList = ({ posts, refreshPosts }) => {
       ...prev,
       [postId]: !prev[postId]
     }))
+  }
+
+  // loadMoreReplies()
+  const loadMoreReplies = async postId => {
+    const current = paginationState[postId] || { page: 1, totalPages: 1 }
+    if (current.page >= current.totalPages) return
+
+    setLoadingReplies(prev => ({ ...prev, [postId]: true }))
+
+    try {
+      const data = await getRepliesByPostId(postId, current.page + 1, 10)
+
+      setPostReplies(prev => ({
+        ...prev,
+        [postId]: [...(prev[postId] || []), ...data.replies]
+      }))
+
+      setPaginationState(prev => ({
+        ...prev,
+        [postId]: {
+          page: current.page + 1,
+          totalPages: data.totalPages
+        }
+      }))
+    } catch (error) {
+      console.log(
+        `Loading more replies for ${postId}: page ${current.page + 1} of ${
+          current.totalPages
+        }`
+      )
+
+      console.error('Error loading more replies:', error)
+    } finally {
+      setLoadingReplies(prev => ({ ...prev, [postId]: false }))
+    }
+  }
+
+  const showLoadMoreButton = postId => {
+    const pageData = paginationState[postId]
+    console.log('Should Show Load More?', {
+      postId,
+      pageData,
+      condition: pageData && pageData.page < pageData.totalPages
+    })
+    return pageData && pageData.page < pageData.totalPages
   }
 
   const handleVote = async (postId, voteType) => {
@@ -169,40 +241,6 @@ const PostList = ({ posts, refreshPosts }) => {
     })
   }
 
-  // const handleVoteReply = async (replyId, voteType, postId) => {
-  //   try {
-  //     const response = await voteReply(replyId, voteType);
-
-  //     // Update local state using voteType from the request
-  //     setPostReplies(prevReplies => {
-  //       const updatedReplies = { ...prevReplies };
-  //       const repliesForPost = updatedReplies[postId]?.map(reply => {
-  //         if (reply._id === replyId) {
-  //           let newUserVoteType;
-
-  //           // Determine if vote was retracted or switched
-  //           if (reply.userVoteType === voteType) {
-  //             newUserVoteType = null; // retracted
-  //           } else {
-  //             newUserVoteType = voteType; // new or switched
-  //           }
-
-  //           return {
-  //             ...reply,
-  //             votes: response.votes,
-  //             userVoteType: newUserVoteType
-  //           };
-  //         }
-  //         return reply;
-  //       });
-  //       updatedReplies[postId] = repliesForPost;
-  //       return updatedReplies;
-  //     });
-  //   } catch (error) {
-  //     console.error('Error voting on reply:', error);
-  //   }
-  // };
-
   const handleVoteReply = async (replyId, voteType, postId) => {
     try {
       const response = await voteReply(replyId, voteType)
@@ -241,11 +279,19 @@ const PostList = ({ posts, refreshPosts }) => {
     setReplyToDelete(null)
   }
 
+  // refreshReplies()
   const refreshReplies = postId => {
     forumApi()
       .getRepliesByPostId(postId)
-      .then(updatedReplies => {
-        setPostReplies(prev => ({ ...prev, [postId]: updatedReplies }))
+      .then(data => {
+        setPostReplies(prev => ({ ...prev, [postId]: data.replies }))
+        setPaginationState(prev => ({
+          ...prev,
+          [postId]: {
+            page: data.currentPage,
+            totalPages: data.totalPages
+          }
+        }))
       })
   }
 
@@ -295,27 +341,43 @@ const PostList = ({ posts, refreshPosts }) => {
           )}
 
           {visibleReplies[post._id] && (
-            <ReplyList
-              postId={post._id}
-              replies={postReplies[post._id] || []}
-              onVote={handleVoteReply}
-              onEdit={(replyId, updatedData) =>
-                handleEditReply(post._id, replyId, updatedData)
-              }
-              //  onDelete={handleDeleteReply}
-              onDelete={(postId, replyId) => {
-                setReplyToDelete({ postId, replyId })
-                setShowReplyDeleteModal(true)
-              }}
-              currentUserId={getCurrentUserId()}
-              onReply={(parentReplyId, content) => {
-                forumApi()
-                  .addReply(post._id, content, parentReplyId)
-                  .then(() => {
-                    refreshReplies(post._id)
-                  })
-              }}
-            />
+            <>
+              <ReplyList
+                postId={post._id}
+                replies={postReplies[post._id] || []}
+                loading={loadingReplies[post._id]}
+                onVote={handleVoteReply}
+                onEdit={(replyId, updatedData) =>
+                  handleEditReply(post._id, replyId, updatedData)
+                }
+                onDelete={(postId, replyId) => {
+                  setReplyToDelete({ postId, replyId })
+                  setShowReplyDeleteModal(true)
+                }}
+                currentUserId={getCurrentUserId()}
+                onReply={(parentReplyId, content) => {
+                  forumApi()
+                    .addReply(post._id, content, parentReplyId)
+                    .then(() => {
+                      refreshReplies(post._id)
+                    })
+                }}
+              />
+
+              {loadingReplies[post._id] && <ForumSpinner />}
+
+              {!loadingReplies[post._id] && showLoadMoreButton(post._id) && (
+                <>
+                  {console.log(
+                    'Rendering Load More Button for postId:',
+                    post._id
+                  )}
+                  <button onClick={() => loadMoreReplies(post._id)}>
+                    Load More Replies
+                  </button>
+                </>
+              )}
+            </>
           )}
         </div>
       ))}
