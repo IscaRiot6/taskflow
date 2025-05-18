@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import forumApi from '../../api/forumApi'
 import '../../styles/forumStyles/PostList.css'
 import PostItem from './PostItem'
@@ -30,6 +30,14 @@ const PostList = ({ posts, refreshPosts }) => {
   const [showReplyDeleteModal, setShowReplyDeleteModal] = useState(false)
   const [loadingReplies, setLoadingReplies] = useState({})
   const [paginationState, setPaginationState] = useState({})
+
+ const handleReply = (postId) => (parentReplyId, content) => {
+  addReply(postId, content, parentReplyId).then(() => {
+    refreshReplies(postId)
+  })
+}
+
+
 
   const handleReplyClick = postId => {
     setActiveReplyPostId(postId)
@@ -73,12 +81,14 @@ const PostList = ({ posts, refreshPosts }) => {
         ...prev,
         [postId]: {
           page: data.currentPage,
-          totalPages: data.totalPages
+          totalPages: data.totalPages,
+          totalTopLevelReplies: data.totalTopLevelReplies
         }
       }))
       console.log(`Updated pagination state for ${postId}:`, {
         page: data.currentPage,
-        totalPages: data.totalPages
+        totalPages: data.totalPages,
+        
       })
     } catch (err) {
       console.log('paginationState (fetchReplies)', paginationState[postId])
@@ -124,7 +134,8 @@ const PostList = ({ posts, refreshPosts }) => {
         ...prev,
         [postId]: {
           page: current.page + 1,
-          totalPages: data.totalPages
+          totalPages: data.totalPages,
+          totalTopLevelReplies: data.totalTopLevelReplies
         }
       }))
     } catch (error) {
@@ -279,17 +290,36 @@ const PostList = ({ posts, refreshPosts }) => {
     setReplyToDelete(null)
   }
 
+  // const getRemainingReplies = postId => {
+  // const { page, totalPages } = paginationState[postId] || {}
+  // const repliesLoaded = page * 10
+  // const totalTopLevelReplies = totalPages * 10
+  // const remaining = totalTopLevelReplies - repliesLoaded
+  // return Math.max(remaining, 0)
+  // }
+
+  const getRemainingReplies = postId => {
+  const pageData = paginationState[postId]
+  if (!pageData) return 0
+
+  const repliesLoaded = pageData.page * 10
+  const remaining = pageData.totalTopLevelReplies - repliesLoaded
+  return Math.max(remaining, 0)
+  }
+
+
+
   // refreshReplies()
   const refreshReplies = postId => {
-    forumApi()
-      .getRepliesByPostId(postId)
+   getRepliesByPostId(postId)
       .then(data => {
         setPostReplies(prev => ({ ...prev, [postId]: data.replies }))
         setPaginationState(prev => ({
           ...prev,
           [postId]: {
             page: data.currentPage,
-            totalPages: data.totalPages
+            totalPages: data.totalPages,
+            totalTopLevelReplies: data.totalTopLevelReplies
           }
         }))
       })
@@ -355,28 +385,22 @@ const PostList = ({ posts, refreshPosts }) => {
                   setShowReplyDeleteModal(true)
                 }}
                 currentUserId={getCurrentUserId()}
-                onReply={(parentReplyId, content) => {
-                  forumApi()
-                    .addReply(post._id, content, parentReplyId)
-                    .then(() => {
-                      refreshReplies(post._id)
-                    })
-                }}
+                onReply={handleReply(post._id)}
+
               />
 
               {loadingReplies[post._id] && <ForumSpinner />}
 
               {!loadingReplies[post._id] && showLoadMoreButton(post._id) && (
-                <>
-                  {console.log(
-                    'Rendering Load More Button for postId:',
-                    post._id
-                  )}
-                  <button onClick={() => loadMoreReplies(post._id)}>
-                    Load More Replies
-                  </button>
-                </>
+                <button
+                  onClick={() => loadMoreReplies(post._id)}
+                  disabled={loadingReplies[post._id]}
+                >
+                  Load more replies ({getRemainingReplies(post._id)} remaining)
+                </button>
+
               )}
+
             </>
           )}
         </div>

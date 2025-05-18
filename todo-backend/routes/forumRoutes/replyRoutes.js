@@ -88,7 +88,8 @@ router.get('/:postId/replies', authMiddleware, async (req, res) => {
     res.status(200).json({
       replies: paginatedReplies,
       currentPage: Number(page),
-      totalPages: totalPages
+      totalPages: totalPages,
+      totalTopLevelReplies: totalTopLevelReplies // show number in load more replies button
     })
   } catch (err) {
     console.error('Error in GET /:postId/replies:', err)
