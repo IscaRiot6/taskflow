@@ -7,7 +7,8 @@ import {
   FaInfoCircle,
   FaEnvelope,
   FaSignOutAlt,
-  FaUserCircle // Importing FaUserCircle for the Profile icon
+  FaUserCircle,
+  FaRocketchat
 } from 'react-icons/fa' // Example icons
 
 const SideNavbar = ({ isLoggedIn, onLogout }) => {
@@ -47,6 +48,12 @@ const SideNavbar = ({ isLoggedIn, onLogout }) => {
               <FaUserCircle /> <span className='nav-text'>Profile</span>
             </Link>
           </li>
+          <li>
+            <Link to='/forum'>
+              <FaRocketchat /> <span className='nav-text'>Forum</span>
+            </Link>
+          </li>
+
           {isLoggedIn && (
             <li onClick={onLogout} className='logout'>
               <FaSignOutAlt /> <span className='nav-text'>Logout</span>
