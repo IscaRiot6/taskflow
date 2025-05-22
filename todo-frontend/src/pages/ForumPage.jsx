@@ -9,7 +9,7 @@ import Pagination from '../components/Pagination'
 const ForumPage = () => {
   const { getAllPosts } = forumApi();
   const [currentPage, setCurrentPage] = useState(1)
-  const postsPerPage = 1 // Adjust 
+  const postsPerPage = 5 // Adjust 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -52,7 +52,12 @@ const ForumPage = () => {
       </p>
       <div className="forumPage-content">
         <CreatePost refreshPosts={refreshPosts} />  
-        <PostList posts={currentPosts} refreshPosts={refreshPosts} />
+
+        {/* <PostList posts={currentPosts} refreshPosts={refreshPosts} /> */}
+        <div className="forumPage-posts-fade">
+          <PostList posts={currentPosts} refreshPosts={refreshPosts} />
+        </div>
+
         <Pagination
           tasks={posts}
           setCurrentPage={setCurrentPage}

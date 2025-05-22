@@ -1,5 +1,6 @@
 import React from 'react'
 import '../styles/Pagination.css'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 
 const Pagination = ({ tasks, setCurrentPage, currentPage, tasksPerPage }) => {
   const totalPages = Math.ceil(tasks.length / tasksPerPage)
@@ -34,9 +35,8 @@ const Pagination = ({ tasks, setCurrentPage, currentPage, tasksPerPage }) => {
       {startPage > 1 && (
         <>
           <button onClick={() => handlePageChange(startPage - pageGroupSize)}>
-            &larr;
-          </button>{' '}
-          {/* NEW ARROW */}
+            <ArrowLeft size={16} />
+          </button>
           <button onClick={() => handlePageChange(1)}>1</button>
           <span className='dots'>...</span>
         </>
@@ -55,7 +55,9 @@ const Pagination = ({ tasks, setCurrentPage, currentPage, tasksPerPage }) => {
       {endPage < totalPages && (
         <>
           <span className='dots'>...</span>
-          <button onClick={() => handlePageChange(endPage + 1)}>&rarr;</button>
+          <button onClick={() => handlePageChange(endPage + 1)}>
+            <ArrowRight size={16} />
+          </button>
         </>
       )}
 
