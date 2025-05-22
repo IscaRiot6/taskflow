@@ -22,6 +22,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import ForumPage from '../pages/ForumPage'
 // import 'bootstrap/dist/css/bootstrap.min.css'
+import WelcomeBanner from './WelcomeBanner'
 
 function App () {
   const [user, setUser] = useState(null)
@@ -29,6 +30,8 @@ function App () {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   // const [theme, setTheme] = useState('default')
   const navigate = useNavigate()
+  const [welcomeMessage, setWelcomeMessage] = useState('')
+  const [showWelcome, setShowWelcome] = useState(false)
 
   const memoizedSetTasks = useCallback(newTasks => {
     setTasks(newTasks)
@@ -39,13 +42,13 @@ function App () {
     const token = localStorage.getItem('authToken')
     const userRaw = localStorage.getItem('user')
 
-    // console.log('🔐 token:', token)
-    // console.log('👤 user raw:', userRaw)
-
     try {
       const parsedUser = JSON.parse(userRaw)
       if (parsedUser && parsedUser._id) {
         setUser(parsedUser)
+        setWelcomeMessage(`👋 Welcome back, ${parsedUser.username}!`)
+        setShowWelcome(true)
+        setTimeout(() => setShowWelcome(false), 4000)
       } else {
         throw new Error('Invalid user object')
       }
@@ -63,7 +66,10 @@ function App () {
 
   const handleLogin = user => {
     setIsLoggedIn(true)
-    setUser(user) // instead of just username
+    setUser(user)
+    setWelcomeMessage(`👋 Welcome back, ${user.username}!`)
+    setShowWelcome(true)
+    setTimeout(() => setShowWelcome(false), 4000)
   }
 
   const handleLogout = () => {
@@ -137,6 +143,7 @@ function App () {
       <div>
         <ThemeToggle />
         <BackgroundSetter />
+        <WelcomeBanner message={welcomeMessage} visible={showWelcome} />
         <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
         <SideNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
         <Routes>
