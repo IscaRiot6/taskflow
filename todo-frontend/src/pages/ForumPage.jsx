@@ -9,7 +9,7 @@ import Pagination from '../components/Pagination'
 const ForumPage = () => {
   const { getAllPosts } = forumApi();
   const [currentPage, setCurrentPage] = useState(1)
-  const postsPerPage = 5 // Adjust 
+  const postsPerPage = 1 // Adjust 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -47,6 +47,9 @@ const ForumPage = () => {
     
     <div className="forumPage-wrapper">
       <h1 className="forumPage-title">Forum</h1>
+      <p className="forumPage-welcome">
+        Here you can post whatever you want — just avoid offensive language! 🙂
+      </p>
       <div className="forumPage-content">
         <CreatePost refreshPosts={refreshPosts} />  
         <PostList posts={currentPosts} refreshPosts={refreshPosts} />
@@ -56,6 +59,7 @@ const ForumPage = () => {
           currentPage={currentPage}
           tasksPerPage={postsPerPage}
         />
+        
       </div>
     </div>
   );

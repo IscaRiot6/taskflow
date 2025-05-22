@@ -147,9 +147,16 @@
   color: red;
 }
 
+
+
 .vote-count {
   margin: 0 10px;
   font-weight: bold;
+  color: var(--vote-color, #000);
+}
+
+body.dark .vote-count {
+  color: #fff; /* visible in dark mode */
 }
 
 .vote-button.upvote.active {
