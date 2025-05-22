@@ -4,10 +4,12 @@ import CreatePost from '../components/Forum/CreatePost';
 import PostList from '../components/Forum/PostList';
 import '../styles/forumStyles/ForumPage.css';
 //  import 'bootstrap/dist/css/bootstrap.min.css'
+import Pagination from '../components/Pagination'
 
 const ForumPage = () => {
   const { getAllPosts } = forumApi();
-
+  const [currentPage, setCurrentPage] = useState(1)
+  const postsPerPage = 5 // Adjust 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,6 +34,11 @@ const ForumPage = () => {
     await fetchPosts(); // Re-fetch posts
   };
 
+  const indexOfLastPost = currentPage * postsPerPage
+  const indexOfFirstPost = indexOfLastPost - postsPerPage
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost)
+
+
   if (loading) return <p>Loading posts...</p>;
   if (error) return <p>{error}</p>;
 
@@ -42,8 +49,13 @@ const ForumPage = () => {
       <h1 className="forumPage-title">Forum</h1>
       <div className="forumPage-content">
         <CreatePost refreshPosts={refreshPosts} />  
-        <PostList posts={posts} refreshPosts={refreshPosts} />
-
+        <PostList posts={currentPosts} refreshPosts={refreshPosts} />
+        <Pagination
+          tasks={posts}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+          tasksPerPage={postsPerPage}
+        />
       </div>
     </div>
   );
