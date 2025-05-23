@@ -5,7 +5,7 @@
   text-align: center;
   font-size: 1.1rem;
   position: fixed;
-  top: 20px; /* Push it down slightly */
+  top: 15px; /* Push it down slightly */
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -37,6 +37,11 @@
 
 .welcome-banner .close-btn:hover {
   color: #ccc;
+  transform: scale(1.2) rotate(90deg);
+}
+
+.welcome-banner .close-btn:active {
+  transform: scale(0.95) rotate(180deg);
 }
 
 @keyframes fadeSlide {
