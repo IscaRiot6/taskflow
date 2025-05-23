@@ -1,3 +1,32 @@
+.contact-title {
+  font-size: 2.2rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 10px;
+  transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+}
+
+.contact-title:hover{
+  transform: scale(1.02);
+  color: #007bff;
+  text-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+.contact-subtitle {
+  font-size: 1rem;
+  color: #555;
+  text-align: center;
+  margin-bottom: 30px;
+  transition: color 0.3s ease-in-out;
+}
+
+.contact-subtitle:hover {
+  transform: scale(1.02);
+  color: #007bff;
+  text-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+
 /* Container for contact form and slideshow */
 .contact-container {
   display: flex;

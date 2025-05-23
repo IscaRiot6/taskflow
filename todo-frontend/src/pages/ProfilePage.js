@@ -47,6 +47,10 @@ const ProfilePage = () => {
     <div className='profile-page'>
       <div className='profile-columns'>
         <h1 className='profile-title'>Profile Page</h1>
+        <p className='profile-subtitle'>
+          View and edit your personal info, connect with friends, and explore
+          your space.
+        </p>
 
         {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 

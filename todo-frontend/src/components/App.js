@@ -143,7 +143,11 @@ function App () {
       <div>
         <ThemeToggle />
         <BackgroundSetter />
-        <WelcomeBanner message={welcomeMessage} visible={showWelcome} />
+        <WelcomeBanner
+          message={welcomeMessage}
+          visible={showWelcome}
+          onClose={() => setShowWelcome(false)}
+        />
         <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
         <SideNavbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
         <Routes>

@@ -5,10 +5,38 @@
   text-align: center;
   font-size: 1.1rem;
   position: fixed;
-  top: 0;
-  width: 100%;
+  top: 20px; /* Push it down slightly */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 800px;
+  border-radius: 10px;
   z-index: 1000;
   animation: fadeSlide 0.5s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.welcome-banner p {
+  margin: 0;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.welcome-banner .close-btn {
+  margin-left: 12px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.welcome-banner .close-btn:hover {
+  color: #ccc;
 }
 
 @keyframes fadeSlide {
@@ -18,6 +46,6 @@
   }
   to {
     opacity: 1;
-    top: 0;
+    top: 10px;
   }
 }
