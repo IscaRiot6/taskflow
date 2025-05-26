@@ -1,0 +1,11 @@
+{
+  "name": "taskflow-root",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd todo-backend && node server.js",
+    "client": "cd todo-frontend && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
