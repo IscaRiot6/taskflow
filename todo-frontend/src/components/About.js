@@ -37,59 +37,72 @@ const About = () => {
       </div>
 
       <div className='about-content'>
-        <p className='icon-paragraph'>
+        <div className='icon-paragraph'>
           <span className='icon-wrapper'>
             <Sparkles size={18} />
           </span>
-          <strong>Concept:</strong> Welcome to TaskFlow — a productivity and
-          creativity hub that blends task management with anime-inspired
-          storytelling. From thematic tasks to nested arcs, TaskFlow lets you
-          plan your day like you're building a story.
-        </p>
+          <p>
+            <strong>Concept:</strong>
+            Welcome to TaskFlow — a productivity and creativity hub that blends
+            task management with anime-inspired storytelling. From thematic
+            tasks to nested arcs, TaskFlow lets you plan your day like you're
+            building a story.
+          </p>
+        </div>
 
-        <p className='icon-paragraph'>
+        <div className='icon-paragraph'>
           <span className='icon-wrapper'>
             <Puzzle size={18} />
           </span>
-          <strong>Features:</strong> Deep task creation with custom
-          themes/images, nested tasks, dual navigation views, favorites,
-          profiles, live search, and sorting — all wrapped in a playful
-          anime-themed UI.
-        </p>
+          <p>
+            <strong>Features:</strong> Deep task creation with custom
+            themes/images, nested tasks, dual navigation views, favorites,
+            profiles, live search, and sorting — all wrapped in a playful
+            anime-themed UI.
+          </p>
+        </div>
 
-        <p className='icon-paragraph'>
+        <div className='icon-paragraph'>
           <span className='icon-wrapper'>
             <MessageCircle size={18} />
           </span>
-          <strong>Live Chat System:</strong> Add friends and chat in real-time
-          with timestamps, visibility toggles, and message alerts. UX updates
-          are coming soon!
-        </p>
+          <p>
+            <strong>Live Chat System:</strong> Add friends and chat in real-time
+            with timestamps, visibility toggles, and message alerts. UX updates
+            are coming soon!
+          </p>
+        </div>
 
-        <p className='icon-paragraph'>
+        <div className='icon-paragraph'>
           <span className='icon-wrapper'>
             <Users size={18} />
           </span>
-          <strong>Forum Section:</strong> Share posts on tasks, anime, or life.
-          Supports votes, replies (with nesting), and pagination. Admin
-          moderation is planned.
-        </p>
+          <p>
+            <strong>Forum Section:</strong> Share posts on tasks, anime, or
+            life. Supports votes, replies (with nesting), and pagination. Admin
+            moderation is planned.
+          </p>
+        </div>
 
-        <p className='icon-paragraph'>
+        <div className='icon-paragraph'>
           <span className='icon-wrapper'>
             <ShieldCheck size={18} />
           </span>
-          <strong>Authentication:</strong> Smooth sign-up/login experience with
-          an inviting landing page.
-        </p>
+          <p>
+            <strong>Authentication:</strong> Smooth sign-up/login experience
+            with an inviting landing page.
+          </p>
+        </div>
 
-        <p className='icon-paragraph'>
+        <div className='icon-paragraph'>
           <span className='icon-wrapper'>
             <Film size={18} />
           </span>
-          <strong>Bonus Tracker:</strong> Track and rate anime or movies — use
-          TaskFlow as both planner and fandom log.
-        </p>
+          <p>
+            <strong>Bonus Tracker:</strong> Track and rate anime or movies — use
+            TaskFlow as both planner and fandom log.
+          </p>
+        </div>
 
         <p>
           <strong>Stack:</strong> Built with React and Node.js — lightweight,

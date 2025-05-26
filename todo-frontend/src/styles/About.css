@@ -21,7 +21,7 @@ body::before {
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+   transition: transform 0.9s ease, box-shadow 0.9s ease;
   height: 400px;
   overflow-y: auto;
   animation: fadeInUp 1s ease-out;
@@ -50,6 +50,11 @@ body::before {
 .about-header {
   text-align: center;
   margin-bottom: 20px;
+  background: rgba(0, 123, 255, 0.05);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 123, 255, 0.1);
+  transition: all 0.3s ease;
 }
 
 .about-title {
@@ -150,15 +155,10 @@ body::before {
   transition: all 0.3s ease-in-out;
 }
 
-.icon-paragraph {
-  /* display: flex; */
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 16px; /* breathing space between paragraphs */
-}
 
 .icon-wrapper {
-  margin-top: 4px; /* optional tweak to align better with text */
+    flex-shrink: 0;
+  margin-top: 4px; 
 }
 
 
@@ -166,9 +166,10 @@ body::before {
 .icon-paragraph {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 16px;
   transition: background 0.3s ease;
+  line-height: 1.5;
 }
 
 .icon-paragraph:hover {
@@ -177,9 +178,21 @@ body::before {
   padding: 4px 6px;
 }
 
-/* Icon spacing */
-.icon-wrapper {
-  margin-top: 4px;
-  color: #00bcd4;
+.icon-paragraph:not(:last-child) {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding-bottom: 12px;
 }
 
+
+/* Icon spacing */
+.icon-wrapper {
+  flex-shrink: 0;
+  width: 24px;
+  margin-top: 4px;
+  color: #007bff;
+}
+
+.icon-paragraph > strong {
+  display: inline;
+  margin-right: 4px;
+}
